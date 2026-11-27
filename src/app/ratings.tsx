@@ -79,9 +79,9 @@ export default function RatingsMethod() {
 
   return (
     <Screen>
-      <H1>How school ratings are calculated</H1>
+      <H1>Mock Trial ELO Ratings: how they are calculated</H1>
       <Body muted>
-        School ratings use the Elo system from chess. Every rule is below, with the full data and a script that recomputes every rating from scratch, so anyone can check them.
+        The Mock Trial ELO Ratings use the Elo system from chess. Every rule is below, with the full data and a script that recomputes every rating from scratch, so anyone can check them.
       </Body>
 
       {STEPS.map((s) => (

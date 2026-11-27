@@ -53,7 +53,7 @@ export function CircuitHistory() {
 
   return (
     <View style={{ gap: space.md }}>
-      <Segmented value={view} onChange={(v) => { setView(v); setShowAll(false); }} options={[{ id: 'elo', label: 'Elo ratings' }, { id: 'points', label: 'Season points' }]} />
+      <Segmented value={view} onChange={(v) => { setView(v); setShowAll(false); }} options={[{ id: 'elo', label: 'ELO Ratings' }, { id: 'points', label: 'Season points' }]} />
       <TextInput
         value={q}
         onChangeText={setQ}

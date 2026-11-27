@@ -33,7 +33,7 @@ export default function SchoolHistoryScreen() {
       <Body muted>{`${rows.length} competitions · ${total} circuit points`}</Body>
       {mine && (
         <Card>
-          <Label>Elo rating</Label>
+          <Label>Mock Trial ELO Rating</Label>
           <Row style={{ alignItems: 'baseline' }}>
             <H1>{String(Math.round(mine.rating))}</H1>
             <Body muted>{`${classOf(mine.rating)} · #${rank} of ${elo!.ranked.length}${mine.provisional ? ' · provisional' : ''}`}</Body>
@@ -58,7 +58,7 @@ export default function SchoolHistoryScreen() {
               <PastEventCard
                 key={r.event.id}
                 e={r.event}
-                note={[r.best ? finishText(r.best) : 'Competed', elo?.byEvent.get(r.event.id)?.get(name) ? `Elo ${fmtChange(elo.byEvent.get(r.event.id)!.get(name)!)}` : null].filter(Boolean).join(' · ')}
+                note={[r.best ? finishText(r.best) : 'Competed', elo?.byEvent.get(r.event.id)?.get(name) ? `ELO ${fmtChange(elo.byEvent.get(r.event.id)!.get(name)!)}` : null].filter(Boolean).join(' · ')}
               />
             ))}
         </View>

@@ -1,6 +1,6 @@
-# How school ratings are calculated
+# Mock Trial ELO Ratings: how they are calculated
 
-Mock Trial Central rates law schools with the Elo system from chess. This page gives every rule, the data, and a way to check
+The Mock Trial ELO Ratings rate law schools with the Elo system from chess. This page gives every rule, the data, and a way to check
 every number yourself. The app shows the same explanation at https://app.mocktrialcentral.com/ratings.
 
 ## Check it yourself
