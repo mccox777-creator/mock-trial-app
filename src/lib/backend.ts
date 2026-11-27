@@ -78,8 +78,8 @@ function demoBackend(): Backend {
     kind: 'demo',
     async loadHistory(level) {
       if (level !== 'law_school') return [];
-      const mod = await import('../data/history-law-school.json');
-      return (mod.default ?? mod) as unknown as PastEvent[];
+      // Bundled with the app (no separate download), read only when someone opens the history.
+      return require('../data/history-law-school.json') as PastEvent[];
     },
     async load() {
       if (!cache) {
