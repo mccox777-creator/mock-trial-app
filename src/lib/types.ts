@@ -20,6 +20,35 @@ export interface Profile {
   teamIds: string[];
   /** The subset of teamIds this person coaches. */
   coachOf?: string[];
+  /** Platform admin: approves organizers and handles reports. */
+  isAdmin?: boolean;
+  /** Where their request to run competitions stands. 'approved' organizers' competitions are listed at once. */
+  organizer?: OrganizerStatus;
+}
+
+export type OrganizerStatus = 'none' | 'pending' | 'approved' | 'rejected' | 'suspended';
+
+export interface OrganizerRequest {
+  userId: string;
+  name: string;
+  school: string;
+  role: string;
+  note: string;
+  status: Exclude<OrganizerStatus, 'none'>;
+  requestedAt: string;
+}
+
+export type ReportKind = 'tournament' | 'bulletin' | 'message' | 'case' | 'team' | 'user';
+export type ReportReason = 'fake' | 'spam' | 'abusive' | 'other';
+
+export interface Report {
+  id: number;
+  kind: ReportKind;
+  targetId: string;
+  reason: ReportReason;
+  details: string;
+  status: 'open' | 'resolved' | 'dismissed';
+  createdAt: string;
 }
 
 export type ChatChannel = 'all' | 'judges' | 'coaches';
@@ -108,9 +137,15 @@ export interface Tournament {
   /** When the organizer finalized results. After that (or AUTO_LOCK_DAYS after the last day) nothing can change. */
   finalizedAt: string | null;
   createdAt: string;
+  /** Set by the server: false until a platform admin approves the organizer or the competition. Unapproved competitions are unlisted. */
+  approved?: boolean;
+  /** Set by a platform admin to take a competition down. */
+  hidden?: boolean;
+  /** Most teams one school may enter; null for no limit. */
+  maxTeamsPerSchool?: number | null;
 }
 
-export type RegistrationStatus = 'pending' | 'approved' | 'waitlisted' | 'declined';
+export type RegistrationStatus = 'pending' | 'approved' | 'waitlisted' | 'declined' | 'withdrawn';
 
 export interface Registration {
   id: string;

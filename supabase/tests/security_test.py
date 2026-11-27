@@ -1,11 +1,15 @@
 import os, subprocess, sys, uuid
 # Attack tests for the database rules. Needs a scratch Postgres 15+ (never a real project):
-#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0004_notifications.sql -f supabase/migrations/0005_pairing_options.sql -f supabase/migrations/0006_past_results.sql
+#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0004_notifications.sql -f supabase/migrations/0005_pairing_options.sql -f supabase/migrations/0006_past_results.sql -f supabase/migrations/0007_entry_controls_and_moderation.sql
 #   PGARGS='-h localhost -U postgres -d t' python3 supabase/tests/security_test.py
 PG = os.environ.get('PGARGS', '-d t').split()
-U = {n: str(uuid.uuid5(uuid.NAMESPACE_DNS, n)) for n in ['org','org2','judge','judge2','coachA','coachB','compA','evil']}
+U = {n: str(uuid.uuid5(uuid.NAMESPACE_DNS, n)) for n in ['org','org2','judge','judge2','coachA','coachB','compA','evil','admin','newbie']}
+LIMITED = ['tournaments', 'registrations', 'teams', 'cases', 'bulletins', 'messages', 'reports']
+FRESH = True  # most tests are not about rate limits: age every earlier row past the limit windows first
 def psql(sql, who=None, superuser=False):
-    pre = '' if superuser else (f"set local role authenticated; set local request.jwt.claim.sub = '{U[who]}';" if who else "set local role anon;")
+    age = ('set local session_replication_role = replica; ' + ' '.join(f"update {t} set inserted_at = now() - interval '2 days';" for t in LIMITED)
+           + ' set local session_replication_role = origin; ') if FRESH and not superuser else ''
+    pre = age + ('' if superuser else (f"set local role authenticated; set local request.jwt.claim.sub = '{U[who]}';" if who else "set local role anon;"))
     r = subprocess.run(['psql', *PG,'-qtA','-v','ON_ERROR_STOP=1','-c', f"begin; {pre} {sql}; commit;"], capture_output=True, text=True)
     return r.returncode == 0, (r.stdout.strip() or r.stderr.strip().split('\n')[0])
 fails = 0
@@ -24,6 +28,9 @@ def blocked(name, sql, who=None, rows_if_ok=None):
     fails += not passed
 
 for n,u in U.items(): psql(f"insert into auth.users values ('{u}', '{n}@x.test')", superuser=True)
+# The two organizers in the older tests are approved organizers; 'admin' is a platform admin (both set in the dashboard).
+for n in ('org', 'org2'): psql(f"insert into organizer_requests (user_id, name, school, role, status) values ('{U[n]}', '{n}', 'Harbor', 'Director', 'approved')", superuser=True)
+psql(f"insert into platform_admins (user_id) values ('{U['admin']}')", superuser=True)
 F = "current_date + 30"
 T = lambda id, who, extra='': f"insert into tournaments (id, level, name, start_date, end_date, registration_deadline, team_cap, status, director_ids {',' + extra.split('|')[0] if extra else ''}) values ('{id}', 'law_school', '{id}', {F}, {F}+2, current_date+10, 2, 'registration_open', array['{U[who]}'::uuid] {',' + extra.split('|')[1] if extra else ''})"
 
@@ -171,6 +178,65 @@ ok('anyone reads past results', "select count(*) from past_events", None, '1')
 blocked('organizer adds a fake past result', "insert into past_events (id, level, season, term, name) values ('2025-26-fall-fake', 'law_school', '2025-26', 'Fall', 'Fake')", 'org')
 blocked('signed-in user rewrites a past winner', "update past_events set results='[]' where id='2025-26-fall-x' returning id", 'evil', '')
 blocked('signed-in user deletes past results', "delete from past_events returning id", 'evil', '')
+
+# Registration controls and moderation (0007)
+print('--- registration controls ---')
+R = lambda id, t, team, who: f"insert into registrations (id, tournament_id, team_id, contact_name, contact_email, submitted_by, created_at) values ('{id}','{t}','{team}','x','x@x','{U[who]}','now')"
+ok('school limit set', T('S1','org', 'max_teams_per_school|1').replace('team_cap, ', 'team_cap, ').replace(', 2, ', ', 8, '), 'org')
+ok('coach creates second program team', "insert into teams (id, program_id, name, level) values ('tA2','p1','Harbor A2','law_school')", 'coachA')
+ok('first team from the school enters', R('s1a','S1','tA','coachA'), 'coachA')
+blocked('second team from the same school', R('s1b','S1','tA2','coachA'), 'coachA')
+ok('coach withdraws own team', "update registrations set status='withdrawn' where id='s1a'", 'coachA')
+ok('then the other team fits', R('s1c','S1','tA2','coachA'), 'coachA')
+blocked('coach un-withdraws or self-confirms', "update registrations set status='approved' where id='s1a' returning id", 'coachA', '')
+blocked('coach withdraws someone else', "update registrations set status='withdrawn' where id='s1c' returning id", 'coachB', '')
+ok('organizer closes registration', "update tournaments set status='registration_closed' where id='S1'", 'org')
+blocked('entering a closed competition', R('s1d','S1','tB','coachB'), 'coachB')
+ok('auto-confirm competition, limit 2', T('W1','org', 'require_approval|false'), 'org')
+ok('first team confirmed automatically', R('w1a','W1','tA','coachA').replace("submitted_by, created_at)", "submitted_by, created_at, status)").replace("'now')", "'now','approved')"), 'coachA')
+ok('second team confirmed automatically', R('w1c','W1','tA2','coachA').replace("submitted_by, created_at)", "submitted_by, created_at, status)").replace("'now')", "'now','approved')"), 'coachA')
+ok('third team waitlisted', R('w1b','W1','tB','coachB').replace("submitted_by, created_at)", "submitted_by, created_at, status)").replace("'now')", "'now','approved')"), 'coachB')
+ok('is waitlisted', "select status from registrations where id='w1b'", 'coachB', 'waitlisted')
+ok('organizer removes the confirmed team', "update registrations set status='declined' where id='w1a'", 'org')
+ok('waitlisted team moves up', "select status from registrations where id='w1b'", 'coachB', 'approved')
+
+print('--- organizer approval ---')
+ok('new organizer makes a competition', T('N1','newbie'), 'newbie')
+ok('it is not approved', "select approved from tournaments where id='N1'", 'newbie', 'f')
+blocked('nobody else can see it', "select count(*) from tournaments where id='N1'", 'evil', 0)
+blocked('the public cannot see it', "select count(*) from tournaments where id='N1'", None, 0)
+blocked('nobody can register for it', R('n1a','N1','tA','coachA'), 'coachA')
+blocked('organizer approves their own competition', "update tournaments set approved=true where id='N1'; select approved from tournaments where id='N1'", 'newbie', 'f')
+ok('admin is told', "select count(*) from notifications where kind='admin'", 'admin', 1)
+blocked('followers are not told about it', "select count(*) from notifications where kind='new_competition' and link='/tournament/N1'", 'org2', 0)
+ok('new organizer asks to be approved', "insert into organizer_requests (name, school, role) values ('New', 'Harbor', 'Coach')", 'newbie')
+blocked('asks with status approved', "update organizer_requests set status='approved' returning status", 'newbie', '')
+blocked('approves self on insert', "insert into organizer_requests (user_id, name, school, role, status) values ('" + U['evil'] + "','E','E','E','approved'); select status from organizer_requests", 'evil', 'pending')
+blocked('non-admin approves someone', "update organizer_requests set status='approved' where user_id='" + U['newbie'] + "' returning 1", 'org', '')
+ok('admin approves the organizer', "update organizer_requests set status='approved' where user_id='" + U['newbie'] + "'", 'admin')
+ok('their competition is now listed', "select count(*) from tournaments where id='N1'", 'evil', 1)
+ok('and followers hear about it', "select count(*) from notifications where kind='new_competition' and link='/tournament/N1'", 'org2', 1)
+ok('approved organizer lists at once', T('N2','newbie') + "; select approved from tournaments where id='N2'", 'newbie', 't')
+
+print('--- moderation ---')
+ok('anyone reports a competition', "insert into reports (kind, target_id, reason, details) values ('tournament','N2','fake','not real')", 'evil')
+blocked('reports the same thing twice', "insert into reports (kind, target_id, reason) values ('tournament','N2','spam')", 'evil')
+blocked('reporter sees other reports', "select count(*) from reports", 'coachB', 0)
+ok('admin sees reports', "select count(*) from reports", 'admin', 1)
+blocked('organizer un-hides', "update tournaments set hidden=false where id='N2'; select hidden from tournaments where id='N2'", 'newbie', 'f')
+ok('admin hides the competition', "update tournaments set hidden=true where id='N2'", 'admin')
+blocked('hidden competition is not visible', "select count(*) from tournaments where id='N2'", 'evil', 0)
+blocked('organizer cannot un-hide it', "update tournaments set hidden=false where id='N2'; select hidden from tournaments where id='N2'", 'newbie', 't')
+ok('admin resolves the report', "update reports set status='resolved'", 'admin')
+ok('admin removes a bulletin', "delete from bulletins where id='bj1'", 'admin')
+blocked('others cannot delete bulletins', "delete from bulletins returning id", 'evil', '')
+
+print('--- rate limits ---')
+FRESH = False
+ok('organizer makes a few competitions', ';'.join(T(f'RL{i}','org2') for i in range(3)), 'org2')
+blocked('then too many in an hour', T('RL9','org2'), 'org2')
+blocked('backdating inserted_at does not help', T('RL8','org2', "inserted_at|now() - interval '2 days'"), 'org2')
+ok('admins are not limited', ';'.join(T(f'RA{i}','admin') for i in range(4)), 'admin')
 
 print(f'\n{fails} failing')
 sys.exit(1 if fails else 0)

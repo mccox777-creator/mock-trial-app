@@ -43,9 +43,19 @@ export default function RegisterScreen() {
         await save('teams', team);
         tid = team.id;
       }
-      if (data!.registrations.some((r) => r.tournamentId === t!.id && r.teamId === tid && r.status !== 'declined')) {
+      const prior = data!.registrations.find((r) => r.tournamentId === t!.id && r.teamId === tid);
+      if (prior) {
         setBusy(false);
-        return setErr('That team is already signed up for this competition.');
+        return setErr(prior.status === 'withdrawn' || prior.status === 'declined' ? 'That team has already entered and left this competition. Ask the organizer to put it back.' : 'That team is already signed up for this competition.');
+      }
+      if (t!.maxTeamsPerSchool) {
+        const programOf = (teamId: string) => data!.teams.find((x) => x.id === teamId)?.programId;
+        const mine = programOf(tid);
+        const fromSchool = data!.registrations.filter((r) => r.tournamentId === t!.id && ['pending', 'approved', 'waitlisted'].includes(r.status) && programOf(r.teamId) === mine).length;
+        if (mine && fromSchool >= t!.maxTeamsPerSchool) {
+          setBusy(false);
+          return setErr(`This competition takes at most ${t!.maxTeamsPerSchool} team${t!.maxTeamsPerSchool === 1 ? '' : 's'} per school.`);
+        }
       }
       const filled = data!.registrations.filter((r) => r.tournamentId === t!.id && r.status === 'approved').length;
       const status: Registration['status'] = invitational ? 'pending' : filled >= t!.teamCap ? 'waitlisted' : t!.requireApproval ? 'pending' : 'approved';

@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'react-native-url-polyfill/auto';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { sessionStorage } from './secureStorage';
-import type { AppData, Level, Notice, NotificationPrefs, PastEvent, Profile } from './types';
+import type { AppData, Level, Notice, NotificationPrefs, OrganizerRequest, PastEvent, Profile, Report, ReportKind, ReportReason } from './types';
 import { sampleData, DEMO_USERS } from './sampleData';
 
 /** The circuit record that ships with the app: read only when someone opens the history. */
@@ -52,6 +52,19 @@ export interface Backend {
   loadHistory(level: Level): Promise<PastEvent[]>;
   /** Demo mode only: restore the sample season. */
   resetDemo?(): Promise<void>;
+  /** Ask a platform admin to approve this account to run competitions. */
+  requestOrganizer(r: { name: string; school: string; role: string; note: string }): Promise<void>;
+  /** Flag something to the platform admins. */
+  report(kind: ReportKind, targetId: string, reason: ReportReason, details: string): Promise<void>;
+  /** Platform admins only; the database refuses everyone else. */
+  admin: {
+    organizerRequests(): Promise<OrganizerRequest[]>;
+    decideOrganizer(userId: string, status: 'approved' | 'rejected' | 'suspended'): Promise<void>;
+    reports(): Promise<Report[]>;
+    resolveReport(id: number, status: 'resolved' | 'dismissed'): Promise<void>;
+    setListing(tournamentId: string, patch: { approved?: boolean; hidden?: boolean }): Promise<void>;
+    removePost(kind: 'bulletin' | 'message', id: string): Promise<void>;
+  };
 }
 
 const EMPTY: AppData = {
@@ -69,6 +82,15 @@ const DEMO_INBOX: Notice[] = [
   { id: 2, kind: 'chat', title: 'Demo Director · Winter Trial Classic', body: 'Use the 3rd Street garage. We will validate parking at check-in.', link: '/tournament/winter-classic', createdAt: '2026-11-20T10:30:00', readAt: null },
   { id: 1, kind: 'new_competition', title: 'New competition: Winter Trial Classic', body: 'Jan 22, 2027 in Pinecrest. Registration closes Dec 18.', link: '/tournament/winter-classic', createdAt: '2026-11-02T09:00:00', readAt: '2026-11-02T12:00:00' },
 ];
+
+const DEMO_ADMIN: Backend['admin'] = {
+  organizerRequests: async () => [],
+  decideOrganizer: async () => {},
+  reports: async () => [],
+  resolveReport: async () => {},
+  setListing: async () => {},
+  removePost: async () => {},
+};
 
 function demoBackend(): Backend {
   let cache: AppData | null = null;
@@ -169,6 +191,9 @@ function demoBackend(): Backend {
       cache = JSON.parse(JSON.stringify(sampleData)) as AppData;
       await save();
     },
+    async requestOrganizer() {},
+    async report() {},
+    admin: DEMO_ADMIN,
   };
 }
 
@@ -245,13 +270,19 @@ function supabaseBackend(url: string, anonKey: string): Backend {
       const u = data.user;
       if (!u) return null;
       const { data: prof } = await sb.from('profiles').select('*').eq('id', u.id).maybeSingle();
-      const { data: mine } = await sb.from('team_members').select('team_id, role').eq('user_id', u.id);
+      const [{ data: mine }, { data: req }, { data: admin }] = await Promise.all([
+        sb.from('team_members').select('team_id, role').eq('user_id', u.id),
+        sb.from('organizer_requests').select('status').eq('user_id', u.id).maybeSingle(),
+        sb.rpc('is_admin'),
+      ]);
       return {
         id: u.id,
         email: u.email ?? '',
         name: (prof?.name as string) || u.email || 'Member',
         teamIds: (prof?.team_ids as string[]) ?? [],
         coachOf: (mine ?? []).filter((m) => m.role === 'coach').map((m) => m.team_id as string),
+        isAdmin: admin === true,
+        organizer: (req?.status as Profile['organizer']) ?? 'none',
       };
     },
     async signIn(email) {
@@ -302,6 +333,47 @@ function supabaseBackend(url: string, anonKey: string): Backend {
       const { error } = await sb.storage.from('case-files').upload(path, body, { contentType: mimeType });
       if (error) throw error;
       return `storage:case-files/${path}`;
+    },
+    async requestOrganizer(r) {
+      const { data: u } = await sb.auth.getUser();
+      if (!u.user) throw new Error('Sign in first.');
+      const row = { user_id: u.user.id, name: r.name.trim(), school: r.school.trim(), role: r.role.trim(), note: r.note.trim(), status: 'pending' };
+      const { data: had } = await sb.from('organizer_requests').select('status').eq('user_id', u.user.id).maybeSingle();
+      const { error } = had ? await sb.from('organizer_requests').update(row).eq('user_id', u.user.id) : await sb.from('organizer_requests').insert(row);
+      if (error) throw error;
+    },
+    async report(kind, targetId, reason, details) {
+      const { error } = await sb.from('reports').insert({ kind, target_id: targetId, reason, details: details.trim() });
+      if (error && error.code === '23505') throw new Error('You have already reported this. The admins will look at it.');
+      if (error) throw error;
+    },
+    admin: {
+      async organizerRequests() {
+        const { data, error } = await sb.from('organizer_requests').select('*').order('requested_at', { ascending: false });
+        if (error) throw error;
+        return (data ?? []).map((r) => mapKeys(r, toCamel) as unknown as OrganizerRequest);
+      },
+      async decideOrganizer(userId, status) {
+        const { error } = await sb.from('organizer_requests').update({ status }).eq('user_id', userId);
+        if (error) throw error;
+      },
+      async reports() {
+        const { data, error } = await sb.from('reports').select('id, kind, target_id, reason, details, status, created_at').order('created_at', { ascending: false }).limit(200);
+        if (error) throw error;
+        return (data ?? []).map((r) => mapKeys(r, toCamel) as unknown as Report);
+      },
+      async resolveReport(id, status) {
+        const { error } = await sb.from('reports').update({ status }).eq('id', id);
+        if (error) throw error;
+      },
+      async setListing(tournamentId, patch) {
+        const { error } = await sb.from('tournaments').update(patch).eq('id', tournamentId);
+        if (error) throw error;
+      },
+      async removePost(kind, id) {
+        const { error } = await sb.from(kind === 'bulletin' ? 'bulletins' : 'messages').delete().eq('id', id);
+        if (error) throw error;
+      },
     },
     async fileLink(ref) {
       if (!ref.startsWith('storage:case-files/')) return ref;
