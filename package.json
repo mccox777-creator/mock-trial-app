@@ -34,7 +34,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "backup": "node scripts/backup.mjs",
-    "restore": "node scripts/restore.mjs"
+    "restore": "node scripts/restore.mjs",
+    "check:pairings": "node --experimental-strip-types --no-warnings scripts/check-pairings.ts"
   },
   "private": true
 }

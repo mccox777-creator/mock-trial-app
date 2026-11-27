@@ -3,7 +3,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 import { Body, Button, Card, Field, H2, Label, Loading, Row, Screen, SideTag } from '../../components/ui';
 import { newId, useStore } from '../../lib/store';
-import { suggestPairings, teamName } from '../../lib/scoring';
+import { computeStandings, describePairing, pairingSettings, suggestPairings, teamName } from '../../lib/scoring';
 import { autoAssign, isLocked } from '../../lib/judging';
 import type { Match } from '../../lib/types';
 import { isValidDateTime, nowLocal, todayLocal } from '../../lib/format';
@@ -22,14 +22,32 @@ export default function PairRoundScreen() {
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const suggested = useMemo(() => {
-    if (!data || !t) return [];
+  const draw = useMemo(() => {
+    if (!data || !t) return null;
     const teamIds = data.registrations.filter((r) => r.tournamentId === t.id && r.status === 'approved').map((r) => r.teamId);
     const prior = data.matches.filter((m) => m.tournamentId === t.id && m.round < round);
-    return suggestPairings({ teamIds, round, priorMatches: prior, ballots: data.ballots, method: t.pairingMethod, randomRounds: t.randomRounds, sideConstraint: t.sideConstraint, seed });
+    const standings = computeStandings(prior, data.ballots, t.rankBy ?? 'ballots');
+    const result = suggestPairings({
+      ...pairingSettings(t), teamIds, round, priorMatches: prior, ballots: data.ballots, seed,
+      schoolOf: (tid) => data.teams.find((x) => x.id === tid)?.programId,
+      nameOf: (tid) => teamName(data.teams, tid),
+    });
+    const powered = t.pairingMethod === 'power' && round > t.randomRounds;
+    const sides = new Map<string, string>();
+    for (const m of [...prior].sort((a, b) => a.round - b.round)) {
+      sides.set(m.pTeamId, (sides.get(m.pTeamId) ?? '') + 'P');
+      sides.set(m.dTeamId, (sides.get(m.dTeamId) ?? '') + 'D');
+    }
+    const info = (tid: string) => {
+      const s = standings.find((x) => x.teamId === tid);
+      const seedNo = result.order.indexOf(tid) + 1;
+      const rec = s ? `${s.wins}–${s.losses}${s.ties ? `–${s.ties}` : ''} · ${s.ballots} ballots` : '';
+      return [powered ? `#${seedNo}` : '', rec, sides.get(tid) ? `sides ${sides.get(tid)}` : ''].filter(Boolean).join(' · ');
+    };
+    return { ...result, info };
   }, [data, t, round, seed]);
   const [flips, setFlips] = useState<Record<number, boolean>>({});
-  const pairs = suggested.map((p, i) => (flips[i] ? { pTeamId: p.dTeamId, dTeamId: p.pTeamId } : p));
+  const pairs = (draw?.pairs ?? []).map((p, i) => (flips[i] ? { pTeamId: p.dTeamId, dTeamId: p.pTeamId } : p));
 
   if (!data) return <Loading />;
   if (!t || !me || !canManage(t) || isLocked(t, todayLocal())) return <Screen><Body>Only the organizer can pair rounds, and only before the competition locks.</Body></Screen>;
@@ -63,9 +81,17 @@ export default function PairRoundScreen() {
         Round {round} of {t.prelimRounds}
       </H2>
       <Body muted>
-        {round <= t.randomRounds ? `Round ${round} is a random draw${round > 1 ? ', avoiding rematches' : ''}.` : t.pairingMethod === 'power' ? 'Teams are power-matched by record, avoiding rematches.' : 'Random draw, avoiding rematches.'}{' '}
-        {approvedCount % 2 === 1 ? 'With an odd number of teams, one team has a bye this round.' : ''}
+        {describePairing(t)}.
+        {approvedCount % 2 === 1 ? ' With an odd number of teams, one team has a bye this round.' : ''}
       </Body>
+      {draw && draw.notes.length > 0 && (
+        <Card>
+          <Label>Why the draw moved</Label>
+          {draw.notes.map((n) => (
+            <Body key={n}>{n}</Body>
+          ))}
+        </Card>
+      )}
       <Body muted>
         {approvedJudges} approved judge{approvedJudges === 1 ? '' : 's'} available this round. Judges are kept away from schools they listed as conflicts.
       </Body>
@@ -76,11 +102,17 @@ export default function PairRoundScreen() {
           <Label>Courtroom {String.fromCharCode(65 + i)}</Label>
           <Row style={{ flexWrap: 'nowrap' }}>
             <SideTag side="p" kind={cs?.kind} />
-            <Body style={{ flex: 1 }}>{teamName(data.teams, p.pTeamId)}</Body>
+            <View style={{ flex: 1 }}>
+              <Body>{teamName(data.teams, p.pTeamId)}</Body>
+              {draw!.info(p.pTeamId) ? <Body muted>{draw!.info(p.pTeamId)}</Body> : null}
+            </View>
           </Row>
           <Row style={{ flexWrap: 'nowrap' }}>
             <SideTag side="d" kind={cs?.kind} />
-            <Body style={{ flex: 1 }}>{teamName(data.teams, p.dTeamId)}</Body>
+            <View style={{ flex: 1 }}>
+              <Body>{teamName(data.teams, p.dTeamId)}</Body>
+              {draw!.info(p.dTeamId) ? <Body muted>{draw!.info(p.dTeamId)}</Body> : null}
+            </View>
           </Row>
           <View style={{ alignItems: 'flex-start' }}>
             <Button small kind="ghost" title="Swap sides" onPress={() => setFlips((f) => ({ ...f, [i]: !f[i] }))} />

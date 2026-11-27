@@ -1,6 +1,6 @@
 import os, subprocess, sys, uuid
 # Attack tests for the database rules. Needs a scratch Postgres 15+ (never a real project):
-#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql
+#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0005_pairing_options.sql (plus 0004 once merged)
 #   PGARGS='-h localhost -U postgres -d t' python3 supabase/tests/security_test.py
 PG = os.environ.get('PGARGS', '-d t').split()
 U = {n: str(uuid.uuid5(uuid.NAMESPACE_DNS, n)) for n in ['org','org2','judge','judge2','coachA','coachB','compA','evil']}
@@ -137,6 +137,12 @@ ok('organizer turns chat to announcements only', "update tournaments set chat_re
 blocked('coach posts in announcements-only chat', "insert into messages (id, tournament_id, channel, body) values ('c9','T3','all','x')", 'coachA')
 ok('organizer still announces', "insert into messages (id, tournament_id, channel, body) values ('c10','T3','all','Round 2 at 1pm')", 'org')
 blocked('public results show judge comments', "select count(*) from information_schema.columns where table_name='published_results' and column_name in ('comments','judge','sheet')", None, 0)
+
+# Pairing options (0005)
+ok('organizer picks high-low power matching within records', "update tournaments set power_style='high_low', bracketed=true, side_constraint='flip_even', avoid_same_school=false where id='T3'", 'org')
+blocked('unknown power-match style', "update tournaments set power_style='whatever' where id='T3'", 'org')
+blocked('unknown side rule', "update tournaments set side_constraint='sometimes' where id='T3'", 'org')
+blocked('other organizer changes pairing rules', "update tournaments set power_style='slide' where id='T3' returning id", 'org2', '')
 
 print(f'\n{fails} failing')
 sys.exit(1 if fails else 0)

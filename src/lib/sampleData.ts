@@ -1,7 +1,7 @@
 // Fictional sample season used in demo mode (no backend configured).
 // Every school, team, and case here is invented.
 import type { AppData, Ballot, Match, Program, Team, Tournament } from './types';
-import { mulberry32, suggestPairings } from './scoring';
+import { mulberry32, pairingSettings, suggestPairings } from './scoring';
 
 const DEMO_DIRECTOR = 'demo-director';
 
@@ -43,6 +43,9 @@ function tournament(t: Partial<Tournament> & Pick<Tournament, 'id' | 'name' | 's
     ballotsPerRound: 3,
     sideConstraint: 'alternate',
     pairingMethod: 'power',
+    powerStyle: 'high_high',
+    bracketed: false,
+    avoidSameSchool: true,
     randomRounds: 1,
     entryType: 'open',
     requireApproval: true,
@@ -107,7 +110,7 @@ function playTournament(t: Tournament, teamIds: string[], seed: number, roundsTo
   const rand = mulberry32(seed);
   const days = [t.startDate, t.startDate, t.endDate, t.endDate];
   for (let round = 1; round <= t.prelimRounds; round++) {
-    const pairs = suggestPairings({ teamIds, round, priorMatches: matches, ballots, method: t.pairingMethod, randomRounds: t.randomRounds, sideConstraint: t.sideConstraint, seed: seed + round });
+    const { pairs } = suggestPairings({ ...pairingSettings(t), teamIds, round, priorMatches: matches, ballots, seed: seed + round, schoolOf: (id) => teams.find((x) => x.id === id)?.programId });
     pairs.forEach((p, i) => {
       const id = `${t.id}-r${round}-${i + 1}`;
       const hour = round % 2 === 1 ? '09:00' : '14:00';

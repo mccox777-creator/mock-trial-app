@@ -4,7 +4,7 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 import { Body, Button, Card, Empty, H1, H2, Label, Loading, Mono, Pill, Row, Screen, SideTag, effectiveStatus } from '../../components/ui';
 import { StandingsTable } from '../../components/StandingsTable';
 import { newId, useStore } from '../../lib/store';
-import { computeStandings, resultFor, teamName } from '../../lib/scoring';
+import { computeStandings, describePairing, resultFor, teamName } from '../../lib/scoring';
 import { ballotsText, fmtDate, fmtDateTime, fmtRange, fmtTime, nowLocal, todayLocal } from '../../lib/format';
 import { regLabel } from '../../lib/labels';
 import { AUTO_LOCK_DAYS, BACKGROUND_LABEL, autoAssign, autoLockDate, canChange, isLocked, isOrganizer, resultsVisible, describeScoring, scoringOf, SHEET_PARTS } from '../../lib/judging';
@@ -122,8 +122,7 @@ export default function TournamentScreen() {
               {t.prelimRounds} preliminary rounds · {t.ballotsPerRound} judges per trial · {t.witnessesPerSide} witnesses per side
             </Body>
             <Body>
-              {t.randomRounds === 1 ? 'Round 1' : `Rounds 1–${t.randomRounds}`} drawn at random, then {t.pairingMethod === 'power' ? 'power-matched by record' : 'random'} ·{' '}
-              {t.sideConstraint === 'alternate' ? 'teams alternate sides' : t.sideConstraint === 'balanced' ? 'sides balanced overall' : 'no side constraint'}
+              {describePairing(t)}
             </Body>
             <Label style={{ marginTop: space.sm }}>Score sheet</Label>
             <Body>{describeScoring(t.witnessesPerSide, scoringOf(t))}</Body>

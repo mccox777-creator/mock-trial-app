@@ -7,7 +7,8 @@ import { fmtDate, fmtRange, isValidDate, todayLocal } from '../../lib/format';
 import { isLocked } from '../../lib/judging';
 import { LEVELS, type Level, type Tournament } from '../../lib/types';
 import { radius, space, useTheme } from '../../lib/theme';
-import { RulesChecklist } from '../../components/RulesChecklist';
+import { CheckRow, RulesChecklist } from '../../components/RulesChecklist';
+import { POWER_STYLES, SIDE_RULES, describePairing } from '../../lib/scoring';
 import { ALL_RULES, describeRules } from '../../lib/rules';
 import { MAX_EXTRA_LINES, ScoringSetupForm, parseExtraLines } from '../../components/ScoringSetupForm';
 import { DEFAULT_SCORING, describeScoring, sheetLines } from '../../lib/judging';
@@ -32,10 +33,10 @@ export default function TournamentWizard() {
   const [busy, setBusy] = useState(false);
   const [d, setD] = useState<Draft>(() =>
     existing
-      ? { ...existing, teamCap: String(existing.teamCap), entryFee: String(existing.entryFee), prelimRounds: String(existing.prelimRounds), ballotsPerRound: String(existing.ballotsPerRound), witnessesPerSide: String(existing.witnessesPerSide), randomRounds: String(existing.randomRounds), rankBy: existing.rankBy ?? 'ballots', rules: existing.rules ?? {}, customRules: existing.customRules ?? '', scoring: existing.scoring ?? DEFAULT_SCORING, extraLines: (existing.scoring?.extra ?? []).join('\n') }
+      ? { ...existing, teamCap: String(existing.teamCap), entryFee: String(existing.entryFee), prelimRounds: String(existing.prelimRounds), ballotsPerRound: String(existing.ballotsPerRound), witnessesPerSide: String(existing.witnessesPerSide), randomRounds: String(existing.randomRounds), rankBy: existing.rankBy ?? 'ballots', powerStyle: existing.powerStyle ?? 'high_high', bracketed: existing.bracketed ?? false, avoidSameSchool: existing.avoidSameSchool ?? true, rules: existing.rules ?? {}, customRules: existing.customRules ?? '', scoring: existing.scoring ?? DEFAULT_SCORING, extraLines: (existing.scoring?.extra ?? []).join('\n') }
       : {
           level, name: '', hostName: '', city: '', venue: '', startDate: '', endDate: '', registrationDeadline: '',
-          teamCap: '16', entryFee: '350', prelimRounds: '4', ballotsPerRound: '3', witnessesPerSide: '3', randomRounds: '1', sideConstraint: 'alternate', pairingMethod: 'power',
+          teamCap: '16', entryFee: '350', prelimRounds: '4', ballotsPerRound: '3', witnessesPerSide: '3', randomRounds: '1', sideConstraint: 'alternate', pairingMethod: 'power', powerStyle: 'high_high', bracketed: false, avoidSameSchool: true,
           entryType: 'open', requireApproval: true, caseId: null, description: '', rankBy: 'ballots', chatReplies: true, rules: {}, customRules: '', scoring: DEFAULT_SCORING, extraLines: '',
         },
   );
@@ -191,19 +192,36 @@ export default function TournamentWizard() {
             <Label>{`After Round ${d.randomRounds}`}</Label>
             <Segmented value={d.pairingMethod} onChange={(v) => set('pairingMethod', v)} options={[{ id: 'power', label: 'Power-match by record' }, { id: 'random', label: 'Keep drawing at random' }]} />
           </View>
+          {d.pairingMethod === 'power' && (
+            <>
+              <View style={{ gap: 6 }}>
+                <Label>Power-match style</Label>
+                <Segmented value={d.powerStyle} onChange={(v) => set('powerStyle', v)} options={POWER_STYLES.map((s) => ({ id: s.id, label: s.label }))} />
+                <Body muted>{POWER_STYLES.find((s) => s.id === d.powerStyle)!.body}</Body>
+              </View>
+              <CheckRow
+                label="Pair within records first"
+                help="Teams with the same record play each other first. When a record group is odd, one team moves down to the next group."
+                on={d.bracketed}
+                onToggle={() => set('bracketed', !d.bracketed)}
+              />
+            </>
+          )}
+          <CheckRow
+            label="Keep teams from the same school apart"
+            help="Two teams from one school never meet. Rematches are always avoided."
+            on={d.avoidSameSchool}
+            onToggle={() => set('avoidSameSchool', !d.avoidSameSchool)}
+          />
           <View style={{ gap: 6 }}>
             <Label>Rank teams by</Label>
             <Segmented value={d.rankBy} onChange={(v) => set('rankBy', v)} options={[{ id: 'ballots', label: 'Ballots won' }, { id: 'wins', label: 'Trials won' }]} />
             <Body muted>Ties are broken by the other measure, then combined strength, then point differential. Rankings update as each ballot comes in.</Body>
           </View>
           <View style={{ gap: 6 }}>
-            <Label>Sides</Label>
-            <Segmented
-              value={d.sideConstraint}
-              onChange={(v) => set('sideConstraint', v)}
-              options={[{ id: 'alternate', label: 'Alternate' }, { id: 'balanced', label: 'Balanced' }, { id: 'none', label: 'Any' }]}
-            />
-            <Body muted>Alternate means a team that argued plaintiff or prosecution in one round argues defense in the next.</Body>
+            <Label>When teams switch sides</Label>
+            <Segmented value={d.sideConstraint} onChange={(v) => set('sideConstraint', v)} options={SIDE_RULES.map((s) => ({ id: s.id, label: s.label }))} />
+            <Body muted>{SIDE_RULES.find((s) => s.id === d.sideConstraint)!.body} When the straight power match breaks a rule, the team plays the nearest-ranked opponent that fits, and the pairing screen says why.</Body>
           </View>
         </>
       )}
@@ -284,7 +302,7 @@ export default function TournamentWizard() {
           <Body muted>{LEVELS.find((l) => l.id === d.level)!.label} · hosted by {d.hostName || '—'}</Body>
           <Body>{isValidDate(d.startDate) && isValidDate(d.endDate) ? fmtRange(d.startDate, d.endDate) : 'Dates not set'} · {[d.venue, d.city].filter(Boolean).join(', ')}</Body>
           <Body>
-            {d.prelimRounds} rounds, {d.ballotsPerRound} ballots each · {d.randomRounds === '1' ? 'Round 1' : `Rounds 1–${d.randomRounds}`} random, then {d.pairingMethod === 'power' ? 'power-matched' : 'random'}
+            {d.prelimRounds} rounds, {d.ballotsPerRound} ballots each · {describePairing({ ...(d as unknown as Tournament), randomRounds: Number(d.randomRounds) || 1 })}
           </Body>
           <Body>
             {(() => {
