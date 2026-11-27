@@ -4,8 +4,10 @@
 // 1 / (1 + 10^((their rating - yours) / 400)), and after each event a rating moves by K x (actual - expected).
 // A competition counts like a short chess tournament: finishing above a school is a win against it,
 // finishing below is a loss, and schools that finish in the same round (two semifinalists, or two teams
-// that didn't advance) don't count against each other. Each competition is worth up to 8 games, however
-// big the field, so a 24-team event can't swing a rating three times as much as an 8-team one.
+// that didn't advance) don't count against each other. Every team is its own competitor: a school with two
+// teams plays the field twice, and its rating moves by the average of its teams' results. Teams from the same
+// school never count against each other. Each team's competition is worth up to 8 games, however big the
+// field, so a 24-team event can't swing a rating three times as much as an 8-team one.
 import type { PastEvent } from './types';
 /** "UCLA 2" -> "UCLA" (kept here so this file runs without the app bundler). */
 const schoolOfTeam = (team: string) => team.replace(/\s+(\d|I{1,3}|[AB])$/, '');
@@ -56,6 +58,25 @@ export function fieldOf(e: PastEvent) {
   return best;
 }
 
+/**
+ * Every team at an event with its finishing tier. The record names results by team where it can ("UCLA 2"), but
+ * not always, so each school gets its result tiers plus one "took part" entry for each further team it entered.
+ */
+export function teamsOf(e: PastEvent): { school: string; tier: number }[] {
+  const tier = (r: PastEvent['results'][number]) => (e.tournamentId && r.place ? r.place - 1 : finishTier(r));
+  const results = new Map<string, number[]>();
+  for (const r of e.results) results.set(r.school, [...(results.get(r.school) ?? []), tier(r)]);
+  const entered = new Map<string, number>();
+  for (const p of e.participants) entered.set(schoolOfTeam(p), (entered.get(schoolOfTeam(p)) ?? 0) + 1);
+  const out: { school: string; tier: number }[] = [];
+  for (const school of new Set([...results.keys(), ...entered.keys()])) {
+    const tiers = results.get(school) ?? [];
+    for (const t of tiers) out.push({ school, tier: t });
+    for (let n = tiers.length; n < (entered.get(school) ?? 0); n++) out.push({ school, tier: e.tournamentId ? 998 : 5 });
+  }
+  return out;
+}
+
 const MONTH: Record<string, number> = {
   jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
 };
@@ -102,16 +123,18 @@ export interface EloChange {
   eventId: string;
   before: number;
   after: number;
-  /** Finished ahead of / behind, counting only schools in a different round. */
+  /** Finished ahead of / behind, team against team, counting only teams from other schools in a different round. */
   ahead: number;
   behind: number;
-  /** Inputs, so anyone can check: after = before + k x weight x (ahead - expected). */
+  /** Inputs, so anyone can check: after = before + k x weight x (ahead - expected) / teams. Counts are summed over the school's teams. */
   k: number;
-  /** min(8, schools - 1) / (schools - 1): scales an event to at most 8 games. */
+  /** min(8, n) / n, n = teams from other schools: scales each team's event to at most 8 games. */
   weight: number;
-  /** Sum of the expected scores against every school in a different round. */
+  /** Sum of the expected scores, over each of the school's teams against every team (from another school) in a different round. */
   expected: number;
-  /** Finishing tier at this event (lower is better). */
+  /** How many teams the school entered. */
+  teams: number;
+  /** Best finishing tier of the school's teams at this event (lower is better). */
   tier: number;
 }
 export interface EloRow {
@@ -131,34 +154,36 @@ export function computeElo(events: PastEvent[]): Map<string, EloRow> {
     return r;
   };
   for (const e of chronological(events)) {
-    const field = [...fieldOf(e)];
+    const teams = teamsOf(e);
     // An event with no results (everyone in the same round) tells us nothing about who is stronger.
-    if (new Set(field.map(([, t]) => t)).size < 2) continue;
-    const pre = new Map(field.map(([s]) => [s, row(s).rating]));
-    const games = Math.min(GAMES_PER_EVENT, field.length - 1) / (field.length - 1);
-    for (const [s, tier] of field) {
-      const me = row(s);
-      let score = 0;
+    if (new Set(teams.map((t) => t.tier)).size < 2) continue;
+    const schools = [...new Set(teams.map((t) => t.school))];
+    const pre = new Map(schools.map((s) => [s, row(s).rating]));
+    for (const s of schools) {
+      const mine = teams.filter((t) => t.school === s);
+      const others = teams.filter((t) => t.school !== s);
+      // Each team plays every team from another school; at most 8 games' worth per team.
+      const weight = others.length ? Math.min(GAMES_PER_EVENT, others.length) / others.length : 0;
       let exp = 0;
       let ahead = 0;
       let behind = 0;
-      for (const [o, ot] of field) {
-        if (o === s || ot === tier) continue;
-        const expected = 1 / (1 + 10 ** ((pre.get(o)! - pre.get(s)!) / 400));
-        const won = tier < ot ? 1 : 0;
-        if (won) ahead++;
-        else behind++;
-        score += won - expected;
-        exp += expected;
-      }
+      for (const t of mine)
+        for (const o of others) {
+          if (o.tier === t.tier) continue;
+          exp += 1 / (1 + 10 ** ((pre.get(o.school)! - pre.get(s)!) / 400));
+          if (t.tier < o.tier) ahead++;
+          else behind++;
+        }
       if (ahead + behind === 0) continue; // played nobody in a different round: not counted for this school
+      const me = row(s);
       const before = pre.get(s)!;
       const k = kFactor(before, me.events);
-      const after = before + k * games * score;
+      // The average of the school's teams' results.
+      const after = before + (k * weight * (ahead - exp)) / mine.length;
       me.rating = after;
       me.peak = Math.max(me.peak, after);
       me.events += 1;
-      me.history.push({ eventId: e.id, before, after, ahead, behind, k, weight: games, expected: exp, tier });
+      me.history.push({ eventId: e.id, before, after, ahead, behind, k, weight, expected: exp, teams: mine.length, tier: Math.min(...mine.map((t) => t.tier)) });
     }
   }
   for (const r of rows.values()) r.provisional = r.events < PROVISIONAL_UNDER;
