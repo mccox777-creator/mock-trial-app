@@ -256,3 +256,28 @@ export interface AppData {
   recordings: Recording[];
   messages: Message[];
 }
+
+/** How a team finished at a past competition. "advanced" = qualified out of a regional to the national round. */
+export type PastFinish = 'winner' | 'finalist' | 'advanced' | 'semifinalist' | 'quarterfinalist' | 'octofinalist' | 'place';
+
+/** A competition from before the app, imported from the circuit's results records. Read-only. */
+export interface PastEvent {
+  id: string;
+  level: Level;
+  /** "2025-26" */
+  season: string;
+  term: 'Fall' | 'Spring';
+  name: string;
+  host: string | null;
+  region: string | null;
+  dates: string | null;
+  teamCount: number | null;
+  schoolCount: number | null;
+  results: { school: string; team: string; finish: PastFinish; place: number | null }[];
+  /** Team names as listed, e.g. "Nova Southeastern 2". */
+  participants: string[];
+  /** The source text had a line the importer couldn't read; worth a look. */
+  needsReview: boolean;
+  /** Position in the source record, newest first. */
+  ord: number;
+}

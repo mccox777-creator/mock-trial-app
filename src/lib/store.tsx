@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { createBackend, type Backend, type TableName } from './backend';
-import type { AppData, Level, Profile, Tournament } from './types';
+import type { AppData, Level, PastEvent, Profile, Tournament } from './types';
 import { DEMO_USERS } from './sampleData';
 
 interface StoreValue {
@@ -107,4 +107,25 @@ export function useLevelData() {
 
 export function newId(prefix: string) {
   return `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
+}
+
+const historyCache = new Map<string, Promise<PastEvent[]>>();
+/** Past competitions for the selected circuit, loaded once per level. */
+export function useHistory() {
+  const { backend, level } = useStore();
+  const [state, setState] = useState<{ level: Level; events: PastEvent[] | null; error: string | null }>({ level, events: null, error: null });
+  useEffect(() => {
+    let live = true;
+    let p = historyCache.get(level);
+    if (!p) {
+      p = backend.loadHistory(level);
+      historyCache.set(level, p);
+      p.catch(() => historyCache.delete(level));
+    }
+    p.then((events) => live && setState({ level, events, error: null })).catch((e) => live && setState({ level, events: [], error: e instanceof Error ? e.message : 'Could not load past results.' }));
+    return () => {
+      live = false;
+    };
+  }, [backend, level]);
+  return state.level === level ? state : { level, events: null, error: null };
 }

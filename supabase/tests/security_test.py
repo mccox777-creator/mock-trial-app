@@ -1,6 +1,6 @@
 import os, subprocess, sys, uuid
 # Attack tests for the database rules. Needs a scratch Postgres 15+ (never a real project):
-#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql
+#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql, then each later migration in order
 #   PGARGS='-h localhost -U postgres -d t' python3 supabase/tests/security_test.py
 PG = os.environ.get('PGARGS', '-d t').split()
 U = {n: str(uuid.uuid5(uuid.NAMESPACE_DNS, n)) for n in ['org','org2','judge','judge2','coachA','coachB','compA','evil']}
@@ -137,6 +137,13 @@ ok('organizer turns chat to announcements only', "update tournaments set chat_re
 blocked('coach posts in announcements-only chat', "insert into messages (id, tournament_id, channel, body) values ('c9','T3','all','x')", 'coachA')
 ok('organizer still announces', "insert into messages (id, tournament_id, channel, body) values ('c10','T3','all','Round 2 at 1pm')", 'org')
 blocked('public results show judge comments', "select count(*) from information_schema.columns where table_name='published_results' and column_name in ('comments','judge','sheet')", None, 0)
+
+# Past results (0006): readable by everyone, writable by no app user
+psql("insert into past_events (id, level, season, term, name, results, participants) values ('2025-26-fall-x', 'law_school', '2025-26', 'Fall', 'X Cup', '[{\"school\":\"UCLA\",\"team\":\"UCLA\",\"finish\":\"winner\",\"place\":1}]', '[\"UCLA\"]')", superuser=True)
+ok('anyone reads past results', "select count(*) from past_events", None, '1')
+blocked('organizer adds a fake past result', "insert into past_events (id, level, season, term, name) values ('2025-26-fall-fake', 'law_school', '2025-26', 'Fall', 'Fake')", 'org')
+blocked('signed-in user rewrites a past winner', "update past_events set results='[]' where id='2025-26-fall-x' returning id", 'evil', '')
+blocked('signed-in user deletes past results', "delete from past_events returning id", 'evil', '')
 
 print(f'\n{fails} failing')
 sys.exit(1 if fails else 0)
