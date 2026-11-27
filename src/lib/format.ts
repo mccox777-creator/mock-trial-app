@@ -60,3 +60,18 @@ export function signed(n: number) {
 export function ballotsText(n: number) {
   return Number.isInteger(n) ? String(n) : n.toFixed(1);
 }
+
+/** Accepts the usual YouTube link shapes and returns a clean https link, or null. */
+export function youtubeLink(raw: string): string | null {
+  let u: URL;
+  try {
+    u = new URL(raw.trim().startsWith('http') ? raw.trim() : `https://${raw.trim()}`);
+  } catch {
+    return null;
+  }
+  const host = u.hostname.replace(/^(www|m|music)\./, '');
+  let id: string | null = null;
+  if (host === 'youtu.be') id = u.pathname.slice(1).split('/')[0];
+  else if (host === 'youtube.com') id = u.searchParams.get('v') ?? (u.pathname.match(/^\/(live|shorts|embed)\/([^/]+)/)?.[2] ?? null);
+  return id && /^[A-Za-z0-9_-]{6,20}$/.test(id) ? `https://www.youtube.com/watch?v=${id}` : null;
+}

@@ -19,6 +19,30 @@ export function RulesChecklist({ rules, onChange }: { rules: RuleSet; onChange: 
   );
 }
 
+/** A tickable row: label, optional help, and optional detail shown when ticked. */
+export function CheckRow({ label, help, on, onToggle, children }: { label: string; help?: string; on: boolean; onToggle: () => void; children?: React.ReactNode }) {
+  const c = useTheme();
+  return (
+    <View style={{ borderWidth: 1, borderColor: on ? c.accent : c.line, borderRadius: radius.md, backgroundColor: c.surface }}>
+      <Pressable onPress={onToggle} accessibilityRole="checkbox" accessibilityState={{ checked: on }} style={{ flexDirection: 'row', gap: space.md, padding: space.md, alignItems: 'flex-start' }}>
+        <View
+          style={{
+            width: 22, height: 22, borderRadius: 5, marginTop: 1, borderWidth: 2,
+            borderColor: on ? c.accent : c.muted, backgroundColor: on ? c.accent : 'transparent', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          {on && <Text style={{ color: c.accentInk, fontWeight: '800', fontSize: 14, lineHeight: 16 }}>✓</Text>}
+        </View>
+        <View style={{ flex: 1, gap: 2 }}>
+          <Text style={{ color: c.ink, fontWeight: '600', fontSize: 15 }}>{label}</Text>
+          {help && <Text style={{ color: c.muted, fontSize: 13 }}>{help}</Text>}
+        </View>
+      </Pressable>
+      {on && children}
+    </View>
+  );
+}
+
 function RuleRow({ rule, rules, onChange }: { rule: RuleDef; rules: RuleSet; onChange: (next: RuleSet) => void }) {
   const c = useTheme();
   const on = rules[rule.id] === true;

@@ -6,9 +6,9 @@ import { Body, Button, Card, Empty, Field, H2, Label, Loading, Mono, Pill, Row, 
 import { BallotForm, BallotView } from '../../components/ScoreSheet';
 import { newId, useStore } from '../../lib/store';
 import { resultFor, teamName } from '../../lib/scoring';
-import { ballotsText, fmtDateTime, nowLocal, signed, todayLocal } from '../../lib/format';
+import { ballotsText, fmtDateTime, nowLocal, signed, todayLocal, youtubeLink } from '../../lib/format';
 import { VIS_LABEL } from '../../lib/labels';
-import { eligibleJudges, isLocked, isOrganizer, judgeName, resultsVisible, visibleBallots } from '../../lib/judging';
+import { eligibleJudges, isLocked, isOrganizer, judgeName, resultsVisible, scoringOf, visibleBallots } from '../../lib/judging';
 import type { Ballot, VideoVisibility } from '../../lib/types';
 import { space, useTheme } from '../../lib/theme';
 
@@ -39,7 +39,7 @@ export default function MatchScreen() {
   const myName = me ? judgeName(data, t.id, me.id) : 'Judge';
   const others = seen.filter((b) => organizer || b.judgeId !== me?.id);
 
-  async function saveBallot(existing: Ballot | undefined, b: { judge: string; sheet: Ballot['sheet']; pScore: number; dScore: number }, asJudge: boolean) {
+  async function saveBallot(existing: Ballot | undefined, b: { judge: string; sheet: Ballot['sheet']; comments: Ballot['comments']; pScore: number; dScore: number }, asJudge: boolean) {
     await save('ballots', {
       id: existing?.id ?? (asJudge ? `${m!.id}-${me!.id}` : newId('bal')),
       matchId: m!.id,
@@ -47,6 +47,7 @@ export default function MatchScreen() {
       judgeId: asJudge ? me!.id : existing?.judgeId ?? null,
       source: asJudge ? 'app' : existing?.source ?? 'paper',
       sheet: b.sheet,
+      comments: b.comments,
       pScore: b.pScore,
       dScore: b.dScore,
       enteredBy: me?.id ?? '',
@@ -92,13 +93,13 @@ export default function MatchScreen() {
             <Body muted>This competition is locked. No more ballots can be submitted.</Body>
           ) : myBallot && editing !== 'mine' ? (
             <>
-              <BallotView ballot={myBallot} witnesses={t.witnessesPerSide} kind={cs?.kind} />
+              <BallotView ballot={myBallot} witnesses={t.witnessesPerSide} scoring={scoringOf(t)} kind={cs?.kind} />
               {!t.resultsPublished && !locked && <Button title="Change my scores" kind="secondary" onPress={() => setEditing('mine')} />}
             </>
           ) : (
             <BallotForm
               title={myBallot ? 'Change your scores' : 'Score this trial'}
-              witnesses={t.witnessesPerSide}
+              witnesses={t.witnessesPerSide} scoring={scoringOf(t)}
               kind={cs?.kind}
               initial={myBallot}
               allowTotals={false}
@@ -167,7 +168,7 @@ export default function MatchScreen() {
               <BallotForm
                 key={b.id}
                 title={`Correct ${b.judge}`}
-                witnesses={t.witnessesPerSide}
+                witnesses={t.witnessesPerSide} scoring={scoringOf(t)}
                 kind={cs?.kind}
                 initial={b}
                 allowTotals
@@ -181,7 +182,7 @@ export default function MatchScreen() {
               />
             ) : (
               <View key={b.id} style={{ gap: 6 }}>
-                <BallotView ballot={b} witnesses={t.witnessesPerSide} kind={cs?.kind} />
+                <BallotView ballot={b} witnesses={t.witnessesPerSide} scoring={scoringOf(t)} kind={cs?.kind} />
                 {editable && (
                   <Row>
                     <Button small kind="ghost" title="Correct" onPress={() => setEditing(b.id)} />
@@ -196,7 +197,7 @@ export default function MatchScreen() {
               <BallotForm
                 title="Enter a paper ballot"
                 onScan={(img, type, lines) => backend.readBallot(m.id, img, type, lines)}
-                witnesses={t.witnessesPerSide}
+                witnesses={t.witnessesPerSide} scoring={scoringOf(t)}
                 kind={cs?.kind}
                 allowTotals
                 askJudgeName
@@ -237,17 +238,18 @@ function AddRecording({ matchId }: { matchId: string }) {
   return (
     <Card>
       <H2>Add a recording</H2>
-      <Body muted>Paste a link to the video for now. Direct upload from your phone comes once the video service is connected.</Body>
+      <Body muted>Upload the video to YouTube as Unlisted, then paste its link here. Unlisted videos don't show up in YouTube search, but anyone with the link can watch, so share it only through the app.</Body>
       <Field label="Title" value={title} onChangeText={setTitle} placeholder="Full trial, Courtroom B" />
-      <Field label="Video link" value={url} onChangeText={setUrl} autoCapitalize="none" keyboardType="url" placeholder="https://" />
+      <Field label="YouTube link" value={url} onChangeText={setUrl} autoCapitalize="none" keyboardType="url" placeholder="https://youtu.be/…" />
       <Label>Who can watch</Label>
       <Segmented value={vis} onChange={setVis} options={[{ id: 'teams', label: 'These teams' }, { id: 'coaches', label: 'Coaches' }, { id: 'public', label: 'Anyone' }]} />
       {err && <Body style={{ color: '#B3261E' }}>{err}</Body>}
       <Button
         title="Save recording"
         onPress={async () => {
-          if (!title.trim() || !url.trim().startsWith('https://')) return setErr('Add a title and a link that starts with https://');
-          await save('recordings', { id: newId('rec'), matchId, title: title.trim(), provider: 'link', url: url.trim(), visibility: vis, uploadedBy: me?.id ?? '', createdAt: nowLocal() });
+          const link = youtubeLink(url);
+          if (!title.trim() || !link) return setErr('Add a title and a YouTube link, like https://youtu.be/… or https://www.youtube.com/watch?v=…');
+          await save('recordings', { id: newId('rec'), matchId, title: title.trim(), provider: 'youtube', url: link, visibility: vis, uploadedBy: me?.id ?? '', createdAt: nowLocal() });
           setOpen(false);
           setTitle('');
           setUrl('');
@@ -256,3 +258,4 @@ function AddRecording({ matchId }: { matchId: string }) {
     </Card>
   );
 }
+

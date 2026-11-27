@@ -52,6 +52,9 @@ Deno.serve(async (req) => {
   const { data: allowed } = await supabase.rpc('claim_ballot_scan', { p_match: matchId });
   if (!allowed) return fail(403, 'Only the organizer can scan ballots for this trial, up to 300 a day.');
 
+  const { data: m } = await supabase.from('matches').select('tournaments(scoring)').eq('id', matchId).maybeSingle();
+  const max = Number((m as { tournaments?: { scoring?: { max?: number } } } | null)?.tournaments?.scoring?.max ?? 10);
+
   let response;
   try {
     response = await client.messages.parse({
@@ -67,7 +70,7 @@ Deno.serve(async (req) => {
               type: 'text',
               text:
                 'This is a photographed mock trial ballot. Read the score the judge gave each side on each line below, ' +
-                'in this order. Plaintiff/prosecution and defense are usually separate columns. Scores are whole numbers, usually 1 to 10. ' +
+                `in this order. Plaintiff/prosecution and defense are usually separate columns. Scores are whole numbers from 1 to ${max}. ` +
                 'If a line is unreadable or missing, use null rather than guessing, and say so in unreadable_notes.\n\nLines:\n' +
                 (lines as string[]).map((l, i) => `${i + 1}. ${l}`).join('\n'),
             },

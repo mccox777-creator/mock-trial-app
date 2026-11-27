@@ -100,6 +100,7 @@ export function useLevelData() {
       bulletins: data.bulletins.filter((b) => b.level === level),
       matches: data.matches.filter((m) => tIds.has(m.tournamentId)),
       judgeSignups: data.judgeSignups.filter((j) => tIds.has(j.tournamentId)),
+      messages: data.messages.filter((m) => tIds.has(m.tournamentId)),
     };
   }, [data, level]);
 }

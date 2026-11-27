@@ -3,8 +3,8 @@ import * as ImagePicker from 'expo-image-picker';
 import type { BallotReading } from '../lib/backend';
 import { Text, TextInput, View } from 'react-native';
 import { Body, Button, Card, Field, H2, Label, Row, Segmented, SideTag } from './ui';
-import { SHEET_MAX, SHEET_MIN, sheetLines } from '../lib/judging';
-import type { Ballot, CaseKind, ScoreSheet } from '../lib/types';
+import { DEFAULT_SCORING, SHEET_MIN, fmtDiff, runningTotals, sheetLines } from '../lib/judging';
+import type { Ballot, BallotComments, CaseKind, ScoreSheet, ScoringSetup } from '../lib/types';
 import { radius, space, useTheme } from '../lib/theme';
 
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
@@ -16,6 +16,7 @@ const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
 export function BallotForm({
   title,
   witnesses,
+  scoring = DEFAULT_SCORING,
   kind,
   initial,
   allowTotals,
@@ -27,24 +28,32 @@ export function BallotForm({
 }: {
   title: string;
   witnesses: number;
+  scoring?: ScoringSetup;
   kind?: CaseKind;
   initial?: Ballot;
   allowTotals: boolean;
   defaultJudge: string;
   askJudgeName: boolean;
-  onSubmit: (b: { judge: string; sheet: ScoreSheet | null; pScore: number; dScore: number }) => Promise<void>;
+  onSubmit: (b: { judge: string; sheet: ScoreSheet | null; comments: BallotComments | null; pScore: number; dScore: number }) => Promise<void>;
   onCancel?: () => void;
   /** Organizer only: read a photographed paper ballot into the form. */
   onScan?: (imageBase64: string, mediaType: string, lines: string[]) => Promise<BallotReading>;
 }) {
   const c = useTheme();
-  const lines = sheetLines(witnesses);
+  const lines = sheetLines(witnesses, scoring);
+  const SHEET_MAX = scoring.max;
   const [mode, setMode] = useState<'lines' | 'totals'>(initial && !initial.sheet ? 'totals' : 'lines');
   const [judge, setJudge] = useState(initial?.judge ?? defaultJudge);
   const [p, setP] = useState<string[]>(() => lines.map((_, i) => (initial?.sheet ? String(initial.sheet.p[i] ?? '') : '')));
   const [d, setD] = useState<string[]>(() => lines.map((_, i) => (initial?.sheet ? String(initial.sheet.d[i] ?? '') : '')));
   const [pt, setPt] = useState(initial && !initial.sheet ? String(initial.pScore) : '');
   const [dt, setDt] = useState(initial && !initial.sheet ? String(initial.dScore) : '');
+  const lineComments = scoring.comments === 'per_line' || scoring.comments === 'both';
+  const overallComment = scoring.comments === 'overall' || scoring.comments === 'both';
+  const [pc, setPc] = useState<string[]>(() => lines.map((_, i) => initial?.comments?.p?.[i] ?? ''));
+  const [dc, setDc] = useState<string[]>(() => lines.map((_, i) => initial?.comments?.d?.[i] ?? ''));
+  const [overall, setOverall] = useState(initial?.comments?.overall ?? '');
+  const [notesOpen, setNotesOpen] = useState<Set<number>>(() => new Set(lines.map((_, i) => i).filter((i) => initial?.comments?.p?.[i] || initial?.comments?.d?.[i])));
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [scan, setScan] = useState<{ state: 'idle' | 'reading' | 'done'; notes: string[] }>({ state: 'idle', notes: [] });
@@ -102,20 +111,32 @@ export function BallotForm({
   const pTotal = sum(nums(p).filter((n) => Number.isFinite(n)));
   const dTotal = sum(nums(d).filter((n) => Number.isFinite(n)));
   const pLabel = kind === 'criminal' ? 'Prosecution' : 'Plaintiff';
+  const running = runningTotals(nums(p), nums(d));
+  const diff = pTotal - dTotal;
+
+  function collectComments(): BallotComments | null {
+    const out: BallotComments = {};
+    if (overallComment && overall.trim()) out.overall = overall.trim().slice(0, 2000);
+    if (lineComments && mode === 'lines' && [...pc, ...dc].some((x) => x.trim())) {
+      out.p = pc.map((x) => x.trim().slice(0, 500));
+      out.d = dc.map((x) => x.trim().slice(0, 500));
+    }
+    return Object.keys(out).length ? out : null;
+  }
 
   async function submit() {
     setErr(null);
     if (askJudgeName && !judge.trim()) return setErr('Add the judge\'s name or a ballot label.');
-    let out: { judge: string; sheet: ScoreSheet | null; pScore: number; dScore: number };
+    let out: { judge: string; sheet: ScoreSheet | null; comments: BallotComments | null; pScore: number; dScore: number };
     if (mode === 'lines') {
       const bad = lines.findIndex((_, i) => !okLine(p[i]) || !okLine(d[i]));
       if (bad !== -1) return setErr(`${lines[bad]}: score both sides from ${SHEET_MIN} to ${SHEET_MAX}.`);
-      out = { judge: judge.trim(), sheet: { p: nums(p), d: nums(d) }, pScore: pTotal, dScore: dTotal };
+      out = { judge: judge.trim(), sheet: { p: nums(p), d: nums(d) }, comments: collectComments(), pScore: pTotal, dScore: dTotal };
     } else {
       const a = Number(pt);
       const b = Number(dt);
       if (pt.trim() === '' || dt.trim() === '' || !(a >= 0) || !(b >= 0)) return setErr('Enter both totals.');
-      out = { judge: judge.trim(), sheet: null, pScore: a, dScore: b };
+      out = { judge: judge.trim(), sheet: null, comments: collectComments(), pScore: a, dScore: b };
     }
     if (out.pScore === out.dScore && mode === 'lines') return setErr('The totals are tied. Most competitions require a winner on every ballot; adjust a line to break the tie.');
     setBusy(true);
@@ -164,19 +185,49 @@ export function BallotForm({
             <View style={{ width: 52, alignItems: 'center' }}>
               <SideTag side="d" kind={kind} />
             </View>
+            <Text style={{ width: 40, textAlign: 'center', color: c.muted, fontSize: 12, fontWeight: '700' }}>Diff</Text>
           </Row>
-          {lines.map((line, i) => (
-            <Row key={line} style={{ flexWrap: 'nowrap', paddingVertical: 4, borderTopWidth: 1, borderTopColor: c.line }}>
-              <Text style={{ flex: 1, color: c.ink, fontSize: 14 }}>{line}</Text>
-              <TextInput accessibilityLabel={`${pLabel}, ${line}`} style={[cell, flagged.has(`p${i}`) && { borderColor: c.warn, borderWidth: 2 }]} value={p[i]} keyboardType="number-pad" maxLength={2} onChangeText={(v) => setP((x) => x.map((y, j) => (j === i ? v : y)))} />
-              <TextInput accessibilityLabel={`Defense, ${line}`} style={[cell, flagged.has(`d${i}`) && { borderColor: c.warn, borderWidth: 2 }]} value={d[i]} keyboardType="number-pad" maxLength={2} onChangeText={(v) => setD((x) => x.map((y, j) => (j === i ? v : y)))} />
-            </Row>
-          ))}
+          {lines.map((line, i) => {
+            const filled = p[i].trim() !== '' && d[i].trim() !== '';
+            const r = running[i];
+            return (
+              <View key={line} style={{ paddingVertical: 4, borderTopWidth: 1, borderTopColor: c.line, gap: 4 }}>
+                <Row style={{ flexWrap: 'nowrap' }}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: c.ink, fontSize: 14 }}>{line}</Text>
+                    <Text style={{ color: c.muted, fontSize: 12, fontVariant: ['tabular-nums'] }}>
+                      Running {r.p}–{r.d} ({fmtDiff(r.diff)})
+                    </Text>
+                  </View>
+                  <TextInput accessibilityLabel={`${pLabel}, ${line}`} style={[cell, flagged.has(`p${i}`) && { borderColor: c.warn, borderWidth: 2 }]} value={p[i]} keyboardType="number-pad" maxLength={2} onChangeText={(v) => setP((x) => x.map((y, j) => (j === i ? v : y)))} />
+                  <TextInput accessibilityLabel={`Defense, ${line}`} style={[cell, flagged.has(`d${i}`) && { borderColor: c.warn, borderWidth: 2 }]} value={d[i]} keyboardType="number-pad" maxLength={2} onChangeText={(v) => setD((x) => x.map((y, j) => (j === i ? v : y)))} />
+                  <Text style={{ width: 40, textAlign: 'center', fontVariant: ['tabular-nums'], fontWeight: '700', color: !filled ? c.muted : r.line > 0 ? c.ink : r.line < 0 ? c.ink : c.muted }}>
+                    {filled ? fmtDiff(r.line) : '–'}
+                  </Text>
+                </Row>
+                {lineComments &&
+                  (notesOpen.has(i) ? (
+                    <View style={{ gap: 4 }}>
+                      <TextInput accessibilityLabel={`Comment for ${pLabel.toLowerCase()}, ${line}`} placeholder={`Comment for ${pLabel.toLowerCase()}`} placeholderTextColor={c.muted} value={pc[i]} onChangeText={(v) => setPc((x) => x.map((y, j) => (j === i ? v : y)))} multiline maxLength={500} style={noteStyle(c)} />
+                      <TextInput accessibilityLabel={`Comment for defense, ${line}`} placeholder="Comment for defense" placeholderTextColor={c.muted} value={dc[i]} onChangeText={(v) => setDc((x) => x.map((y, j) => (j === i ? v : y)))} multiline maxLength={500} style={noteStyle(c)} />
+                    </View>
+                  ) : (
+                    <Text accessibilityRole="button" onPress={() => setNotesOpen((s) => new Set(s).add(i))} style={{ color: c.accent, fontSize: 13, fontWeight: '600', paddingVertical: 2 }}>
+                      + Add comments
+                    </Text>
+                  ))}
+              </View>
+            );
+          })}
           <Row style={{ flexWrap: 'nowrap', paddingVertical: 8, borderTopWidth: 2, borderTopColor: c.ink }}>
             <Text style={{ flex: 1, color: c.ink, fontWeight: '800' }}>Total</Text>
             <Text style={{ width: 52, textAlign: 'center', fontWeight: '800', color: c.ink, fontVariant: ['tabular-nums'] }}>{pTotal}</Text>
             <Text style={{ width: 52, textAlign: 'center', fontWeight: '800', color: c.ink, fontVariant: ['tabular-nums'] }}>{dTotal}</Text>
+            <Text style={{ width: 40, textAlign: 'center', fontWeight: '800', color: c.ink, fontVariant: ['tabular-nums'] }}>{fmtDiff(diff)}</Text>
           </Row>
+          <Body style={{ fontWeight: '700' }}>
+            {diff === 0 ? 'Tied so far' : `${diff > 0 ? pLabel : 'Defense'} ahead by ${Math.abs(diff)}`}
+          </Body>
         </View>
       ) : (
         <Row style={{ flexWrap: 'nowrap', alignItems: 'flex-start' }}>
@@ -189,6 +240,9 @@ export function BallotForm({
         </Row>
       )}
 
+      {overallComment && (
+        <Field label="Comments for the teams (optional)" value={overall} onChangeText={setOverall} multiline maxLength={2000} placeholder="What went well, and what to work on." />
+      )}
       {err && <Body style={{ color: c.bad }}>{err}</Body>}
       <View style={{ gap: space.sm }}>
         <Button title={initial ? 'Save changes' : 'Submit ballot'} onPress={submit} disabled={busy} />
@@ -199,11 +253,13 @@ export function BallotForm({
 }
 
 /** Read-only view of one ballot, line by line when available. */
-export function BallotView({ ballot, witnesses, kind }: { ballot: Ballot; witnesses: number; kind?: CaseKind }) {
+export function BallotView({ ballot, witnesses, scoring = DEFAULT_SCORING, kind }: { ballot: Ballot; witnesses: number; scoring?: ScoringSetup; kind?: CaseKind }) {
   const c = useTheme();
-  const lines = sheetLines(witnesses);
+  const lines = sheetLines(witnesses, scoring);
   const [open, setOpen] = useState(false);
   const winner = ballot.pScore > ballot.dScore ? (kind === 'criminal' ? 'Prosecution' : 'Plaintiff') : ballot.dScore > ballot.pScore ? 'Defense' : 'Tie';
+  const running = ballot.sheet ? runningTotals(ballot.sheet.p, ballot.sheet.d) : [];
+  const cm = ballot.comments;
   return (
     <Card style={{ paddingVertical: space.md }} onPress={ballot.sheet ? () => setOpen((o) => !o) : undefined}>
       <Row style={{ justifyContent: 'space-between', flexWrap: 'nowrap' }}>
@@ -214,17 +270,53 @@ export function BallotView({ ballot, witnesses, kind }: { ballot: Ballot; witnes
         <Text style={{ color: c.ink, fontVariant: ['tabular-nums'], fontWeight: '700', marginHorizontal: space.sm }}>
           {ballot.pScore} – {ballot.dScore}
         </Text>
-        <Text style={{ color: c.accent, fontWeight: '700', fontSize: 13 }}>{winner}</Text>
+        <Text style={{ color: c.accent, fontWeight: '700', fontSize: 13 }}>
+          {winner} {winner !== 'Tie' ? fmtDiff(Math.abs(ballot.pScore - ballot.dScore)) : ''}
+        </Text>
       </Row>
+      {open && ballot.sheet && (
+        <Row style={{ flexWrap: 'nowrap' }}>
+          <Text style={{ flex: 1 }} />
+          <Text style={{ width: 30, textAlign: 'center', color: c.muted, fontSize: 11, fontWeight: '700' }}>P</Text>
+          <Text style={{ width: 30, textAlign: 'center', color: c.muted, fontSize: 11, fontWeight: '700' }}>D</Text>
+          <Text style={{ width: 34, textAlign: 'center', color: c.muted, fontSize: 11, fontWeight: '700' }}>Diff</Text>
+          <Text style={{ width: 62, textAlign: 'right', color: c.muted, fontSize: 11, fontWeight: '700' }}>Running</Text>
+        </Row>
+      )}
       {open &&
         ballot.sheet &&
         lines.map((line, i) => (
-          <Row key={line} style={{ flexWrap: 'nowrap', borderTopWidth: 1, borderTopColor: c.line, paddingTop: 4 }}>
-            <Text style={{ flex: 1, color: c.muted, fontSize: 13 }}>{line}</Text>
-            <Text style={{ width: 36, textAlign: 'center', color: c.ink, fontVariant: ['tabular-nums'] }}>{ballot.sheet!.p[i]}</Text>
-            <Text style={{ width: 36, textAlign: 'center', color: c.ink, fontVariant: ['tabular-nums'] }}>{ballot.sheet!.d[i]}</Text>
-          </Row>
+          <View key={line} style={{ borderTopWidth: 1, borderTopColor: c.line, paddingTop: 4, gap: 2 }}>
+            <Row style={{ flexWrap: 'nowrap' }}>
+              <Text style={{ flex: 1, color: c.muted, fontSize: 13 }}>{line}</Text>
+              <Text style={{ width: 30, textAlign: 'center', color: c.ink, fontVariant: ['tabular-nums'] }}>{ballot.sheet!.p[i]}</Text>
+              <Text style={{ width: 30, textAlign: 'center', color: c.ink, fontVariant: ['tabular-nums'] }}>{ballot.sheet!.d[i]}</Text>
+              <Text style={{ width: 34, textAlign: 'center', color: c.ink, fontVariant: ['tabular-nums'], fontWeight: '600' }}>{fmtDiff(running[i].line)}</Text>
+              <Text style={{ width: 62, textAlign: 'right', color: c.muted, fontVariant: ['tabular-nums'], fontSize: 12 }}>
+                {running[i].p}–{running[i].d}
+              </Text>
+            </Row>
+            {cm?.p?.[i] ? <Text style={{ color: c.ink, fontSize: 13 }}>{`${kind === 'criminal' ? 'Prosecution' : 'Plaintiff'}: ${cm.p[i]}`}</Text> : null}
+            {cm?.d?.[i] ? <Text style={{ color: c.ink, fontSize: 13 }}>{`Defense: ${cm.d[i]}`}</Text> : null}
+          </View>
         ))}
+      {cm?.overall ? (
+        <View style={{ gap: 2, marginTop: space.xs }}>
+          <Label>Judge's comments</Label>
+          <Text style={{ color: c.ink, fontSize: 14 }}>{cm.overall}</Text>
+        </View>
+      ) : null}
     </Card>
   );
 }
+
+const noteStyle = (c: ReturnType<typeof useTheme>) => ({
+  borderWidth: 1,
+  borderColor: c.line,
+  borderRadius: radius.sm,
+  paddingVertical: 6,
+  paddingHorizontal: 8,
+  color: c.ink,
+  backgroundColor: c.surface,
+  fontSize: 14,
+});

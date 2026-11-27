@@ -20,7 +20,7 @@ export default function TeamScreen() {
     .filter((t) => t.resultsPublished && data.matches.some((m) => m.tournamentId === t.id && (m.pTeamId === id || m.dTeamId === id)))
     .sort((a, b) => b.startDate.localeCompare(a.startDate))
     .map((t) => {
-      const table = computeStandings(data.matches.filter((m) => m.tournamentId === t.id), data.ballots);
+      const table = computeStandings(data.matches.filter((m) => m.tournamentId === t.id), data.ballots, t.rankBy ?? 'ballots');
       return { t, row: table.find((s) => s.teamId === id), of: table.length };
     });
   const totals = events.reduce((a, e) => ({ w: a.w + (e.row?.wins ?? 0), l: a.l + (e.row?.losses ?? 0) }), { w: 0, l: 0 });

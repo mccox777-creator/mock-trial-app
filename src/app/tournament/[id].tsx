@@ -7,12 +7,15 @@ import { newId, useStore } from '../../lib/store';
 import { computeStandings, resultFor, teamName } from '../../lib/scoring';
 import { ballotsText, fmtDate, fmtDateTime, fmtRange, fmtTime, nowLocal, todayLocal } from '../../lib/format';
 import { regLabel } from '../../lib/labels';
-import { AUTO_LOCK_DAYS, BACKGROUND_LABEL, autoAssign, autoLockDate, canChange, isLocked, isOrganizer, resultsVisible } from '../../lib/judging';
+import { AUTO_LOCK_DAYS, BACKGROUND_LABEL, autoAssign, autoLockDate, canChange, isLocked, isOrganizer, resultsVisible, describeScoring, scoringOf, SHEET_PARTS } from '../../lib/judging';
 import type { AppData, Match, Registration, RegistrationStatus, Tournament } from '../../lib/types';
 import { radius, space, useTheme } from '../../lib/theme';
+import type { ScoringSetup } from '../../lib/types';
+import { ChatPanel } from '../../components/ChatPanel';
+import { chatRole } from '../../lib/chat';
 import { describeRules, type RuleSet } from '../../lib/rules';
 
-type Tab = 'overview' | 'teams' | 'pairings' | 'grid' | 'standings' | 'judges';
+type Tab = 'overview' | 'teams' | 'pairings' | 'grid' | 'standings' | 'chat' | 'judges';
 
 export default function TournamentScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -45,6 +48,7 @@ export default function TournamentScreen() {
     { id: 'pairings', label: 'Pairings' },
     { id: 'grid', label: 'By team' },
     ...(resultsVisible(t, me) ? [{ id: 'standings' as Tab, label: 'Standings' }] : []),
+    ...(chatRole(t, me, data) ? [{ id: 'chat' as Tab, label: 'Chat' }] : []),
     ...(organizer ? [{ id: 'judges' as Tab, label: `Judges${pendingJudges ? ` · ${pendingJudges} new` : ''}` }] : []),
   ];
 
@@ -66,6 +70,8 @@ export default function TournamentScreen() {
       </View>
 
       <TabBar tabs={tabs} value={tab} onChange={setTab} />
+
+      {tab === 'chat' && <ChatPanel t={t} />}
 
       {tab === 'overview' && (
         <>
@@ -119,6 +125,9 @@ export default function TournamentScreen() {
               {t.randomRounds === 1 ? 'Round 1' : `Rounds 1–${t.randomRounds}`} drawn at random, then {t.pairingMethod === 'power' ? 'power-matched by record' : 'random'} ·{' '}
               {t.sideConstraint === 'alternate' ? 'teams alternate sides' : t.sideConstraint === 'balanced' ? 'sides balanced overall' : 'no side constraint'}
             </Body>
+            <Label style={{ marginTop: space.sm }}>Score sheet</Label>
+            <Body>{describeScoring(t.witnessesPerSide, scoringOf(t))}</Body>
+            <Body muted>{sheetSummary(scoringOf(t))}</Body>
             <Label style={{ marginTop: space.sm }}>Host</Label>
             <Body>{t.hostName}</Body>
             {t.description ? (
@@ -355,10 +364,22 @@ function GridTab({ t, matches }: { t: Tournament; matches: Match[] }) {
 function StandingsTab({ t, matches }: { t: Tournament; matches: Match[] }) {
   const { data, me } = useStore();
   if (!data) return null;
-  const s = computeStandings(matches, data.ballots);
+  const s = computeStandings(matches, data.ballots, t.rankBy ?? 'ballots');
+  const scored = matches.filter((m) => data.ballots.some((b) => b.matchId === m.id));
+  const lastRound = scored.reduce((a, m) => Math.max(a, m.round), 0);
+  const inRound = data.ballots.filter((b) => matches.some((m) => m.id === b.matchId && m.round === lastRound)).length;
+  const dueRound = matches.filter((m) => m.round === lastRound).length * t.ballotsPerRound;
   return (
     <>
       {isOrganizer(t, me) && !t.resultsPublished && <Body muted>Only you can see these standings until you publish results from the Overview tab.</Body>}
+      {s.length > 0 && (
+        <Row>
+          {!t.resultsPublished && <Pill text="Live" tone="good" />}
+          <Body muted style={{ flex: 1 }}>
+            {`Ranked by ${(t.rankBy ?? 'ballots') === 'ballots' ? 'ballots won' : 'trials won'} · Round ${lastRound}: ${inRound} of ${dueRound} ballots in`}
+          </Body>
+        </Row>
+      )}
       {s.length === 0 ? (
         <Empty title="No scores yet" body="Standings fill in as ballots come in." />
       ) : (
@@ -510,4 +531,9 @@ function RulesCard({ rules, custom }: { rules: RuleSet; custom: string }) {
       )}
     </Card>
   );
+}
+
+function sheetSummary(scoring: ScoringSetup) {
+  const parts = SHEET_PARTS.filter((p) => scoring.parts.includes(p.id)).map((p) => p.label);
+  return [...parts, ...scoring.extra].join(', ');
 }

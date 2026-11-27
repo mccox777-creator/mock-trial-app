@@ -18,6 +18,24 @@ export interface Profile {
   email: string;
   /** Teams this person coaches or competes on. */
   teamIds: string[];
+  /** The subset of teamIds this person coaches. */
+  coachOf?: string[];
+}
+
+export type ChatChannel = 'all' | 'judges' | 'coaches';
+export type ChatRole = 'organizer' | 'judge' | 'coach' | 'competitor';
+
+/** A message in a competition's group chat. There are no private messages. */
+export interface Message {
+  id: string;
+  tournamentId: string;
+  channel: ChatChannel;
+  authorId: string;
+  /** Set by the server from the author's profile, so nobody can post under another name. */
+  authorName: string;
+  authorRole: ChatRole | '';
+  body: string;
+  createdAt: string;
 }
 
 export interface Program {
@@ -63,6 +81,12 @@ export interface Tournament {
   requireApproval: boolean;
   caseId: string | null;
   description: string;
+  /** False: chat is announcements only, and only the organizer posts. */
+  chatReplies: boolean;
+  /** How teams are ranked: by ballots won first, or by trials won first. */
+  rankBy: 'ballots' | 'wins';
+  /** How judges score: the scale and which parts of the trial get a line on the sheet. */
+  scoring: ScoringSetup;
   /** Ticked items from the rules checklist (see lib/rules.ts), plus any numeric details. */
   rules: RuleSet;
   /** Anything the checklist does not cover, one rule per line. */
@@ -107,6 +131,27 @@ export interface Match {
   judgeIds: string[];
 }
 
+export type SheetPart = 'pretrial' | 'opening' | 'direct' | 'witness' | 'cross' | 'evidence' | 'closing' | 'professionalism';
+
+export interface ScoringSetup {
+  /** Top of the scale: 10 or 15. Every line is scored from 1 to this. */
+  max: number;
+  parts: SheetPart[];
+  /** The organizer's own extra lines, scored for each side. */
+  extra: string[];
+  /** Where judges can write comments: nowhere, one box for the whole ballot, after each performance, or both. */
+  comments: CommentMode;
+}
+
+export type CommentMode = 'none' | 'overall' | 'per_line' | 'both';
+
+/** A judge's written comments. Per-line comments are kept per side, in sheet-line order. */
+export interface BallotComments {
+  overall?: string;
+  p?: string[];
+  d?: string[];
+}
+
 export interface ScoreSheet {
   p: number[]; // one score per line, same order as sheetLines()
   d: number[];
@@ -121,6 +166,8 @@ export interface Ballot {
   source: 'app' | 'paper';
   /** Line-by-line scores, when entered that way. Totals are always stored. */
   sheet: ScoreSheet | null;
+  /** Written comments, when the organizer turned them on. Shared with teams only if ballots are returned. */
+  comments?: BallotComments | null;
   pScore: number;
   dScore: number;
   enteredBy: string;
@@ -187,7 +234,8 @@ export interface Recording {
   matchId: string;
   title: string;
   /** 'link' for now; 'mux' / 'cloudflare' once a video service is chosen. */
-  provider: 'link' | 'mux' | 'cloudflare';
+  /** Round video lives on YouTube (unlisted); the app stores the link. */
+  provider: 'youtube' | 'link';
   url: string;
   visibility: VideoVisibility;
   uploadedBy: string;
@@ -206,4 +254,5 @@ export interface AppData {
   caseFiles: CaseFile[];
   bulletins: Bulletin[];
   recordings: Recording[];
+  messages: Message[];
 }
