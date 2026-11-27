@@ -80,12 +80,13 @@ $$;
 
 -- ---------- Competitions: listing, approval, hiding ----------
 
+-- Competitions made before this change stay listed: the column starts true for existing rows (adding it fires
+-- no triggers, so locked competitions are fine), then new rows default to false.
 alter table tournaments
-  add column approved boolean not null default false,
+  add column approved boolean not null default true,
   add column hidden boolean not null default false,
   add column max_teams_per_school int check (max_teams_per_school between 1 and 20);
--- Competitions made before this change stay listed.
-update tournaments set approved = true;
+alter table tournaments alter column approved set default false;
 
 -- Only admins change approved and hidden. A new competition is approved at once if its organizer is.
 create function guard_listing() returns trigger language plpgsql security definer set search_path = public, pg_temp as $$
