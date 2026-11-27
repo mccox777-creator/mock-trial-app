@@ -2,7 +2,8 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 import { Body, Card, Empty, H1, Label, Loading, Mono, Row, Screen } from '../../components/ui';
 import { useHistory } from '../../lib/store';
-import { finishText, pointsFor, schoolOfTeam } from '../../lib/history';
+import { finishText, schoolOfTeam } from '../../lib/history';
+import { eloFor, fmtChange } from '../../lib/elo';
 import { space, useTheme } from '../../lib/theme';
 
 const ORDER = ['winner', 'advanced', 'finalist', 'place', 'semifinalist', 'quarterfinalist', 'octofinalist'];
@@ -14,6 +15,7 @@ export default function PastEventScreen() {
   if (!events) return <Loading />;
   const e = events.find((x) => x.id === id);
   if (!e) return <Screen><Empty title="Competition not found" body="It may belong to another circuit. Switch circuits on the Results tab." /></Screen>;
+  const changes = eloFor(events).byEvent.get(e.id);
   const results = [...e.results].sort((a, b) => ORDER.indexOf(a.finish) - ORDER.indexOf(b.finish) || (a.place ?? 9) - (b.place ?? 9));
   const go = (team: string) => router.push({ pathname: '/history/school', params: { name: schoolOfTeam(team) } });
 
@@ -33,7 +35,7 @@ export default function PastEventScreen() {
             <Pressable key={`${r.team}-${i}`} onPress={() => go(r.team)} accessibilityRole="button" style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.md, paddingVertical: 10, borderBottomWidth: 1, borderColor: c.line, gap: space.sm }}>
               <Text style={{ width: 110, color: r.finish === 'winner' || r.finish === 'advanced' ? c.good : c.muted, fontWeight: '700' }}>{finishText(r)}</Text>
               <Text style={{ flex: 1, color: c.ink, fontSize: 16 }}>{r.team}</Text>
-              {pointsFor(r) > 0 && <Text style={{ color: c.muted }}>{`+${pointsFor(r)}`}</Text>}
+              {changes?.get(r.school) && <Text style={{ color: c.muted, fontVariant: ['tabular-nums'] }}>{`Elo ${fmtChange(changes.get(r.school)!)}`}</Text>}
             </Pressable>
           ))}
         </Card>
