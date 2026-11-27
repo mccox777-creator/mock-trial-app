@@ -18,7 +18,7 @@ Put the four files in one folder and run `python3 verify_ratings.py` (Python 3, 
 separately from the app's code, in a different language, using only the rules below. It prints `0 mismatches` when the
 published ratings are exactly what the rules produce.
 
-Any single line of rating-changes.csv can be checked by hand: `after = before + k * weight * (ahead - expected)`.
+Any single line of rating-changes.csv can be checked by hand: `after = before + k * weight * (ahead - expected) / teams`.
 
 In the repository, `npm run ratings:export` regenerates the files in `public/ratings-data/` and `npm run check:elo` fails if
 they are out of date.
@@ -26,21 +26,23 @@ they are out of date.
 ## The rules
 
 1. **Start.** A school's rating starts at 1500 at its first competition in the record (Spring 2023 onward).
-2. **Finishes.** A school's finish at a competition is its best team's finish. From best to worst: won or qualified out of
-   a regional (0), final (1), semifinal (2), quarterfinal (3), octofinal (4), took part (5). A numbered place counts as one
-   less than the place (3rd = 2), capped at 4.5, so 4th beats 5th and every placed school beats those who only took part.
-   A competition run in the app uses its full final standings: 1st beats 2nd beats 3rd and so on.
-3. **Games.** Finishing ahead of a school is a win against it, finishing behind is a loss. Schools that finish in the same
-   round don't count against each other.
-4. **Expected score.** Against each school in a different round: `1 / (1 + 10^((their rating - your rating) / 400))`.
-   Ratings from before the competition are used for everyone.
-5. **Change.** `new = old + K * weight * (wins - expected)`, where wins is the number of schools finished ahead of and
-   expected is the sum of the expected scores.
-   - `weight = min(8, n - 1) / (n - 1)`, where n is the number of schools in the field, so a competition is worth at most 8
-     games however large it is.
+2. **Teams.** Every team is its own competitor. A team's finish, from best to worst: won or qualified out of a regional
+   (0), final (1), semifinal (2), quarterfinal (3), octofinal (4), took part (5). A numbered place counts as one less than
+   the place (3rd = 2), capped at 4.5, so 4th beats 5th and every placed team beats those who only took part. A
+   competition run in the app uses its full final standings: 1st beats 2nd beats 3rd and so on. Where the record names a
+   school's result without saying which team, each further team the school entered counts as "took part".
+3. **Games.** Each team plays every team from another school: finishing ahead is a win, finishing behind a loss, and
+   finishing in the same round doesn't count. Teams from the same school never count against each other.
+4. **Expected score.** For each game: `1 / (1 + 10^((their school's rating - your school's rating) / 400))`. Ratings from
+   before the competition are used for everyone.
+5. **Change.** `new = old + K * weight * (wins - expected) / teams`, where wins and expected are summed over all of the
+   school's games at the competition and teams is how many teams it entered. In other words, the school moves by the
+   average of its teams' results, so a strong team lifts it and a team that goes out early pulls it down.
+   - `weight = min(8, n) / n`, where n is the number of teams from other schools, so each team's competition is worth at
+     most 8 games however large it is.
    - `K` is 40 for a school's first 5 competitions, then 20, and 10 at 2400 or above (as in FIDE chess).
-   - A competition counts for a school only if at least one other school there finished in a different round. A competition
-     with no results changes nothing and doesn't count toward a school's total.
+   - A competition counts for a school only if one of its teams finished in a different round from a team of another
+     school. A competition with no results changes nothing and doesn't count toward a school's total.
 6. **Order.** Competitions are applied oldest first by start date. One with no date in the record takes the date of the one
    listed just before it in the same term. Competitions run in the app count once they close (finalized by the organizer,
    or 7 days after the last day) and their results are published.
@@ -84,17 +86,23 @@ A review of the math and the data found and fixed these problems:
 | 4th and 5th place counted as the same finish | Lost information | Places count by number |
 | A competition with no results still counted toward a school's total | Wrong K factor and competition counts | Only competitions with games count |
 
-After the fixes the top 10 is:
+### Change, 27 November 2026: every team counts
+
+A school with several teams at a competition now has every team rated, and moves by the
+average of its teams' results. Before, only its best team counted. This lowers schools that often send extra teams that
+go out early (UCLA 2093 to 2021, San Diego 7th to 10th, Maryland 12th to 17th) and lifts schools that send one strong team.
+
+The top 10 now:
 
 | # | School | Rating | Class | Competitions |
 | --- | --- | --- | --- | --- |
-| 1 | UCLA | 2093 | Expert | 81 |
-| 2 | Drexel | 1926 | Class A | 55 |
-| 3 | Stetson | 1851 | Class A | 85 |
-| 4 | Harvard | 1821 | Class A | 43 |
-| 5 | Georgetown | 1809 | Class A | 42 |
-| 6 | Texas | 1807 | Class A | 44 |
-| 7 | San Diego | 1797 | Class B | 29 |
-| 8 | American | 1788 | Class B | 34 |
-| 9 | Florida International | 1788 | Class B | 24 |
-| 10 | Boston College | 1785 | Class B | 11 |
+| 1 | UCLA | 2021 | Expert | 81 |
+| 2 | Drexel | 1873 | Class A | 55 |
+| 3 | Stetson | 1820 | Class A | 85 |
+| 4 | Harvard | 1791 | Class B | 43 |
+| 5 | Texas | 1769 | Class B | 44 |
+| 6 | American | 1766 | Class B | 34 |
+| 7 | Boston College | 1764 | Class B | 11 |
+| 8 | Georgetown | 1764 | Class B | 42 |
+| 9 | Mercer | 1759 | Class B | 67 |
+| 10 | San Diego | 1736 | Class B | 29 |

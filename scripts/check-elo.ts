@@ -46,6 +46,15 @@ assert.equal(empty.size, 0);
 const places = computeElo([ev('p', 0, [P('A', 1), P('B', 2), P('C', 3), P('D', 4), P('E', 5)], ['A', 'B', 'C', 'D', 'E', 'F'])]);
 assert.ok(places.get('D')!.rating > places.get('E')!.rating && places.get('E')!.rating > places.get('F')!.rating);
 
+// Every team counts: a second team that goes out early pulls its school down.
+const one = computeElo([ev('o', 0, [W('A'), F('B')], ['A', 'B', 'C', 'D'])]);
+const two = computeElo([ev('t', 0, [W('A'), F('B')], ['A', 'A 2', 'B', 'C', 'D'])]);
+assert.ok(two.get('A')!.rating < one.get('A')!.rating, 'a weak second team costs points');
+assert.equal(two.get('A')!.history[0].teams, 2);
+// ...and two teams from one school never count against each other.
+const final = computeElo([ev('f', 0, [{ school: 'A', team: 'A', finish: 'winner', place: 1 }, { school: 'A', team: 'A 2', finish: 'finalist', place: 2 }], ['A', 'A 2', 'B'])]);
+assert.ok(final.get('A')!.rating > 1500 && final.get('B')!.rating < 1500);
+
 // Real data: UCLA first, Drexel second.
 const real = JSON.parse(readFileSync(new URL('../src/data/history-law-school.json', import.meta.url), 'utf8')) as PastEvent[];
 const ranked = [...computeElo(real).values()].sort((a, b) => b.rating - a.rating);

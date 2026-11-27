@@ -25,13 +25,18 @@ def tier(r):
     return TIER[r['finish']]
 
 
-def field(e):
-    best = {}
+def teams(e):
+    """Every team with its finishing tier: each school's result tiers, plus 'took part' for each further team it entered."""
+    res, entered = {}, {}
     for r in e['results']:
-        best[r['school']] = min(best.get(r['school'], 999), tier(r))
+        res.setdefault(r['school'], []).append(tier(r))
     for p in e['participants']:
-        best.setdefault(school_of(p), 5)
-    return best
+        entered[school_of(p)] = entered.get(school_of(p), 0) + 1
+    out = []
+    for s in set(res) | set(entered):
+        t = res.get(s, [])
+        out += [(s, x) for x in t] + [(s, 5)] * (entered.get(s, 0) - len(t))
+    return out
 
 
 def start_day(e):
@@ -64,22 +69,27 @@ def k_factor(rating, played):
 def compute(events):
     rating, played = {}, {}
     for e in in_order(events):
-        f = field(e)
-        if len(set(f.values())) < 2:
+        field = teams(e)
+        if len({t for _, t in field}) < 2:
             continue
-        pre = {s: rating.get(s, START) for s in f}
-        weight = min(GAMES, len(f) - 1) / (len(f) - 1)
-        for s, t in f.items():
+        schools = {s for s, _ in field}
+        pre = {s: rating.get(s, START) for s in schools}
+        for s in schools:
+            mine = [t for o, t in field if o == s]
+            others = [(o, t) for o, t in field if o != s]
+            if not others:
+                continue
+            weight = min(GAMES, len(others)) / len(others)
             score, games = 0.0, 0
-            for o, ot in f.items():
-                if o == s or ot == t:
-                    continue
-                expected = 1 / (1 + 10 ** ((pre[o] - pre[s]) / 400))
-                score += (1 if t < ot else 0) - expected
-                games += 1
+            for t in mine:
+                for o, ot in others:
+                    if ot == t:
+                        continue
+                    score += (1 if t < ot else 0) - 1 / (1 + 10 ** ((pre[o] - pre[s]) / 400))
+                    games += 1
             if games == 0:
                 continue
-            rating[s] = pre[s] + k_factor(pre[s], played.get(s, 0)) * weight * score
+            rating[s] = pre[s] + k_factor(pre[s], played.get(s, 0)) * weight * score / len(mine)
             played[s] = played.get(s, 0) + 1
     return rating, played
 

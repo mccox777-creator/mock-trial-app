@@ -19,8 +19,8 @@ const STEPS: { title: string; body: string[] }[] = [
   {
     title: '2. Each competition is a set of games',
     body: [
-      'A school’s finish is its best team’s finish: won (or qualified out of a regional), final, semifinal, quarterfinal, octofinal, or took part. A numbered place counts by its number, so 4th finishes ahead of 5th, and any place finishes ahead of schools that only took part.',
-      'Finishing ahead of another school counts as a win against it. Finishing behind counts as a loss. Two schools that went out in the same round don’t count against each other.',
+      'Every team is its own competitor. A team finishes: won (or qualified out of a regional), final, semifinal, quarterfinal, octofinal, or took part. A numbered place counts by its number, so 4th finishes ahead of 5th, and any place finishes ahead of teams that only took part.',
+      'Each team plays every team from another school: finishing ahead counts as a win, finishing behind as a loss, and going out in the same round doesn’t count. Teams from the same school never count against each other. A school with two teams plays the field twice, and its rating moves by the average of its teams’ results, so a strong team lifts it and a team that goes out early pulls it down.',
       'A competition run in this app uses its full final standings, so 1st beats 2nd beats 3rd and so on.',
     ],
   },
@@ -34,10 +34,10 @@ const STEPS: { title: string; body: string[] }[] = [
   {
     title: '4. The change',
     body: [
-      'New rating = old rating + K × weight × (wins − expected), where wins is the number of schools finished ahead of and expected is the sum of the expected scores.',
-      `Weight = min(${GAMES_PER_EVENT}, schools in the field − 1) / (schools in the field − 1). A competition is worth at most ${GAMES_PER_EVENT} games however big it is, so a 24-school event can’t move a rating three times as much as an 8-school one.`,
+      'New rating = old rating + K × weight × (wins − expected) ÷ teams, where wins counts every team (from another school) that the school’s teams finished ahead of, expected is the sum of the expected scores for those same games, and teams is how many teams the school entered.',
+      `Weight = min(${GAMES_PER_EVENT}, n) / n, where n is the number of teams from other schools. Each team’s competition is worth at most ${GAMES_PER_EVENT} games however big it is, so a 24-team event can’t move a rating three times as much as an 8-team one.`,
       'K is 40 for a school’s first 5 competitions, then 20, and 10 once a school reaches 2400, as in international chess.',
-      'A competition counts for a school only if it finished in a different round from at least one other school there. A competition with no results recorded changes nothing.',
+      'A competition counts for a school only if one of its teams finished in a different round from a team of another school. A competition with no results recorded changes nothing.',
     ],
   },
   {
@@ -104,14 +104,14 @@ export default function RatingsMethod() {
           <Body muted>{[example.e.region, example.e.dates, `${example.e.term} ${example.e.season}`].filter(Boolean).join(' · ')}</Body>
           <Body>Rating before: {example.h.before.toFixed(2)}</Body>
           <Body>
-            Finished ahead of {example.h.ahead} school{example.h.ahead === 1 ? '' : 's'} and behind {example.h.behind}, counting only schools in a different round.
+            Entered {example.h.teams} team{example.h.teams === 1 ? '' : 's'}. Finished ahead of {example.h.ahead} team{example.h.ahead === 1 ? '' : 's'} and behind {example.h.behind}, counting only teams from other schools in a different round.
           </Body>
-          <Body>Expected score, summed over those schools: {example.h.expected.toFixed(4)}</Body>
+          <Body>Expected score, summed over those games: {example.h.expected.toFixed(4)}</Body>
           <Body>
             K = {example.h.k}, weight = {example.h.weight.toFixed(4)}
           </Body>
           <Body>
-            Change = {example.h.k} × {example.h.weight.toFixed(4)} × ({example.h.ahead} − {example.h.expected.toFixed(4)}) = {(example.h.after - example.h.before).toFixed(2)}
+            Change = {example.h.k} × {example.h.weight.toFixed(4)} × ({example.h.ahead} − {example.h.expected.toFixed(4)}) ÷ {example.h.teams} = {(example.h.after - example.h.before).toFixed(2)}
           </Body>
           <Body>Rating after: {example.h.after.toFixed(2)}</Body>
           <Button small kind="ghost" title={`See every change for ${example.school}`} onPress={() => router.push({ pathname: '/history/school', params: { name: example.school } })} />
