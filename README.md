@@ -9,11 +9,15 @@ Built with [Expo](https://expo.dev) (React Native + TypeScript), so one codebase
 | Area | What people can do |
 | --- | --- |
 | **Schedule** | Browse competitions by circuit. See registration deadlines and upcoming case releases at a glance. |
-| **Director wizard** | Any signed-in tournament director creates a competition in six steps: basics, dates and venue, format (rounds, ballots, pairing method, side rules), case, registration (deadline, team cap, fee, review or auto-confirm), review. Save as draft or publish. |
-| **Sign-ups** | Coaches register an existing team or a new one. Directors confirm, waitlist, or decline. Teams over the cap are waitlisted automatically. |
-| **Pairings** | Directors pair each round: Round 1 random, later rounds power-matched without rematches, with sides alternating. Swap sides or redraw before posting. Posting sends a bulletin. |
-| **Scores** | Directors and tab staff enter every judge's ballot after each round. Standings update on everyone's phone right away. |
-| **Rankings** | Season-wide and per-competition standings: wins, ballots, combined strength (sum of opponents' wins), point differential. |
+| **Director wizard** | Any signed-in tournament director creates a competition in seven steps: basics, dates and venue, format (rounds, ballots, witnesses per side, 1 to 4 random opening rounds, pairing method, side rules), rules, case, registration, review. Save as draft or publish. |
+| **Rules checklist** | The organizer ticks the rules that apply (woodshedding and how long, negative inference, invention of fact, FRE, time limits, roster limits, conduct, and more) and adds any others in their own words. They show on the competition page. The catalog lives in `src/lib/rules.ts`. |
+| **Sign-ups** | Open competitions: coaches register a team; the organizer confirms, waitlists, or declines (or confirms automatically). Invitational competitions: schools send a request with a note, and the organizer invites or waitlists. Teams over the cap are waitlisted. |
+| **Judges** | Judges volunteer from the competition page (background, rounds, conflicts). The organizer confirms them and assigns them to trials by hand or with auto-fill, which avoids conflicts. |
+| **Pairings** | Opening rounds are drawn at random (1 to 4, the organizer's choice), later rounds power-matched without rematches, with side rules. A by-team grid shows each team's side, opponent, and courtroom for every round. |
+| **Scores** | Judges score in the app on a per-performance sheet. Organizers can also enter paper ballots by hand or photograph them: the photo is read by Claude, filled into the form, and the organizer confirms before saving. |
+| **Privacy** | Only the organizer sees scores and standings. Judges see only their own ballot. Teams see nothing until the organizer publishes results, and see their own ballots only if the organizer also returns them. |
+| **Locking** | Once the organizer finalizes results, or 7 days after the last day, the competition is locked. Nobody, including the organizer, can change it, and the database enforces this. |
+| **Rankings and archive** | Season-wide standings from published results only (wins, ballots, combined strength, point differential), and past events grouped by season. Each team has a history page. |
 | **Case files** | Case authors set a release time; files stay locked until that moment, then unlock for every team at once. Corrections post as versioned files plus a case bulletin. |
 | **Bulletins** | Schedule changes, case errata, and results in one feed instead of email. |
 | **Recordings** | Attach round video to a trial, visible to the two teams, coaches, or everyone. Links for now; direct upload once a video service (Mux or Cloudflare Stream) is chosen. |
@@ -32,9 +36,11 @@ Type check: `npx tsc --noEmit`
 ## Connect a real backend
 
 1. Create a Supabase project.
-2. Run `supabase/migrations/0001_initial.sql` in the SQL editor. It creates the tables, row-level security rules (directors edit only their competitions, staff enter scores only for theirs, case files hidden until release, recordings limited by visibility), a private `case-files` storage bucket, and live-update publication.
+2. Run `supabase/migrations/0001_initial.sql` in the SQL editor. It creates the tables, row-level security rules (organizers edit only their competitions, judges score only their own assigned trials, ballots hidden until results are published, case files hidden until release, recordings limited by visibility), lock triggers, an append-only change log, private `case-files` and `backups` storage buckets, and live-update publication.
 3. Copy `.env.example` to `.env` and fill in the project URL and anon key.
 4. Restart `npx expo start`. The app now uses email sign-in codes and shared data.
+5. Ballot photo reading: `supabase secrets set ANTHROPIC_API_KEY=...`, then `supabase functions deploy read-ballot`.
+6. Backups: turn on Point-in-Time Recovery in the Supabase dashboard (paid plans), deploy `nightly-export`, and schedule it with pg_cron as described at the top of `supabase/functions/nightly-export/index.ts`. Every insert, update, and delete is also written to `change_log`, which nobody can edit.
 
 ## Ship to the stores
 
@@ -51,14 +57,17 @@ eas submit --platform all
 - `src/app/` — screens (Expo Router; each file is a route)
 - `src/lib/types.ts` — data model
 - `src/lib/scoring.ts` — ballot results, standings, pairing suggestions
+- `src/lib/judging.ts` — score sheet lines, who sees which ballots, judge assignment, locking
+- `src/lib/rules.ts` — the competition rules checklist
 - `src/lib/backend.ts` — demo and Supabase backends behind one interface
 - `src/lib/sampleData.ts` — fictional sample season for demo mode
 - `supabase/migrations/` — database schema and access rules
+- `supabase/functions/` — ballot photo reading and nightly backups
 
 ## Known gaps
 
 - Dates are typed as `YYYY-MM-DD`; native date pickers are next.
-- Tab staff are stored on each competition (`staff_ids`) but there is no screen to invite them yet.
+- Co-organizers: a competition can list several directors, but there is no screen to invite one yet.
 - Push notifications for bulletins and pairings are not wired up yet.
 - Elimination brackets after prelims are not built yet.
 - Case release times are compared in UTC on the server.

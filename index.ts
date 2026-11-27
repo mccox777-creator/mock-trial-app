@@ -1,8 +1,10 @@
-import { registerRootComponent } from 'expo';
+import { Platform } from 'react-native';
 
-import App from './App';
+// Hosted web previews are served from an unknown sub-path; start the router at "/".
+if (process.env.EXPO_PUBLIC_WEB_PREVIEW === '1' && Platform.OS === 'web' && typeof window !== 'undefined' && window.location.pathname !== '/') {
+  try {
+    window.history.replaceState(null, '', '/');
+  } catch {}
+}
 
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
-registerRootComponent(App);
+require('expo-router/entry');

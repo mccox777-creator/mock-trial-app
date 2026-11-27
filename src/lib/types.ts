@@ -1,0 +1,209 @@
+import type { RuleSet } from './rules';
+// Core domain model. Every competition-facing record carries a `level` so the
+// same app serves law school, collegiate, and high school circuits.
+
+export type Level = 'law_school' | 'collegiate' | 'high_school';
+
+export const LEVELS: { id: Level; label: string; short: string; live: boolean }[] = [
+  { id: 'law_school', label: 'Law School', short: 'Law', live: true },
+  { id: 'collegiate', label: 'Collegiate', short: 'College', live: false },
+  { id: 'high_school', label: 'High School', short: 'HS', live: false },
+];
+
+export type UserRole = 'competitor' | 'coach' | 'director';
+
+export interface Profile {
+  id: string;
+  name: string;
+  email: string;
+  /** Teams this person coaches or competes on. */
+  teamIds: string[];
+}
+
+export interface Program {
+  id: string;
+  name: string; // e.g. "Lakeshore School of Law"
+  level: Level;
+  region: string;
+}
+
+export interface Team {
+  id: string;
+  programId: string;
+  name: string; // e.g. "Lakeshore A"
+  level: Level;
+}
+
+export type TournamentStatus = 'draft' | 'registration_open' | 'registration_closed' | 'in_progress' | 'final';
+
+export interface Tournament {
+  id: string;
+  level: Level;
+  name: string;
+  hostProgramId: string | null;
+  hostName: string;
+  city: string;
+  venue: string;
+  startDate: string; // YYYY-MM-DD
+  endDate: string;
+  registrationDeadline: string;
+  teamCap: number;
+  entryFee: number; // USD
+  prelimRounds: number;
+  ballotsPerRound: number;
+  /** Whether teams must alternate sides between rounds. */
+  sideConstraint: 'alternate' | 'balanced' | 'none';
+  /** Rounds drawn at random before any power-matching (1 to 4). */
+  randomRounds: number;
+  /** How rounds after the random draws are paired. */
+  pairingMethod: 'power' | 'random';
+  /** Open: schools register directly. Invitational: schools request an invitation. */
+  entryType: 'open' | 'invitational';
+  /** Open competitions only: the director reviews each sign-up before confirming. */
+  requireApproval: boolean;
+  caseId: string | null;
+  description: string;
+  /** Ticked items from the rules checklist (see lib/rules.ts), plus any numeric details. */
+  rules: RuleSet;
+  /** Anything the checklist does not cover, one rule per line. */
+  customRules: string;
+  status: TournamentStatus;
+  directorIds: string[];
+  /** Witnesses per side; sets the lines on the judges' score sheet. */
+  witnessesPerSide: number;
+  /** Until the organizer publishes, only they see scores and standings. */
+  resultsPublished: boolean;
+  /** After publishing, the organizer may also return each team's own ballots to it. */
+  ballotsReturned: boolean;
+  /** When the organizer finalized results. After that (or AUTO_LOCK_DAYS after the last day) nothing can change. */
+  finalizedAt: string | null;
+  createdAt: string;
+}
+
+export type RegistrationStatus = 'pending' | 'approved' | 'waitlisted' | 'declined';
+
+export interface Registration {
+  id: string;
+  tournamentId: string;
+  teamId: string;
+  status: RegistrationStatus;
+  contactName: string;
+  contactEmail: string;
+  /** Message to the director, used for invitation requests. */
+  note?: string;
+  submittedBy: string;
+  createdAt: string;
+}
+
+export interface Match {
+  id: string;
+  tournamentId: string;
+  round: number;
+  startsAt: string; // ISO local datetime, e.g. 2027-01-22T09:00
+  courtroom: string;
+  pTeamId: string;
+  dTeamId: string;
+  /** Judges the organizer assigned to this trial (user ids). */
+  judgeIds: string[];
+}
+
+export interface ScoreSheet {
+  p: number[]; // one score per line, same order as sheetLines()
+  d: number[];
+}
+
+export interface Ballot {
+  id: string;
+  matchId: string;
+  judge: string; // judge's name, or "Ballot 1" for a paper ballot
+  /** The judge who submitted it in the app; null for paper ballots the organizer typed in. */
+  judgeId: string | null;
+  source: 'app' | 'paper';
+  /** Line-by-line scores, when entered that way. Totals are always stored. */
+  sheet: ScoreSheet | null;
+  pScore: number;
+  dScore: number;
+  enteredBy: string;
+  enteredAt: string;
+}
+
+export type JudgeBackground = 'judge' | 'attorney' | 'coach' | 'alumni' | 'other';
+
+export interface JudgeSignup {
+  id: string;
+  tournamentId: string;
+  userId: string;
+  name: string;
+  email: string;
+  background: JudgeBackground;
+  /** Rounds this judge can cover. */
+  rounds: number[];
+  /** Schools the judge has ties to and must not judge. */
+  conflicts: string;
+  status: 'pending' | 'approved' | 'declined';
+  createdAt: string;
+}
+
+export type CaseKind = 'civil' | 'criminal';
+
+export interface CaseFile {
+  id: string;
+  caseId: string;
+  label: string; // "Full case packet", "Exhibit 14 (corrected)"
+  version: string; // "v1.0"
+  url: string | null;
+  addedAt: string;
+}
+
+export interface TrialCase {
+  id: string;
+  level: Level;
+  title: string; // "State v. Delacroix"
+  docket: string; // "No. 2026-CR-0412"
+  kind: CaseKind;
+  summary: string;
+  releaseAt: string; // ISO datetime; files are hidden from competitors until then
+  createdBy: string;
+}
+
+export type BulletinKind = 'general' | 'case' | 'schedule' | 'results';
+
+export interface Bulletin {
+  id: string;
+  level: Level;
+  tournamentId: string | null;
+  caseId: string | null;
+  kind: BulletinKind;
+  title: string;
+  body: string;
+  postedAt: string;
+  postedBy: string;
+}
+
+export type VideoVisibility = 'teams' | 'coaches' | 'public';
+
+export interface Recording {
+  id: string;
+  matchId: string;
+  title: string;
+  /** 'link' for now; 'mux' / 'cloudflare' once a video service is chosen. */
+  provider: 'link' | 'mux' | 'cloudflare';
+  url: string;
+  visibility: VideoVisibility;
+  uploadedBy: string;
+  createdAt: string;
+}
+
+export interface AppData {
+  programs: Program[];
+  teams: Team[];
+  tournaments: Tournament[];
+  registrations: Registration[];
+  judgeSignups: JudgeSignup[];
+  matches: Match[];
+  ballots: Ballot[];
+  cases: TrialCase[];
+  caseFiles: CaseFile[];
+  bulletins: Bulletin[];
+  recordings: Recording[];
+}
