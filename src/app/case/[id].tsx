@@ -9,7 +9,7 @@ import { space } from '../../lib/theme';
 
 export default function CaseScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { data, me } = useStore();
+  const { data, me, backend } = useStore();
   if (!data) return <Loading />;
   const cs = data.cases.find((c) => c.id === id);
   if (!cs) return <Screen><Empty title="Case not found" body="It may have been withdrawn by its author." /></Screen>;
@@ -37,7 +37,7 @@ export default function CaseScreen() {
         <Body muted>No files uploaded yet.</Body>
       ) : (
         files.map((f) => (
-          <Card key={f.id} onPress={f.url && /^(https|file|blob|content):/.test(f.url) ? () => WebBrowser.openBrowserAsync(f.url!) : undefined}>
+          <Card key={f.id} onPress={f.url && /^(https|file|blob|content|storage):/.test(f.url) ? () => backend.fileLink(f.url!).then((u) => WebBrowser.openBrowserAsync(u)).catch(() => undefined) : undefined}>
             <Row style={{ justifyContent: 'space-between' }}>
               <H2 style={{ flex: 1 }}>{f.label}</H2>
               <Mono muted>{f.version}</Mono>
@@ -102,7 +102,7 @@ function AddFile({ caseId }: { caseId: string }) {
           setBusy(true);
           setErr(null);
           try {
-            const url = await backend.uploadFile(picked.name, picked.uri, picked.mimeType ?? 'application/octet-stream');
+            const url = await backend.uploadFile(caseId, picked.name, picked.uri, picked.mimeType ?? 'application/octet-stream');
             await save('caseFiles', { id: newId('cf'), caseId, label: label.trim(), version: version.trim() || 'v1.0', url, addedAt: nowLocal() });
             setOpen(false);
             setLabel('');

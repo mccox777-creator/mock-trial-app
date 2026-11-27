@@ -36,11 +36,12 @@ Type check: `npx tsc --noEmit`
 ## Connect a real backend
 
 1. Create a Supabase project.
-2. Run `supabase/migrations/0001_initial.sql` in the SQL editor. It creates the tables, row-level security rules (organizers edit only their competitions, judges score only their own assigned trials, ballots hidden until results are published, case files hidden until release, recordings limited by visibility), lock triggers, an append-only change log, private `case-files` and `backups` storage buckets, and live-update publication.
+2. Run `supabase/migrations/0001_initial.sql`, then `0002_security.sql`, in the SQL editor. It creates the tables, row-level security rules (organizers edit only their competitions, judges score only their own assigned trials, ballots hidden until results are published, case files hidden until release, recordings limited by visibility), lock triggers, an append-only change log, private `case-files` and `backups` storage buckets, and live-update publication.
 3. Copy `.env.example` to `.env` and fill in the project URL and anon key.
 4. Restart `npx expo start`. The app now uses email sign-in codes and shared data.
-5. Ballot photo reading: `supabase secrets set ANTHROPIC_API_KEY=...`, then `supabase functions deploy read-ballot`.
-6. Backups: turn on Point-in-Time Recovery in the Supabase dashboard (paid plans), deploy `nightly-export`, and schedule it with pg_cron as described at the top of `supabase/functions/nightly-export/index.ts`. Every insert, update, and delete is also written to `change_log`, which nobody can edit.
+5. Work through the dashboard settings in [SECURITY.md](SECURITY.md).
+6. Ballot photo reading: `supabase secrets set ANTHROPIC_API_KEY=...`, then `supabase functions deploy read-ballot`.
+7. Backups: turn on Point-in-Time Recovery in the Supabase dashboard (paid plans), deploy `nightly-export`, and set its `BACKUP_CRON_SECRET`, and schedule it with pg_cron as described at the top of `supabase/functions/nightly-export/index.ts`. Every insert, update, and delete is also written to `change_log`, which nobody can edit.
 
 ## Ship to the stores
 
@@ -68,6 +69,7 @@ eas submit --platform all
 
 - Dates are typed as `YYYY-MM-DD`; native date pickers are next.
 - Co-organizers: a competition can list several directors, but there is no screen to invite one yet.
+- Teammates: coaches add members with the `add_team_member` database function; the screen for it is next.
 - Push notifications for bulletins and pairings are not wired up yet.
 - Elimination brackets after prelims are not built yet.
 - Case release times are compared in UTC on the server.
