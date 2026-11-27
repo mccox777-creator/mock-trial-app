@@ -33,9 +33,13 @@ export const CLASSES: { min: number; name: string }[] = [
 ];
 export const classOf = (r: number) => CLASSES.find((c) => r >= c.min)!.name;
 
-/** Lower is better: 0 won (or qualified out of a regional), 1 final, 2 semifinal, 3 quarterfinal, 4 octofinal, 5 took part. */
+/**
+ * Lower is better: 0 won (or qualified out of a regional), 1 final, 2 semifinal, 3 quarterfinal, 4 octofinal, 5 took part.
+ * A numbered place counts as one less than the place (3rd place = 2), so 4th still beats 5th; any place stays ahead of
+ * schools that only took part.
+ */
 export function finishTier(r: PastEvent['results'][number]) {
-  if (r.finish === 'place') return r.place === 1 ? 0 : r.place === 2 ? 1 : r.place === 3 ? 2 : 3;
+  if (r.finish === 'place') return r.place ? Math.min(r.place - 1, 4.5) : 4.5;
   return { winner: 0, advanced: 0, finalist: 1, semifinalist: 2, quarterfinalist: 3, octofinalist: 4 }[r.finish];
 }
 
@@ -52,9 +56,46 @@ export function fieldOf(e: PastEvent) {
   return best;
 }
 
-/** Oldest first: season, Fall before Spring, then in the order the record lists them (it lists newest first). */
+const MONTH: Record<string, number> = {
+  jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
+};
+/** First day of an imported event as YYYYMMDD, from its dates text ("October 2-4") and its term, or null if it has none. */
+export function startDay(e: PastEvent): number | null {
+  const m = (e.dates ?? '').match(/([A-Za-z]{3})[a-z]*\.?\s*(\d{1,2})/);
+  if (!m || !MONTH[m[1].toLowerCase()]) return null;
+  const first = Number(e.season.slice(0, 4));
+  const year = e.term === 'Fall' ? first : first + 1;
+  return year * 10000 + MONTH[m[1].toLowerCase()] * 100 + Number(m[2]);
+}
+
+/**
+ * Oldest first, by the date each competition started. A competition run in the app carries its date in ord
+ * (-YYYYMMDD). An imported one with no date takes the date of the one listed before it in the record (the record
+ * lists each term's competitions roughly in date order), or the start of its term. Same day: record order.
+ */
 export function chronological(events: PastEvent[]) {
-  return [...events].sort((a, b) => a.season.localeCompare(b.season) || (a.term === b.term ? b.ord - a.ord : a.term === 'Fall' ? -1 : 1));
+  const key = new Map<PastEvent, number>();
+  const byTerm = new Map<string, PastEvent[]>();
+  for (const e of events) {
+    if (e.tournamentId) key.set(e, -e.ord);
+    else {
+      const k = `${e.season} ${e.term}`;
+      if (!byTerm.has(k)) byTerm.set(k, []);
+      byTerm.get(k)!.push(e);
+    }
+  }
+  for (const list of byTerm.values()) {
+    list.sort((a, b) => a.ord - b.ord);
+    const first = Number(list[0].season.slice(0, 4));
+    let last = list[0].term === 'Fall' ? first * 10000 + 801 : (first + 1) * 10000 + 101;
+    for (const e of list) {
+      last = startDay(e) ?? last;
+      key.set(e, last);
+    }
+  }
+  return [...events].sort(
+    (a, b) => key.get(a)! - key.get(b)! || Number(!!a.tournamentId) - Number(!!b.tournamentId) || a.ord - b.ord,
+  );
 }
 
 export interface EloChange {
@@ -64,6 +105,14 @@ export interface EloChange {
   /** Finished ahead of / behind, counting only schools in a different round. */
   ahead: number;
   behind: number;
+  /** Inputs, so anyone can check: after = before + k x weight x (ahead - expected). */
+  k: number;
+  /** min(8, schools - 1) / (schools - 1): scales an event to at most 8 games. */
+  weight: number;
+  /** Sum of the expected scores against every school in a different round. */
+  expected: number;
+  /** Finishing tier at this event (lower is better). */
+  tier: number;
 }
 export interface EloRow {
   school: string;
@@ -83,12 +132,14 @@ export function computeElo(events: PastEvent[]): Map<string, EloRow> {
   };
   for (const e of chronological(events)) {
     const field = [...fieldOf(e)];
-    if (field.length < 2) continue;
+    // An event with no results (everyone in the same round) tells us nothing about who is stronger.
+    if (new Set(field.map(([, t]) => t)).size < 2) continue;
     const pre = new Map(field.map(([s]) => [s, row(s).rating]));
     const games = Math.min(GAMES_PER_EVENT, field.length - 1) / (field.length - 1);
     for (const [s, tier] of field) {
       const me = row(s);
       let score = 0;
+      let exp = 0;
       let ahead = 0;
       let behind = 0;
       for (const [o, ot] of field) {
@@ -98,13 +149,16 @@ export function computeElo(events: PastEvent[]): Map<string, EloRow> {
         if (won) ahead++;
         else behind++;
         score += won - expected;
+        exp += expected;
       }
+      if (ahead + behind === 0) continue; // played nobody in a different round: not counted for this school
       const before = pre.get(s)!;
-      const after = before + kFactor(before, me.events) * games * score;
+      const k = kFactor(before, me.events);
+      const after = before + k * games * score;
       me.rating = after;
       me.peak = Math.max(me.peak, after);
       me.events += 1;
-      me.history.push({ eventId: e.id, before, after, ahead, behind });
+      me.history.push({ eventId: e.id, before, after, ahead, behind, k, weight: games, expected: exp, tier });
     }
   }
   for (const r of rows.values()) r.provisional = r.events < PROVISIONAL_UNDER;

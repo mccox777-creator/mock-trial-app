@@ -311,7 +311,7 @@ export interface PastEvent {
   participants: string[];
   /** The source text had a line the importer couldn't read; worth a look. */
   needsReview: boolean;
-  /** Position in the source record, newest first. */
+  /** Position in the source record: terms newest first, competitions within a term roughly oldest first. */
   ord: number;
   /** Set when this comes from a competition run in the app (added once it closes), not the imported record. */
   tournamentId?: string;
