@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'react-native-url-polyfill/auto';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { sessionStorage } from './secureStorage';
-import type { AppData, Profile } from './types';
+import type { AppData, Notice, NotificationPrefs, Profile } from './types';
 import { sampleData, DEMO_USERS } from './sampleData';
 
 export type TableName = keyof AppData;
@@ -35,6 +35,12 @@ export interface Backend {
   fileLink(ref: string): Promise<string>;
   /** Read a photographed paper ballot. */
   readBallot(matchId: string, imageBase64: string, mediaType: string, lines: string[]): Promise<BallotReading>;
+  getPrefs(): Promise<NotificationPrefs | null>;
+  savePrefs(p: NotificationPrefs): Promise<void>;
+  /** Remember this phone so it can get alerts. */
+  registerPushToken(token: string, platform: string): Promise<void>;
+  inbox(): Promise<Notice[]>;
+  markRead(ids: number[]): Promise<void>;
   /** Demo mode only: act as one of the sample users. */
   switchDemoUser?(who: keyof typeof DEMO_USERS | null): Promise<void>;
   /** Demo mode only: restore the sample season. */
@@ -50,6 +56,12 @@ const EMPTY: AppData = {
 
 const DEMO_KEY = 'mocktrial.demo.v4';
 const DEMO_USER_KEY = 'mocktrial.demo.user';
+const DEMO_PREFS_KEY = 'mocktrial.demo.prefs';
+const DEMO_INBOX: Notice[] = [
+  { id: 3, kind: 'judges_needed', title: 'Judges needed: Spring Invitational Championship', body: 'Ridgeview needs 6 more judges for Rounds 1 to 4, March 12 to 14.', link: '/tournament/spring-championship', createdAt: '2026-11-26T15:00:00', readAt: null },
+  { id: 2, kind: 'chat', title: 'Demo Director · Winter Trial Classic', body: 'Use the 3rd Street garage. We will validate parking at check-in.', link: '/tournament/winter-classic', createdAt: '2026-11-20T10:30:00', readAt: null },
+  { id: 1, kind: 'new_competition', title: 'New competition: Winter Trial Classic', body: 'Jan 22, 2027 in Pinecrest. Registration closes Dec 18.', link: '/tournament/winter-classic', createdAt: '2026-11-02T09:00:00', readAt: '2026-11-02T12:00:00' },
+];
 
 function demoBackend(): Backend {
   let cache: AppData | null = null;
@@ -102,6 +114,22 @@ function demoBackend(): Backend {
     async signIn() {
       return { needsCode: false };
     },
+    async getPrefs() {
+      try {
+        const raw = await AsyncStorage.getItem(DEMO_PREFS_KEY);
+        return raw ? (JSON.parse(raw) as NotificationPrefs) : null;
+      } catch {
+        return null;
+      }
+    },
+    async savePrefs(p) {
+      await AsyncStorage.setItem(DEMO_PREFS_KEY, JSON.stringify(p));
+    },
+    async registerPushToken() {},
+    async inbox() {
+      return DEMO_INBOX;
+    },
+    async markRead() {},
     async uploadFile(_caseId, _name, uri) {
       return uri; // demo mode keeps the file on this device only
     },
@@ -213,6 +241,28 @@ function supabaseBackend(url: string, anonKey: string): Backend {
     },
     async signOut() {
       await sb.auth.signOut();
+    },
+    async getPrefs() {
+      const { data } = await sb.from('notification_prefs').select('*').maybeSingle();
+      return data ? (mapKeys(data, toCamel) as unknown as NotificationPrefs) : null;
+    },
+    async savePrefs(p) {
+      const { data: u } = await sb.auth.getUser();
+      if (!u.user) throw new Error('Sign in first.');
+      const { error } = await sb.from('notification_prefs').upsert({ ...mapKeys(p as unknown as Record<string, unknown>, toSnake), user_id: u.user.id, updated_at: new Date().toISOString() });
+      if (error) throw error;
+    },
+    async registerPushToken(token, platform) {
+      const { data: u } = await sb.auth.getUser();
+      if (!u.user) return;
+      await sb.from('push_tokens').upsert({ token, platform, user_id: u.user.id });
+    },
+    async inbox() {
+      const { data } = await sb.from('notifications').select('id, kind, title, body, link, created_at, read_at').order('created_at', { ascending: false }).limit(50);
+      return (data ?? []).map((r) => mapKeys(r, toCamel) as unknown as Notice);
+    },
+    async markRead(ids) {
+      if (ids.length) await sb.from('notifications').update({ read_at: new Date().toISOString() }).in('id', ids);
     },
     async readBallot(matchId, imageBase64, mediaType, lines) {
       const { data, error } = await sb.functions.invoke('read-ballot', { body: { matchId, imageBase64, mediaType, lines } });
