@@ -3,8 +3,13 @@
 {
   "name": "mock-trial-app",
   "compatibility_date": "2026-11-01",
+  // Serves /api/ratings (the public Elo leaderboard); every other request goes straight to the app files.
+  "main": "worker/index.ts",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    // Only /api/* runs the code above; the app's pages and files are served without it.
+    "run_worker_first": ["/api/*"],
     // Every path (like /tournament/abc) loads the app, which then shows the right screen.
     "not_found_handling": "single-page-application"
   }
