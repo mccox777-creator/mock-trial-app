@@ -35,7 +35,9 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "backup": "node scripts/backup.mjs",
-    "restore": "node scripts/restore.mjs"
+    "restore": "node scripts/restore.mjs",
+    "import-history": "node scripts/import-history.mjs",
+    "check:elo": "node --experimental-strip-types --no-warnings scripts/check-elo.ts"
   },
   "private": true
 }

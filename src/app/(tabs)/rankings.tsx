@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { Body, Card, DateBlock, Empty, H2, Label, LevelSwitcher, Loading, Pill, Row, Screen, Segmented } from '../../components/ui';
 import { StandingsTable } from '../../components/StandingsTable';
+import { CircuitHistory } from '../../components/CircuitHistory';
 import { useLevelData, useStore } from '../../lib/store';
 import { computeStandings, teamName } from '../../lib/scoring';
 import { fmtRange, todayLocal } from '../../lib/format';
@@ -13,7 +14,7 @@ export default function ResultsScreen() {
   const d = useLevelData();
   const { data } = useStore();
   const c = useTheme();
-  const [view, setView] = useState<'rankings' | 'archive'>('rankings');
+  const [view, setView] = useState<'rankings' | 'archive' | 'history'>('rankings');
   const [scope, setScope] = useState<string>('season');
 
   // Only published competitions count toward public rankings and the archive.
@@ -34,9 +35,11 @@ export default function ResultsScreen() {
   return (
     <Screen>
       <LevelSwitcher />
-      <Segmented value={view} onChange={setView} options={[{ id: 'rankings', label: 'Rankings' }, { id: 'archive', label: 'Past events' }]} />
+      <Segmented value={view} onChange={setView} options={[{ id: 'rankings', label: 'Rankings' }, { id: 'archive', label: 'In the app' }, { id: 'history', label: 'Circuit history' }]} />
 
-      {view === 'rankings' ? (
+      {view === 'history' ? (
+        <CircuitHistory />
+      ) : view === 'rankings' ? (
         <>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: space.sm }}>
             {chips.map((ch) => {

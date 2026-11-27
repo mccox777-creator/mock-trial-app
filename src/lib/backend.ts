@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'react-native-url-polyfill/auto';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { sessionStorage } from './secureStorage';
-import type { AppData, Notice, NotificationPrefs, Profile } from './types';
+import type { AppData, Level, Notice, NotificationPrefs, PastEvent, Profile } from './types';
 import { sampleData, DEMO_USERS } from './sampleData';
 
 export type TableName = keyof AppData;
@@ -43,6 +43,8 @@ export interface Backend {
   markRead(ids: number[]): Promise<void>;
   /** Demo mode only: act as one of the sample users. */
   switchDemoUser?(who: keyof typeof DEMO_USERS | null): Promise<void>;
+  /** Past competitions imported from the circuit's records (read-only). */
+  loadHistory(level: Level): Promise<PastEvent[]>;
   /** Demo mode only: restore the sample season. */
   resetDemo?(): Promise<void>;
 }
@@ -74,6 +76,11 @@ function demoBackend(): Backend {
   };
   return {
     kind: 'demo',
+    async loadHistory(level) {
+      if (level !== 'law_school') return [];
+      // Bundled with the app (no separate download), read only when someone opens the history.
+      return require('../data/history-law-school.json') as PastEvent[];
+    },
     async load() {
       if (!cache) {
         try {
@@ -198,6 +205,17 @@ function supabaseBackend(url: string, anonKey: string): Backend {
         data.ballots.push({ id: r.id, matchId: r.match_id, judge: 'Ballot', judgeId: null, source: 'paper', sheet: null, comments: null, pScore: Number(r.p_score), dScore: Number(r.d_score), enteredBy: '', enteredAt: '' });
       }
       return data;
+    },
+    async loadHistory(level) {
+      const out: PastEvent[] = [];
+      // Page through: a season list runs to several hundred rows.
+      for (let from = 0; ; from += 1000) {
+        const { data, error } = await sb.from('past_events').select('*').eq('level', level).order('ord', { ascending: true }).range(from, from + 999);
+        if (error) throw error;
+        out.push(...(data ?? []).map((r) => mapKeys(r, toCamel) as unknown as PastEvent));
+        if (!data || data.length < 1000) break;
+      }
+      return out;
     },
     async upsert(table, row) {
       const { error } = await sb.from(TABLES[table]).upsert(mapKeys(row as unknown as Record<string, unknown>, toSnake));

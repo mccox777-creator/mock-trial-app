@@ -1,6 +1,6 @@
 import os, subprocess, sys, uuid
 # Attack tests for the database rules. Needs a scratch Postgres 15+ (never a real project):
-#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0004_notifications.sql
+#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0004_notifications.sql -f supabase/migrations/0006_past_results.sql
 #   PGARGS='-h localhost -U postgres -d t' python3 supabase/tests/security_test.py
 PG = os.environ.get('PGARGS', '-d t').split()
 U = {n: str(uuid.uuid5(uuid.NAMESPACE_DNS, n)) for n in ['org','org2','judge','judge2','coachA','coachB','compA','evil']}
@@ -157,6 +157,13 @@ ok('organizer asks for judges', "insert into bulletins (id, level, tournament_id
 ok('willing judge hears the call', "select count(*) from notifications where kind='judges_needed'", 'judge2', 1)
 blocked('non-organizer posts a judge call', "insert into bulletins (id, level, tournament_id, kind, title, body, posted_at, posted_by) values ('bj2','law_school','T5','judges_needed','x','x','now','" + U['evil'] + "')", 'evil')
 blocked('push token saved for someone else', "insert into push_tokens (token, user_id) values ('ExponentPushToken[x]','" + U['coachA'] + "')", 'evil')
+
+# Past results (0006): readable by everyone, writable by no app user
+psql("insert into past_events (id, level, season, term, name, results, participants) values ('2025-26-fall-x', 'law_school', '2025-26', 'Fall', 'X Cup', '[{\"school\":\"UCLA\",\"team\":\"UCLA\",\"finish\":\"winner\",\"place\":1}]', '[\"UCLA\"]')", superuser=True)
+ok('anyone reads past results', "select count(*) from past_events", None, '1')
+blocked('organizer adds a fake past result', "insert into past_events (id, level, season, term, name) values ('2025-26-fall-fake', 'law_school', '2025-26', 'Fall', 'Fake')", 'org')
+blocked('signed-in user rewrites a past winner', "update past_events set results='[]' where id='2025-26-fall-x' returning id", 'evil', '')
+blocked('signed-in user deletes past results', "delete from past_events returning id", 'evil', '')
 
 print(f'\n{fails} failing')
 sys.exit(1 if fails else 0)
