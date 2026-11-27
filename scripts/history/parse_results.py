@@ -1,6 +1,7 @@
 """Parse Chris's law school results document (text export) into structured JSON.
 
-Usage: python3 parse_results.py results.txt out.json
+Usage: python3 parse_results.py results.txt out.json [app.json]
+Gaps in the record are then filled from tcpr_gaps.json (next to this script); those rows are marked source "TCPR".
 Each competition block ends with its "PARTICIPATING SCHOOLS:" line. Lines that can't be read are kept
 in `unparsed` on the event so nothing is silently lost.
 """
@@ -32,6 +33,8 @@ ALIASES = {
     'st thomas': 'St. Thomas', 'st. thomas (florida)': 'St. Thomas (FL)', 'st. thomas (minnesota)': 'St. Thomas (MN)',
     'boston': 'Boston University', 'bu': 'Boston University', 'ole miss': 'Mississippi', 'puerto rico': 'University of Puerto Rico',
     'upr': 'University of Puerto Rico', 'university of chicago': 'University of Chicago',
+    # St. Thomas (FL)'s law school is the Benjamin L. Crump College of Law; TCPR confirms it at the 2023 Community Competition.
+    'benjamin crump': 'St. Thomas (FL)', 'benjamin crump (st. thomas)': 'St. Thomas (FL)', 'arkansas - little rock': 'Arkansas Little Rock',
 }
 
 # Typos in the source where two schools ran together with no comma, or a name was doubled.
@@ -300,6 +303,39 @@ def smart_title(s):
     return ' '.join(out)
 
 
+def apply_tcpr(evs, path):
+    """Fill gaps in the record from the TCPR spreadsheet (see tcpr_gaps.json). Never replaces a result already there."""
+    gaps = json.load(open(path, encoding='utf-8'))
+    def find(m):
+        name = lambda e: re.sub(r'\(\s*\)', '', e['name'] or '').strip()
+        hits = [e for e in evs if e['season'] == m['season'] and e['term'] == m['term'] and name(e) == m['name']
+                and (not m.get('host') or (e['host'] or '') == m['host'])]
+        if len(hits) != 1:
+            raise SystemExit(f"tcpr_gaps.json: {len(hits)} events match {m}")
+        return hits[0]
+    def row(r):
+        school, team = split_team(r['team'])
+        return {'school': school, 'team': team, 'finish': r['finish'], 'place': r.get('place'), 'source': 'TCPR'}
+    for f in gaps['fill']:
+        ev = find(f)
+        for r in f['add']:
+            new = row(r)
+            if any(x['team'] == new['team'] for x in ev['results']):
+                raise SystemExit(f"tcpr_gaps.json: {new['team']} already has a result at {ev['name']}")
+            if new['place'] and any(x['place'] == new['place'] for x in ev['results']):
+                raise SystemExit(f"tcpr_gaps.json: place {new['place']} already taken at {ev['name']}")
+            ev['results'].append(new)
+    for g in gaps['events']:
+        at = evs.index(find(g['after'])) + 1
+        d = g['event']
+        ev = {'term': g['after']['term'], 'season': g['after']['season'], 'year': None, 'host': d['host'], 'name': d['name'],
+              'region': None, 'dates': d['dates'], 'teams': d['teams'], 'schools': d['schools'],
+              'results': [row(r) for r in d['results']], 'participants': [dict(zip(('school', 'team'), split_team(t))) for t in d['participants']],
+              'unparsed': [], 'source': [], 'tcpr': True}
+        evs.insert(at, ev)
+    return evs
+
+
 def for_app(evs, level='law_school'):
     """Slim rows for the app and the past_events table."""
     out, used = [], set()
@@ -317,17 +353,18 @@ def for_app(evs, level='law_school'):
         out.append({
             'id': rid, 'level': level, 'season': e['season'], 'term': e['term'], 'name': name, 'host': e['host'], 'region': e['region'],
             'dates': e['dates'], 'teamCount': e['teams'], 'schoolCount': e['schools'],
-            'results': [{k: r[k] for k in ('school', 'team', 'finish', 'place')} for r in e['results']],
+            'results': [{k: r[k] for k in ('school', 'team', 'finish', 'place', 'source') if k in r} for r in e['results']],
             'participants': [p['team'] for p in e['participants']],
             'needsReview': bool(e['unparsed']),
             'ord': len(out),
+            **({'source': 'TCPR'} if e.get('tcpr') else {}),
         })
     return out
 
 
 if __name__ == '__main__':
     lines = open(sys.argv[1], encoding='utf-8').read().split('\n')
-    evs = parse(lines)
+    evs = apply_tcpr(parse(lines), __file__.rsplit('/', 1)[0] + '/tcpr_gaps.json')
     json.dump(evs, open(sys.argv[2], 'w'), indent=1, ensure_ascii=False)
     if len(sys.argv) > 3:
         json.dump(for_app(evs), open(sys.argv[3], 'w'), ensure_ascii=False, separators=(',', ':'))

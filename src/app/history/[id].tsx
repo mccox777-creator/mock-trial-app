@@ -34,7 +34,10 @@ export default function PastEventScreen() {
           {results.map((r, i) => (
             <Pressable key={`${r.team}-${i}`} onPress={() => go(r.team)} accessibilityRole="button" style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.md, paddingVertical: 10, borderBottomWidth: 1, borderColor: c.line, gap: space.sm }}>
               <Text style={{ width: 110, color: r.finish === 'winner' || r.finish === 'advanced' ? c.good : c.muted, fontWeight: '700' }}>{finishText(r)}</Text>
-              <Text style={{ flex: 1, color: c.ink, fontSize: 16 }}>{r.team}</Text>
+              <Text style={{ flex: 1, color: c.ink, fontSize: 16 }}>
+                {r.team}
+                {r.source === 'TCPR' && <Text style={{ color: c.muted, fontSize: 13 }}>{'  from TCPR'}</Text>}
+              </Text>
               {changes?.get(r.school) && <Text style={{ color: c.muted, fontVariant: ['tabular-nums'] }}>{`ELO ${fmtChange(changes.get(r.school)!)}`}</Text>}
             </Pressable>
           ))}
@@ -54,7 +57,15 @@ export default function PastEventScreen() {
         </>
       )}
       <Row>
-        <Body muted>{e.tournamentId ? 'Run in the app. Added to the record and the Mock Trial ELO Ratings when it closed, from its final standings.' : "From the circuit's published results record."}{e.needsReview ? ' Part of this entry could not be read automatically; the organizer may want to check it.' : ''}</Body>
+        <Body muted>
+          {e.tournamentId
+            ? 'Run in the app. Added to the record and the Mock Trial ELO Ratings when it closed, from its final standings.'
+            : e.source === 'TCPR'
+              ? 'Missing from the circuit record; the field and results come from the Trial Competition Performance Rankings (TCPR). Its date is not known.'
+              : "From the circuit's published results record."}
+          {!e.source && e.results.some((r) => r.source === 'TCPR') ? ' Results marked "from TCPR" were missing from the record and are filled in from the Trial Competition Performance Rankings.' : ''}
+          {e.needsReview ? ' Part of this entry could not be read automatically; the organizer may want to check it.' : ''}
+        </Body>
       </Row>
     </Screen>
   );

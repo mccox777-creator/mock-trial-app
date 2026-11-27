@@ -1,0 +1,22 @@
+{
+  "about": "Results missing from the circuit record, filled from the Trial Competition Performance Rankings (TCPR) spreadsheet. Only gaps are filled: a result is added only where the record has no result for that school at that competition and the slot is open. Nothing that conflicts with the record is changed, and nothing before Spring 2023 is added. Every row added here is marked source: TCPR in the app data.",
+  "fill": [
+    {"season": "2023-24", "term": "Fall", "name": "National Civil Trial Competition", "host": "St. John",
+     "add": [{"team": "Rutgers", "finish": "semifinalist"}, {"team": "William & Mary", "finish": "semifinalist"}]},
+    {"season": "2024-25", "term": "Spring", "name": "Syracuse's Military Law Trial Winner",
+     "add": [{"team": "UMKC", "finish": "winner", "place": 1}, {"team": "Texas Tech", "finish": "finalist", "place": 2},
+             {"team": "Stetson", "finish": "semifinalist"}, {"team": "Illinois", "finish": "semifinalist"}]},
+    {"season": "2025-26", "term": "Fall", "name": "Kent, Depaul, UIC, Loyola CHICAGO CUP TRIAL COMPETITION",
+     "add": [{"team": "Maryland", "finish": "semifinalist"}, {"team": "Illinois 2", "finish": "semifinalist"}]},
+    {"season": "2025-26", "term": "Spring", "name": "Estrella Trial Competition",
+     "add": [{"team": "Colorado", "finish": "semifinalist"}]}
+  ],
+  "events": [
+    {"after": {"season": "2024-25", "term": "Spring", "name": "Syracuse's Military Law Trial Winner"},
+     "event": {"name": "National Criminal Trial Competition", "host": "Chapman", "dates": null, "teams": 10, "schools": 7,
+               "note": "Not in the circuit record. Field and results from TCPR; date not known, so it is placed beside the 2026 edition's date (March 20-22).",
+               "results": [{"team": "UCLA", "finish": "winner", "place": 1}, {"team": "UCLA 2", "finish": "finalist", "place": 2},
+                           {"team": "Pepperdine", "finish": "semifinalist"}],
+               "participants": ["UCLA 1", "UCLA 2", "Pepperdine 1", "Pepperdine 2", "San Diego", "USC", "St. Mary's", "Western State 1", "Western State 2", "Wilmington"]}}
+  ]
+}

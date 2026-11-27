@@ -59,6 +59,7 @@ const STEPS: { title: string; body: string[] }[] = [
 const DATA_NOTES = [
   'The results come from the circuit record of law school competitions, Spring 2023 through the current term, read line by line by a script that is published with the app.',
   'Names are matched to one school: nicknames and typos (for example "Johns", "Ole Miss", "Nova SE") become the school’s full name, and St. Thomas is assigned to Florida or Minnesota wherever the record or the other schools there make it clear.',
+  'Where the record is missing a result, it is filled in from the Trial Competition Performance Rankings (TCPR), used as a backstop: only empty places are filled, nothing in the record is changed, and nothing before Spring 2023 is added. Each one is marked "from TCPR" on its competition page and in the data.',
   'Known gaps: a few results name "St. Thomas" or "Loyola" without saying which school, so they are rated separately until confirmed. Online competitions split into divisions are rated as one competition. Some participant lists in the record are shorter than the team count, so a few schools that took part may be missing from those events.',
 ];
 
