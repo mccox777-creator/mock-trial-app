@@ -24,6 +24,7 @@ function Nav() {
       <Stack.Screen name="tournament/[id]" options={{ title: '' }} />
       <Stack.Screen name="team/[id]" options={{ title: 'Team' }} />
       <Stack.Screen name="match/[id]" options={{ title: 'Trial' }} />
+      <Stack.Screen name="timer" options={{ title: 'Trial timer' }} />
       <Stack.Screen name="case/[id]" options={{ title: 'Case file' }} />
       <Stack.Screen name="history/[id]" options={{ title: 'Past competition' }} />
       <Stack.Screen name="history/school" options={{ title: 'School record' }} />

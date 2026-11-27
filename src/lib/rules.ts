@@ -60,6 +60,7 @@ export const RULE_GROUPS: RuleGroup[] = [
   {
     title: 'Time limits',
     rules: [
+      { id: 'timeTotal', label: 'Total time per side', help: 'One clock per side covering the whole trial.', value: { id: 'totalMinutes', label: 'Per side', unit: 'minutes', default: 70 } },
       { id: 'timeOpening', label: 'Opening statement limit', value: { id: 'openingMinutes', label: 'Per side', unit: 'minutes', default: 5 } },
       { id: 'timeDirect', label: 'Direct and redirect limit', value: { id: 'directMinutes', label: 'Per side, all witnesses', unit: 'minutes', default: 25 } },
       { id: 'timeCross', label: 'Cross and recross limit', value: { id: 'crossMinutes', label: 'Per side, all witnesses', unit: 'minutes', default: 20 } },

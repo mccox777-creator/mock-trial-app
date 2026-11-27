@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { View } from 'react-native';
 import { Body, Button, Card, Empty, Field, H2, Label, Loading, Mono, Pill, Row, Screen, Segmented, SideTag } from '../../components/ui';
@@ -85,6 +85,8 @@ export default function MatchScreen() {
           <Body muted>The organizer releases results after the competition.</Body>
         ) : null}
       </Card>
+
+      <Button title="Open the trial timer" kind="secondary" onPress={() => router.push(`/timer?match=${m.id}`)} />
 
       {amJudge && (
         <>
