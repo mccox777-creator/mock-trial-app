@@ -1,4 +1,5 @@
-// Load past competitions into the live database. Dry run unless --yes.
+// Optional: the app already ships with src/data/history-law-school.json. Use this only to add or correct
+// entries in the live database without a new app release. Dry run unless --yes.
 //   npm run import-history -- src/data/history-law-school.json [--yes]
 // Uses SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY from scripts/backup.env (never commit that file).
 import { readFileSync, existsSync } from 'node:fs';

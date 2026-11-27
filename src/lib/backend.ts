@@ -5,6 +5,11 @@ import { sessionStorage } from './secureStorage';
 import type { AppData, Level, Notice, NotificationPrefs, PastEvent, Profile } from './types';
 import { sampleData, DEMO_USERS } from './sampleData';
 
+/** The circuit record that ships with the app: read only when someone opens the history. */
+function bundledHistory(level: Level): PastEvent[] {
+  return level === 'law_school' ? (require('../data/history-law-school.json') as PastEvent[]) : [];
+}
+
 export type TableName = keyof AppData;
 
 /** What the ballot scanner read off a photo. Organizer confirms before anything is saved. */
@@ -77,9 +82,7 @@ function demoBackend(): Backend {
   return {
     kind: 'demo',
     async loadHistory(level) {
-      if (level !== 'law_school') return [];
-      // Bundled with the app (no separate download), read only when someone opens the history.
-      return require('../data/history-law-school.json') as PastEvent[];
+      return bundledHistory(level);
     },
     async load() {
       if (!cache) {
@@ -215,7 +218,10 @@ function supabaseBackend(url: string, anonKey: string): Backend {
         out.push(...(data ?? []).map((r) => mapKeys(r, toCamel) as unknown as PastEvent));
         if (!data || data.length < 1000) break;
       }
-      return out;
+      // The circuit record ships with the app, so nothing has to be imported. Rows in the database
+      // (added later, or corrections) take the place of the shipped entry with the same id.
+      const have = new Set(out.map((e) => e.id));
+      return [...bundledHistory(level).filter((e) => !have.has(e.id)), ...out];
     },
     async upsert(table, row) {
       const { error } = await sb.from(TABLES[table]).upsert(mapKeys(row as unknown as Record<string, unknown>, toSnake));
