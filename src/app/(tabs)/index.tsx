@@ -18,6 +18,10 @@ export default function ScheduleScreen() {
   const nextRelease = d.cases.filter((c) => c.releaseAt > nowLocal()).sort((a, b) => a.releaseAt.localeCompare(b.releaseAt))[0];
   const nextDeadline = upcoming.filter((t) => t.status === 'registration_open' && t.registrationDeadline >= today).sort((a, b) => a.registrationDeadline.localeCompare(b.registrationDeadline))[0];
   const levelLabel = LEVELS.find((l) => l.id === level)!.label;
+  // Competitions whose organizers asked for judges, that this person hasn't volunteered for yet.
+  const judgeCalls = upcoming.filter(
+    (t) => d.bulletins.some((b) => b.tournamentId === t.id && b.kind === 'judges_needed') && !(me && d.judgeSignups.some((j) => j.tournamentId === t.id && j.userId === me.id)) && !(me && t.directorIds.includes(me.id)),
+  );
 
   return (
     <Screen>
@@ -40,6 +44,21 @@ export default function ScheduleScreen() {
       )}
 
       <Button title="Create a competition" onPress={() => router.push('/tournament/new')} />
+
+      {judgeCalls.length > 0 && (
+        <>
+          <Label style={{ marginTop: space.sm }}>Judges needed</Label>
+          {judgeCalls.map((t) => (
+            <Card key={t.id}>
+              <H2 numberOfLines={2}>{t.name}</H2>
+              <Body muted>
+                {fmtRange(t.startDate, t.endDate)} · {t.city || t.hostName}
+              </Body>
+              <Button small title={me ? 'Volunteer to judge' : 'Sign in to volunteer'} onPress={() => router.push(me ? `/tournament/judge?id=${t.id}` : '/account')} />
+            </Card>
+          ))}
+        </>
+      )}
 
       <Label style={{ marginTop: space.sm }}>Upcoming and in session</Label>
       {upcoming.length === 0 ? (

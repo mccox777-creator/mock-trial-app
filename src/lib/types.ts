@@ -213,7 +213,34 @@ export interface TrialCase {
   createdBy: string;
 }
 
-export type BulletinKind = 'general' | 'case' | 'schedule' | 'results';
+export type BulletinKind = 'general' | 'case' | 'schedule' | 'results' | 'judges_needed';
+
+export type NoticeKind = 'my_competitions' | 'chat' | 'results' | 'new_competition' | 'case_release' | 'judges_needed';
+
+/** What a person wants to hear about, and how. */
+export interface NotificationPrefs {
+  /** Circuits followed for circuit-wide notices. Your own competitions always count. */
+  levels: Level[];
+  kinds: NoticeKind[];
+  push: boolean;
+  email: boolean;
+  /** One email a day instead of one per notice. */
+  emailDigest: boolean;
+  willingToJudge: boolean;
+  judgeLevels: Level[];
+  judgeRegion: string;
+}
+
+/** One entry in a person's inbox. */
+export interface Notice {
+  id: number;
+  kind: NoticeKind;
+  title: string;
+  body: string;
+  link: string;
+  createdAt: string;
+  readAt: string | null;
+}
 
 export interface Bulletin {
   id: string;

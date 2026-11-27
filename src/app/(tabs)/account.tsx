@@ -43,6 +43,10 @@ export default function AccountScreen() {
         <>
           <H1>{me.name}</H1>
           <Body muted>{me.email}</Body>
+          <Card onPress={() => router.push('/notifications')}>
+            <H2>Notifications</H2>
+            <Body muted>Your inbox, which circuits you follow, phone alerts and email, and whether you're willing to judge.</Body>
+          </Card>
 
           <Label>Competitions you run</Label>
           {directing.length === 0 ? (

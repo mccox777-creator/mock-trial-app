@@ -18,6 +18,7 @@ function Nav() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="tournament/new" options={{ title: 'New competition', presentation: 'modal' }} />
       <Stack.Screen name="tournament/register" options={{ title: 'Sign up', presentation: 'modal' }} />
+      <Stack.Screen name="notifications" options={{ title: 'Notifications' }} />
       <Stack.Screen name="tournament/judge" options={{ title: 'Volunteer to judge', presentation: 'modal' }} />
       <Stack.Screen name="tournament/pair" options={{ title: 'Pair a round' }} />
       <Stack.Screen name="tournament/[id]" options={{ title: '' }} />

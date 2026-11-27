@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { createBackend, type Backend, type TableName } from './backend';
+import { openAlertsOnTap, registerForPush } from './push';
 import type { AppData, Level, PastEvent, Profile, Tournament } from './types';
 import { DEMO_USERS } from './sampleData';
 
@@ -45,6 +46,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     refreshUser();
     return backend.subscribe(refresh);
   }, [backend, refresh, refreshUser]);
+
+  useEffect(() => openAlertsOnTap(), []);
+  useEffect(() => {
+    if (me?.id) registerForPush(backend);
+  }, [backend, me?.id]);
 
   const value = useMemo<StoreValue>(
     () => ({

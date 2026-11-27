@@ -5,6 +5,7 @@ export const KIND_LABEL: Record<BulletinKind, string> = {
   case: 'Case bulletin',
   schedule: 'Schedule',
   results: 'Results',
+  judges_needed: 'Judges needed',
 };
 
 export const REG_LABEL: Record<RegistrationStatus, string> = {
