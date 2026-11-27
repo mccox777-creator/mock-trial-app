@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'react-native-url-polyfill/auto';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { sessionStorage } from './secureStorage';
 import type { AppData, Profile } from './types';
 import { sampleData, DEMO_USERS } from './sampleData';
 
@@ -28,8 +29,10 @@ export interface Backend {
   signIn(email: string): Promise<{ needsCode: boolean }>;
   verifyCode?(email: string, code: string): Promise<void>;
   signOut(): Promise<void>;
-  /** Store a picked file (case packet, exhibit) and return a URL to open it. */
-  uploadFile(name: string, uri: string, mimeType: string): Promise<string>;
+  /** Store a picked file (case packet, exhibit) for a case and return a reference to save on the file record. */
+  uploadFile(caseId: string, name: string, uri: string, mimeType: string): Promise<string>;
+  /** Turn a saved file reference into a link to open now. Private files get a short-lived link, checked against the release time. */
+  fileLink(ref: string): Promise<string>;
   /** Read a photographed paper ballot. */
   readBallot(matchId: string, imageBase64: string, mediaType: string, lines: string[]): Promise<BallotReading>;
   /** Demo mode only: act as one of the sample users. */
@@ -99,8 +102,11 @@ function demoBackend(): Backend {
     async signIn() {
       return { needsCode: false };
     },
-    async uploadFile(_name, uri) {
+    async uploadFile(_caseId, _name, uri) {
       return uri; // demo mode keeps the file on this device only
+    },
+    async fileLink(ref) {
+      return ref;
     },
     async readBallot(_matchId, _img, _type, lines) {
       // Demo mode has no server, so it simulates a reading to show the confirm step.
@@ -143,7 +149,7 @@ const mapKeys = (o: Record<string, unknown>, f: (k: string) => string) =>
 
 function supabaseBackend(url: string, anonKey: string): Backend {
   const sb: SupabaseClient = createClient(url, anonKey, {
-    auth: { storage: AsyncStorage, autoRefreshToken: true, persistSession: true, detectSessionInUrl: false },
+    auth: { storage: sessionStorage, autoRefreshToken: true, persistSession: true, detectSessionInUrl: false },
   });
   return {
     kind: 'supabase',
@@ -204,14 +210,20 @@ function supabaseBackend(url: string, anonKey: string): Backend {
       if (data?.error) throw new Error(data.error);
       return data as BallotReading;
     },
-    async uploadFile(name, uri, mimeType) {
+    async uploadFile(caseId, name, uri, mimeType) {
       const body = await (await fetch(uri)).arrayBuffer();
-      const path = `${Date.now()}-${name.replace(/[^A-Za-z0-9._-]/g, '_')}`;
+      // Files live under the case's folder; the database lets only the case's author or organizer
+      // upload there, and lets nobody else download until the release time.
+      const path = `${caseId}/${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}-${name.replace(/[^A-Za-z0-9._-]/g, '_').slice(-80)}`;
       const { error } = await sb.storage.from('case-files').upload(path, body, { contentType: mimeType });
       if (error) throw error;
-      // Private bucket: hand out a long-lived signed link. Access is still gated by the release date in the app.
-      const { data, error: e2 } = await sb.storage.from('case-files').createSignedUrl(path, 60 * 60 * 24 * 365);
-      if (e2) throw e2;
+      return `storage:case-files/${path}`;
+    },
+    async fileLink(ref) {
+      if (!ref.startsWith('storage:case-files/')) return ref;
+      // A fresh 5-minute link each time, so a shared link stops working quickly.
+      const { data, error } = await sb.storage.from('case-files').createSignedUrl(ref.slice('storage:case-files/'.length), 300);
+      if (error) throw new Error('This file is not available to you yet.');
       return data.signedUrl;
     },
   };

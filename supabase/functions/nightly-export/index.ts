@@ -6,7 +6,11 @@
 // Schedule: in the SQL editor (pg_cron + pg_net), run nightly at 3:00 AM UTC:
 //   select cron.schedule('nightly-export', '0 3 * * *', $$
 //     select net.http_post(url := '<project-url>/functions/v1/nightly-export',
-//       headers := jsonb_build_object('Authorization', 'Bearer <service-role-key>'));
+//       headers := jsonb_build_object('Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'backup_cron_secret')));
+// Secret:   pick a long random string, then
+//           supabase secrets set BACKUP_CRON_SECRET=<it>
+//           select vault.create_secret('<it>', 'backup_cron_secret');
+// The service-role key never leaves the function, and the cron job never stores it.
 //   $$);
 // For an off-provider copy, also sync the bucket to S3 or Google Drive (see README).
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -16,9 +20,21 @@ const TABLES = [
   'cases', 'case_files', 'bulletins', 'recordings', 'change_log',
 ];
 
+// Compare without leaking how much of the secret matched.
+async function sameSecret(a: string, b: string) {
+  const enc = new TextEncoder();
+  const [x, y] = await Promise.all([a, b].map((v) => crypto.subtle.digest('SHA-256', enc.encode(v))));
+  const p = new Uint8Array(x);
+  const q = new Uint8Array(y);
+  let diff = 0;
+  for (let i = 0; i < p.length; i++) diff |= p[i] ^ q[i];
+  return diff === 0;
+}
+
 Deno.serve(async (req) => {
+  const secret = Deno.env.get('BACKUP_CRON_SECRET') ?? '';
+  if (secret.length < 32 || !(await sameSecret(req.headers.get('Authorization') ?? '', `Bearer ${secret}`))) return new Response('Forbidden', { status: 403 });
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  if (req.headers.get('Authorization') !== `Bearer ${serviceKey}`) return new Response('Forbidden', { status: 403 });
   const sb = createClient(Deno.env.get('SUPABASE_URL')!, serviceKey);
   const day = new Date().toISOString().slice(0, 10);
   const report: Record<string, number> = {};

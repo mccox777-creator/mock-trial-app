@@ -1,0 +1,111 @@
+import os, subprocess, sys, uuid
+# Attack tests for the database rules. Needs a scratch Postgres 15+ (never a real project):
+#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql
+#   PGARGS='-h localhost -U postgres -d t' python3 supabase/tests/security_test.py
+PG = os.environ.get('PGARGS', '-d t').split()
+U = {n: str(uuid.uuid5(uuid.NAMESPACE_DNS, n)) for n in ['org','org2','judge','judge2','coachA','coachB','compA','evil']}
+def psql(sql, who=None, superuser=False):
+    pre = '' if superuser else (f"set local role authenticated; set local request.jwt.claim.sub = '{U[who]}';" if who else "set local role anon;")
+    r = subprocess.run(['psql', *PG,'-qtA','-v','ON_ERROR_STOP=1','-c', f"begin; {pre} {sql}; commit;"], capture_output=True, text=True)
+    return r.returncode == 0, (r.stdout.strip() or r.stderr.strip().split('\n')[0])
+fails = 0
+def ok(name, sql, who=None, expect=None):
+    global fails
+    good, out = psql(sql, who)
+    passed = good and (expect is None or out == str(expect))
+    print(('PASS ' if passed else 'FAIL ') + 'allowed: ' + name + ('' if passed else f'  -> {out}'))
+    fails += not passed
+def blocked(name, sql, who=None, rows_if_ok=None):
+    """Attack must error, or (for silent RLS filters) affect/see `rows_if_ok` rows."""
+    global fails
+    good, out = psql(sql, who)
+    passed = (not good) or (rows_if_ok is not None and out == str(rows_if_ok))
+    print(('PASS ' if passed else 'FAIL ') + 'blocked: ' + name + ('' if passed else f'  -> {out}') + (f'   [{out[:90]}]' if passed and not good else ''))
+    fails += not passed
+
+for n,u in U.items(): psql(f"insert into auth.users values ('{u}', '{n}@x.test')", superuser=True)
+F = "current_date + 30"
+T = lambda id, who, extra='': f"insert into tournaments (id, level, name, start_date, end_date, registration_deadline, team_cap, status, director_ids {',' + extra.split('|')[0] if extra else ''}) values ('{id}', 'law_school', '{id}', {F}, {F}+2, current_date+10, 2, 'registration_open', array['{U[who]}'::uuid] {',' + extra.split('|')[1] if extra else ''})"
+
+print('--- setup through the normal rules ---')
+ok('coach creates program', "insert into programs (id, name, level) values ('p1','Harbor','law_school')", 'coachA')
+ok('coach A creates team (becomes coach)', "insert into teams (id, program_id, name, level) values ('tA','p1','Harbor A','law_school')", 'coachA')
+ok('coach B creates team', "insert into teams (id, program_id, name, level) values ('tB','p1','Harbor B','law_school')", 'coachB')
+ok('profile mirrors membership', "select team_ids::text from profiles", 'coachA', '{tA}')
+ok('organizer creates competition', T('T1','org'), 'org')
+ok('other organizer creates competition', T('T2','org2'), 'org2')
+ok('coach A registers', "insert into registrations (id, tournament_id, team_id, contact_name, contact_email, submitted_by, created_at) values ('rA','T1','tA','A','a@x','" + U['coachA'] + "','now')", 'coachA')
+ok('coach B registers', "insert into registrations (id, tournament_id, team_id, contact_name, contact_email, submitted_by, created_at) values ('rB','T1','tB','B','b@x','" + U['coachB'] + "','now')", 'coachB')
+ok('organizer confirms both', "update registrations set status='approved' where tournament_id='T1'", 'org')
+ok('judge volunteers', "insert into judge_signups (id, tournament_id, user_id, name, email, background, rounds, created_at) values ('j1','T1','" + U['judge'] + "','J','j@x','attorney','{1,2}','now')", 'judge')
+ok('organizer confirms judge', "update judge_signups set status='approved' where id='j1'", 'org')
+ok('organizer pairs round 1 with judge', "insert into matches (id, tournament_id, round, starts_at, courtroom, p_team_id, d_team_id, judge_ids) values ('m1','T1',1,'9am','A','tA','tB','{" + U['judge'] + "}')", 'org')
+ok('organizer pairs round 2 (no judge yet)', "insert into matches (id, tournament_id, round, starts_at, courtroom, p_team_id, d_team_id) values ('m2','T1',2,'1pm','B','tB','tA')", 'org')
+ok('judge scores line by line; totals computed by server', "insert into ballots (id, match_id, judge, judge_id, source, sheet, p_score, d_score, entered_by, entered_at) values ('b1','m1','J','" + U['judge'] + "','app','{\"p\":[8,9,7],\"d\":[6,7,8]}', 9999, 0, 'J','now') returning p_score||'-'||d_score", 'judge', '24-21')
+ok('coach adds competitor by email', "select add_team_member('tA','compA@x.test','competitor')", 'coachA', 't')
+ok('organizer enters a paper ballot by totals', "insert into ballots (id, match_id, judge, source, p_score, d_score, entered_by, entered_at) values ('b2','m1','Ballot 2','paper',80,75,'org','now')", 'org')
+
+print('--- attacks ---')
+blocked('stranger adds a team to own profile', "update profiles set team_ids='{tA}' where id='" + U['evil'] + "'", 'evil')
+blocked('stranger joins a team directly', "insert into team_members (team_id, user_id, role, added_by) values ('tA','" + U['evil'] + "','coach','" + U['evil'] + "')", 'evil')
+blocked('stranger uses add_team_member', "select add_team_member('tA','evil@x.test','coach')", 'evil')
+blocked('stranger registers someone else\'s team', "insert into registrations (id, tournament_id, team_id, contact_name, contact_email, submitted_by, created_at) values ('rX','T2','tA','x','x@x','" + U['evil'] + "','now')", 'evil')
+blocked('stranger reads registration contacts', "select count(*) from registrations", 'evil', 0)
+blocked('judge moves ballot onto another trial', "update ballots set match_id='m2' where id='b1'", 'judge')
+blocked('judge submits a second ballot for same trial', "insert into ballots (id, match_id, judge, judge_id, source, sheet, p_score, d_score, entered_by, entered_at) values ('b3','m1','J','" + U['judge'] + "','app','{\"p\":[10,10,10],\"d\":[1,1,1]}',30,3,'J','now')", 'judge')
+blocked('judge scores a line 11', "update ballots set sheet='{\"p\":[11,9,7],\"d\":[6,7,8]}' where id='b1'", 'judge')
+blocked('judge scores with totals only', "update ballots set sheet=null, p_score=99 where id='b1'", 'judge')
+blocked('judge scores a trial they are not on', "insert into ballots (id, match_id, judge, judge_id, source, sheet, p_score, d_score, entered_by, entered_at) values ('b4','m2','J','" + U['judge'] + "','app','{\"p\":[10],\"d\":[1]}',10,1,'J','now')", 'judge')
+blocked('unconfirmed volunteer scores', "insert into ballots (id, match_id, judge, judge_id, source, sheet, p_score, d_score, entered_by, entered_at) values ('b5','m1','J2','" + U['judge2'] + "','app','{\"p\":[10],\"d\":[1]}',10,1,'J','now')", 'judge2')
+blocked('judge impersonates another judge', "insert into ballots (id, match_id, judge, judge_id, source, sheet, p_score, d_score, entered_by, entered_at) values ('b6','m1','J','" + U['judge2'] + "','app','{\"p\":[10],\"d\":[1]}',10,1,'J','now')", 'judge')
+blocked('organizer assigns an unconfirmed person as judge', "update matches set judge_ids='{" + U['evil'] + "}' where id='m2'", 'org')
+blocked('organizer moves a registration into another competition', "update registrations set tournament_id='T2' where id='rA'", 'org')
+blocked('other organizer edits this competition', "update tournaments set name='hacked' where id='T1' returning id", 'org2', '')
+blocked('other organizer edits these pairings', "update matches set courtroom='X' where id='m1' returning id", 'org2', '')
+blocked('stranger creates competition naming someone else organizer', T('T9','org').replace(U['org'], U['org']) , 'evil')
+blocked('teams see ballots before publishing', "select count(*) from ballots", 'coachA', 0)
+blocked('competitor sees ballots before publishing', "select count(*) from ballots", 'compA', 0)
+blocked('signed-out visitor sees ballots', "select count(*) from ballots", None, 0)
+blocked('signed-out visitor creates competition', T('T8','org'), None)
+blocked('stranger reads change history', "select count(*) from change_log", 'evil')
+blocked('stranger erases change history', "delete from change_log", 'evil')
+blocked('organizer erases change history', "truncate change_log", 'org')
+blocked('stranger claims a ballot scan', "select claim_ballot_scan('m1')", 'evil', 'f')
+ok('organizer claims a ballot scan', "select claim_ballot_scan('m1')", 'org', 't')
+blocked('recording link that runs script', "insert into recordings (id, match_id, title, url, uploaded_by, created_at) values ('v1','m1','x','javascript:alert(1)','" + U['coachA'] + "','now')", 'coachA')
+blocked('huge free text', "update tournaments set description=repeat('x', 100000) where id='T1'", 'org')
+
+print('--- team limit and deadline ---')
+ok('open auto-confirm competition, limit 2', T('T3','org', "entry_type, require_approval|'open', false"), 'org')
+ok('coach B makes a second team', "insert into teams (id, program_id, name, level) values ('tC','p1','Harbor C','law_school')", 'coachB')
+ok('second team confirmed', "insert into registrations (id, tournament_id, team_id, status, contact_name, contact_email, submitted_by, created_at) values ('r3c','T3','tC','approved','C','c@x','" + U['coachB'] + "','now') returning status", 'coachB', 'approved')
+ok('first team confirmed', "insert into registrations (id, tournament_id, team_id, status, contact_name, contact_email, submitted_by, created_at) values ('r3a','T3','tA','approved','A','a@x','" + U['coachA'] + "','now') returning status", 'coachA', 'approved')
+ok('team past the limit is waitlisted, not confirmed', "insert into registrations (id, tournament_id, team_id, status, contact_name, contact_email, submitted_by, created_at) values ('r3b','T3','tB','approved','B','b@x','" + U['coachB'] + "','now') returning status", 'coachB', 'waitlisted')
+psql("update tournaments set registration_deadline = current_date - 1, start_date = current_date + 1 where id = 'T2'", superuser=True)
+blocked('registering after the deadline', "insert into registrations (id, tournament_id, team_id, contact_name, contact_email, submitted_by, created_at) values ('r2','T2','tA','A','a@x','" + U['coachA'] + "','now')", 'coachA')
+
+print('--- case file release ---')
+ok('author creates case releasing tomorrow', "insert into cases (id, level, title, kind, release_at, created_by) values ('c1','law_school','Case','civil', now() + interval '1 day', '" + U['org'] + "')", 'org')
+ok('author uploads into the case folder', "insert into storage.objects (bucket_id, name) values ('case-files','c1/packet.pdf')", 'org')
+ok('author adds the file record', "insert into case_files (id, case_id, label, version, url, added_at) values ('f1','c1','Packet','v1','storage:case-files/c1/packet.pdf','now')", 'org')
+blocked('stranger uploads into the case', "insert into storage.objects (bucket_id, name) values ('case-files','c1/fake.pdf')", 'evil')
+blocked('stranger uploads loose files', "insert into storage.objects (bucket_id, name) values ('case-files','malware.exe')", 'evil')
+blocked('team downloads before release', "select count(*) from storage.objects", 'coachA', 0)
+blocked('team lists files before release', "select count(*) from case_files", 'coachA', 0)
+blocked('file link that is not https', "insert into case_files (id, case_id, label, version, url, added_at) values ('f2','c1','x','v1','javascript:alert(1)','now')", 'org')
+psql("update cases set release_at = now() - interval '1 minute' where id = 'c1'", superuser=True)
+ok('team downloads after release', "select count(*) from storage.objects", 'coachA', 1)
+
+print('--- publishing and locking ---')
+ok('organizer publishes and returns ballots', "update tournaments set results_published=true, ballots_returned=true where id='T1'", 'org')
+ok('competitor sees own team ballots', "select count(*) from ballots", 'compA', 2)
+blocked('stranger sees ballots after publishing', "select count(*) from ballots", 'evil', 0)
+blocked('judge edits ballot after publishing', "update ballots set sheet='{\"p\":[10,10,10],\"d\":[1,1,1]}' where id='b1' returning id", 'judge', '')
+blocked('organizer pushes dates back after publishing', "update tournaments set end_date = end_date + 30 where id='T1'", 'org')
+ok('organizer finalizes', "update tournaments set finalized_at='2026-11-27T15:00' where id='T1'", 'org')
+blocked('organizer changes a ballot after finalizing', "update ballots set p_score=1 where id='b2'", 'org')
+blocked('organizer unfinalizes', "update tournaments set finalized_at=null where id='T1'", 'org')
+blocked('organizer deletes a ballot after finalizing', "delete from ballots where id='b2'", 'org')
+blocked('organizer re-pairs after finalizing', "update matches set courtroom='Z' where id='m1'", 'org')
+print(f'\n{fails} failing')
+sys.exit(1 if fails else 0)
