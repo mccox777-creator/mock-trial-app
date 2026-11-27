@@ -19,6 +19,8 @@ Built with [Expo](https://expo.dev) (React Native + TypeScript), so one codebase
 | **Locking** | Once the organizer finalizes results, or 7 days after the last day, the competition is locked. Nobody, including the organizer, can change it, and the database enforces this. |
 | **Rankings and archive** | Teams are ranked continuously as ballots arrive: by ballots won (or trials won, the organizer's choice), then combined strength, then point differential. The organizer sees live standings; everyone else sees them once results are published. Past events are grouped by season, and each team has a history page. |
 | **Case files** | Case authors set a release time; files stay locked until that moment, then unlock for every team at once. Corrections post as versioned files plus a case bulletin. |
+| **Notifications** | Each person picks the circuits they follow and the kinds of notice they want, by phone alert, email, or a once-a-day email. Anything about their own competitions (pairings, schedule, chat, results) reaches them automatically. Everything also lands in an in-app inbox under Me > Notifications. |
+| **Finding judges** | Anyone can say they're willing to judge, and in which circuits. When an organizer posts "Ask for judges", those volunteers get an alert, and the competition shows under "Judges needed" on the schedule with a sign-up button. |
 | **Bulletins** | Schedule changes, case errata, and results in one feed instead of email. |
 | **Recordings** | Paste an unlisted YouTube link on a trial, visible to the two teams, coaches, or everyone. No paid video hosting. |
 | **Score sheet** | The organizer picks a 1–10 or 1–15 scale, what judges score (pretrial, openings, directs, witnesses, crosses, objections and evidence, closings, professionalism, or their own lines), and where judges can comment. The sheet keeps running totals and the point differential line by line. |
@@ -38,12 +40,13 @@ Type check: `npx tsc --noEmit`
 ## Connect a real backend
 
 1. Create a Supabase project.
-2. Run `supabase/migrations/0001_initial.sql`, `0002_security.sql`, then `0003_scoring_and_video.sql`, in the SQL editor. It creates the tables, row-level security rules (organizers edit only their competitions, judges score only their own assigned trials, ballots hidden until results are published, case files hidden until release, recordings limited by visibility), lock triggers, an append-only change log, private `case-files` and `backups` storage buckets, and live-update publication.
+2. Run the files in `supabase/migrations/` in order (0001 to 0004) in the SQL editor. It creates the tables, row-level security rules (organizers edit only their competitions, judges score only their own assigned trials, ballots hidden until results are published, case files hidden until release, recordings limited by visibility), lock triggers, an append-only change log, private `case-files` and `backups` storage buckets, and live-update publication.
 3. Copy `.env.example` to `.env` and fill in the project URL and anon key.
 4. Restart `npx expo start`. The app now uses email sign-in codes and shared data.
 5. Work through the dashboard settings in [SECURITY.md](SECURITY.md).
 6. Ballot photo reading: `supabase secrets set ANTHROPIC_API_KEY=...`, then `supabase functions deploy read-ballot`.
-7. Backups: follow [BACKUPS.md](BACKUPS.md) (free: your computer plus an encrypted nightly copy in Cloudflare R2). Every insert, update, and delete is also written to `change_log`, which nobody can edit.
+7. Notifications: create a free [Resend](https://resend.com) account and verify your sending domain, then `supabase secrets set RESEND_API_KEY=... EMAIL_FROM="Mock Trial Docket <notices@yourdomain.org>" NOTIFY_CRON_SECRET=<long random string>`, deploy `send-notifications`, and schedule it as described at the top of `supabase/functions/send-notifications/index.ts`. Phone alerts also need `eas init` once, so the app has a project id.
+8. Backups: follow [BACKUPS.md](BACKUPS.md) (free: your computer plus an encrypted nightly copy in Cloudflare R2). Every insert, update, and delete is also written to `change_log`, which nobody can edit.
 
 ## Ship to the stores
 
