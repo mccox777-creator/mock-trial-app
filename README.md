@@ -78,3 +78,12 @@ eas submit --platform all
 - Push notifications for bulletins and pairings are not wired up yet.
 - Elimination brackets after prelims are not built yet.
 - Case release times are compared in UTC on the server.
+
+## Web version
+
+The website runs on Cloudflare Workers as **mock-trial-app**, built from `main` on every merge:
+- build `npx expo export --platform web`, deploy `npx wrangler deploy`
+- build variable `NODE_VERSION=22`
+- `wrangler.jsonc` serves `dist/` as a single-page app, and `public/_headers` adds security headers
+
+Production builds read the live database settings from `.env.production`.
