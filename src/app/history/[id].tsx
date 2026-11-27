@@ -54,7 +54,7 @@ export default function PastEventScreen() {
         </>
       )}
       <Row>
-        <Body muted>From the circuit's published results record.{e.needsReview ? ' Part of this entry could not be read automatically; the organizer may want to check it.' : ''}</Body>
+        <Body muted>{e.tournamentId ? 'Run in the app. Added to the record and the Elo ratings when it closed, from its final standings.' : "From the circuit's published results record."}{e.needsReview ? ' Part of this entry could not be read automatically; the organizer may want to check it.' : ''}</Body>
       </Row>
     </Screen>
   );

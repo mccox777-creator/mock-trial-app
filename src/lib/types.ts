@@ -287,7 +287,7 @@ export interface AppData {
 /** How a team finished at a past competition. "advanced" = qualified out of a regional to the national round. */
 export type PastFinish = 'winner' | 'finalist' | 'advanced' | 'semifinalist' | 'quarterfinalist' | 'octofinalist' | 'place';
 
-/** A competition from before the app, imported from the circuit's results records. Read-only. */
+/** A finished competition: imported from the circuit's results records, or run in the app and closed. Read-only. */
 export interface PastEvent {
   id: string;
   level: Level;
@@ -307,4 +307,6 @@ export interface PastEvent {
   needsReview: boolean;
   /** Position in the source record, newest first. */
   ord: number;
+  /** Set when this comes from a competition run in the app (added once it closes), not the imported record. */
+  tournamentId?: string;
 }

@@ -79,7 +79,7 @@ export function CircuitHistory() {
           </Card>
           {!needle && elo.ranked.length > 25 && <Button small kind="ghost" title={showAll ? 'Show top 25' : `Show all ${elo.ranked.length} schools`} onPress={() => setShowAll(!showAll)} />}
           <Body muted>
-            Chess rules: every school starts at 1500 and gains or loses points for finishing ahead of or behind other schools, more for beating a higher-rated school. A 200-point gap means the higher school finishes ahead about 3 times in 4. * means provisional (under 5 competitions). Classes follow US Chess: Expert 2000+, Class A 1800+, Class B 1600+.
+            Chess rules: every school starts at 1500 and gains or loses points for finishing ahead of or behind other schools, more for beating a higher-rated school. A 200-point gap means the higher school finishes ahead about 3 times in 4. * means provisional (under 5 competitions). Classes follow US Chess: Expert 2000+, Class A 1800+, Class B 1600+. Competitions run in the app count as soon as they close (finalized, or 7 days after the last day) with published results, using their full final standings.
           </Body>
         </>
       )}

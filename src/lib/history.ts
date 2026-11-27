@@ -10,12 +10,12 @@ export const FINISH_LABEL: Record<PastFinish, string> = {
 
 /** Points for one result. Third place in a placement format counts like a semifinal. */
 export function pointsFor(r: PastEvent['results'][number]) {
-  if (r.finish === 'place') return r.place === 3 ? 1 : 0;
+  if (r.finish === 'place') return r.place === 1 ? 3 : r.place === 2 ? 2 : r.place === 3 ? 1 : 0;
   return FINISH_POINTS[r.finish];
 }
 
 export function finishText(r: PastEvent['results'][number]) {
-  if (r.place && r.place > 2) return `${ordinal(r.place)} place`;
+  if (r.place && (r.place > 2 || r.finish === 'place')) return `${ordinal(r.place)} place`;
   return FINISH_LABEL[r.finish];
 }
 

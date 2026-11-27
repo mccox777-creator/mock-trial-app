@@ -24,6 +24,15 @@ assert.ok(gainVsStrong > 20, `upset gain ${gainVsStrong}`);
 assert.ok(Math.abs(expectedScore(1700, 1500) - 0.76) < 0.01);
 assert.equal(classOf(2050), 'Expert');
 
+// A closed in-app competition has full standings: 1st beats 2nd beats 3rd beats 4th.
+const P = (s: string, place: number) => ({ school: s, team: s, finish: 'place' as const, place });
+const app = { ...ev('app-t1', -20251020, [P('A', 1), P('B', 2), P('C', 3), P('D', 4)], []), tournamentId: 't1' };
+const r3 = computeElo([app]);
+assert.ok(r3.get('A')!.rating > r3.get('B')!.rating && r3.get('B')!.rating > r3.get('C')!.rating && r3.get('C')!.rating > r3.get('D')!.rating);
+// ...and counts after the imported events of the same term, so it moves the ratings they built.
+const r4 = computeElo([app, ev('imp', 0, [W('D'), F('C')], ['A', 'B', 'C', 'D'])]);
+assert.deepEqual(r4.get('D')!.history.map((h) => h.eventId), ['imp', 'app-t1']);
+
 // Real data: UCLA first, Drexel second.
 const real = JSON.parse(readFileSync(new URL('../src/data/history-law-school.json', import.meta.url), 'utf8')) as PastEvent[];
 const ranked = [...computeElo(real).values()].sort((a, b) => b.rating - a.rating);

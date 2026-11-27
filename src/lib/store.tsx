@@ -3,6 +3,9 @@ import { createBackend, type Backend, type TableName } from './backend';
 import { openAlertsOnTap, registerForPush } from './push';
 import type { AppData, Level, PastEvent, Profile, Tournament } from './types';
 import { DEMO_USERS } from './sampleData';
+import { closedCompetitionEvents } from './closedCompetitions';
+import { schoolOfTeam } from './history';
+import { todayLocal } from './format';
 
 interface StoreValue {
   backend: Backend;
@@ -133,5 +136,16 @@ export function useHistory() {
       live = false;
     };
   }, [backend, level]);
-  return state.level === level ? state : { level, events: null, error: null };
+  // Competitions run in the app join the record (and the Elo ratings) the moment they close.
+  const d = useLevelData();
+  const today = todayLocal();
+  const events = useMemo(() => {
+    if (state.level !== level || !state.events) return null;
+    if (!d) return state.events;
+    const imported = new Set(state.events.map((e) => e.tournamentId).filter(Boolean));
+    const known = new Set(state.events.flatMap((e) => [...e.results.map((r) => r.school), ...e.participants.map(schoolOfTeam)]));
+    const closed = closedCompetitionEvents(d, today, known).filter((e) => !imported.has(e.tournamentId));
+    return closed.length ? [...closed.reverse(), ...state.events] : state.events;
+  }, [state, level, d, today]);
+  return state.level === level ? { ...state, events } : { level, events: null, error: null };
 }

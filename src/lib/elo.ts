@@ -42,10 +42,12 @@ export function finishTier(r: PastEvent['results'][number]) {
 /** Each school's best finish at an event, with everyone who took part. */
 export function fieldOf(e: PastEvent) {
   const best = new Map<string, number>();
-  for (const r of e.results) best.set(r.school, Math.min(best.get(r.school) ?? 9, finishTier(r)));
+  // A competition run in the app has full standings, so every place counts (1st beats 2nd beats 3rd ...).
+  const tier = (r: PastEvent['results'][number]) => (e.tournamentId && r.place ? r.place - 1 : finishTier(r));
+  for (const r of e.results) best.set(r.school, Math.min(best.get(r.school) ?? 999, tier(r)));
   for (const p of e.participants) {
     const s = schoolOfTeam(p);
-    if (!best.has(s)) best.set(s, 5);
+    if (!best.has(s)) best.set(s, e.tournamentId ? 998 : 5);
   }
   return best;
 }
