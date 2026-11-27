@@ -61,7 +61,27 @@ The results come from the circuit record of law school competitions, read by
 - splits teams that ran together without a comma ("Hofstra 1 Hofstra 2", "Barry 2 Case Western");
 - expands "Cumberland x 3" and "Case Western 1, 2, 3, 4, & 5" into separate teams;
 - matches a result to the school named in the participant list ("St. Thomas" wins, "St. Thomas (FL)" took part), and treats
-  an unqualified St. Thomas at a Florida competition as St. Thomas (FL) and at NTC Region 12 as St. Thomas (MN).
+  an unqualified St. Thomas at a Florida competition as St. Thomas (FL) and at NTC Region 12 as St. Thomas (MN), and
+  "Benjamin Crump" (St. Thomas (FL)'s law school) as St. Thomas (FL).
+
+### Gaps filled from TCPR
+
+Where the circuit record is missing a result, it is filled in from the Trial Competition Performance Rankings (TCPR)
+spreadsheet, which is used as a backstop and not as ground truth. A result is added only where the record has no result
+for that school at that competition and the place is open; nothing in the record is changed, and nothing earlier than
+Spring 2023 is added. Every added row is marked `"source": "TCPR"` in `events.json` and shown as "from TCPR" in the app.
+The additions are listed in [`scripts/history/tcpr_gaps.json`](../scripts/history/tcpr_gaps.json):
+
+| Competition | Added from TCPR |
+| --- | --- |
+| National Civil Trial Competition (St. John's), Fall 2023 | Rutgers and William & Mary semifinalists |
+| Syracuse's Military Law Trial, Spring 2025 | UMKC won over Texas Tech; Stetson and Illinois semifinalists (the record had no results) |
+| National Criminal Trial Competition (Chapman), Spring 2025 | The whole competition, which the record leaves out: UCLA won over UCLA 2, Pepperdine semifinalist, 10 teams from 7 schools. Its date is not known, so it is placed beside the 2026 edition's date (March 20-22) |
+| Chicago Cup, Fall 2025 | Maryland and Illinois 2 semifinalists |
+| Estrella Trial Competition, Spring 2026 | Colorado semifinalist |
+
+Where TCPR and the record disagree, the record stands. The main case is the Charleston Court-Martial Challenge
+(Spring 2026), where TCPR lists a different field and Baylor as the winner.
 
 ### Known gaps
 
@@ -71,7 +91,8 @@ The results come from the circuit record of law school competitions, read by
   of other divisions' semifinalists.
 - Some participant lists in the record are shorter than the stated team count, so a few schools that took part may be
   missing from those competitions. A missing school simply has no games there.
-- One competition (Syracuse's Military Law Trial, Spring 2025) has no results in the record and is not rated.
+- St. John's Civil Rights appears twice in the record, as the Peter James Johnson competition in Fall 2024 and again
+  in Spring 2025 with the same results. Both are rated until the record is corrected.
 
 ## Audit, 27 November 2026
 
@@ -81,7 +102,7 @@ A review of the math and the data found and fixed these problems:
 | --- | --- | --- |
 | Competitions within a term were applied newest first (the record lists terms newest first but competitions within a term oldest first) | Ratings came out as if each term were played backwards | Order by each competition's start date |
 | "Tournament of Champions" (Fall 2023) and "Online National Championship" (Spring 2024) were dropped because their titles contain the word champion | Two major competitions missing | Title lines are no longer mistaken for results |
-| One school split into several names (St. Thomas (FL) under three names; Johns, John's, Mary's, St, Thomas, Ole Miss, Boston, Puerto Rico, run-together names) | 218 school names in the data, now 199; St. Thomas (FL) was rated 1406 instead of 1782 | Name matching above |
+| One school split into several names (St. Thomas (FL) under three names; Johns, John's, Mary's, St, Thomas, Ole Miss, Boston, Puerto Rico, run-together names) | 218 school names in the data, now 199 (198 once Benjamin Crump was matched to St. Thomas (FL)); St. Thomas (FL) was rated 1406 instead of 1782 | Name matching above |
 | "4th place St. Thomas" was read as "St" | Wrong school credited | Fixed the place reader |
 | 4th and 5th place counted as the same finish | Lost information | Places count by number |
 | A competition with no results still counted toward a school's total | Wrong K factor and competition counts | Only competitions with games count |
@@ -92,17 +113,17 @@ A school with several teams at a competition now has every team rated, and moves
 average of its teams' results. Before, only its best team counted. This lowers schools that often send extra teams that
 go out early (UCLA 2093 to 2021, San Diego 7th to 10th, Maryland 12th to 17th) and lifts schools that send one strong team.
 
-The top 10 now:
+The top 10 now (after the TCPR gap fill):
 
 | # | School | Rating | Class | Competitions |
 | --- | --- | --- | --- | --- |
-| 1 | UCLA | 2021 | Expert | 81 |
+| 1 | UCLA | 2022 | Expert | 82 |
 | 2 | Drexel | 1873 | Class A | 55 |
-| 3 | Stetson | 1820 | Class A | 85 |
+| 3 | Stetson | 1821 | Class A | 86 |
 | 4 | Harvard | 1791 | Class B | 43 |
 | 5 | Texas | 1769 | Class B | 44 |
-| 6 | American | 1766 | Class B | 34 |
-| 7 | Boston College | 1764 | Class B | 11 |
+| 6 | American | 1767 | Class B | 34 |
+| 7 | Boston College | 1765 | Class B | 11 |
 | 8 | Georgetown | 1764 | Class B | 42 |
 | 9 | Mercer | 1759 | Class B | 67 |
-| 10 | San Diego | 1736 | Class B | 29 |
+| 10 | Ohio State | 1737 | Class B | 20 |

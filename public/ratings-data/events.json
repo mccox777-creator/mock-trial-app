@@ -3843,6 +3843,13 @@
     "team": "Harvard",
     "finish": "semifinalist",
     "place": null
+   },
+   {
+    "school": "Colorado",
+    "team": "Colorado",
+    "finish": "semifinalist",
+    "place": null,
+    "source": "TCPR"
    }
   ],
   "participants": [
@@ -7013,6 +7020,20 @@
     "team": "Lewis & Clark",
     "finish": "finalist",
     "place": 2
+   },
+   {
+    "school": "Maryland",
+    "team": "Maryland",
+    "finish": "semifinalist",
+    "place": null,
+    "source": "TCPR"
+   },
+   {
+    "school": "Illinois",
+    "team": "Illinois 2",
+    "finish": "semifinalist",
+    "place": null,
+    "source": "TCPR"
    }
   ],
   "participants": [
@@ -10359,7 +10380,36 @@
   "dates": "March 20-22",
   "teamCount": 8,
   "schoolCount": 8,
-  "results": [],
+  "results": [
+   {
+    "school": "UMKC",
+    "team": "UMKC",
+    "finish": "winner",
+    "place": 1,
+    "source": "TCPR"
+   },
+   {
+    "school": "Texas Tech",
+    "team": "Texas Tech",
+    "finish": "finalist",
+    "place": 2,
+    "source": "TCPR"
+   },
+   {
+    "school": "Stetson",
+    "team": "Stetson",
+    "finish": "semifinalist",
+    "place": null,
+    "source": "TCPR"
+   },
+   {
+    "school": "Illinois",
+    "team": "Illinois",
+    "finish": "semifinalist",
+    "place": null,
+    "source": "TCPR"
+   }
+  ],
   "participants": [
    "Florida State",
    "Illinois",
@@ -10372,6 +10422,56 @@
   ],
   "needsReview": false,
   "ord": 153
+ },
+ {
+  "id": "2024-25-spring-national-criminal-trial-competition",
+  "level": "law_school",
+  "season": "2024-25",
+  "term": "Spring",
+  "name": "National Criminal Trial Competition",
+  "host": "Chapman",
+  "region": null,
+  "dates": null,
+  "teamCount": 10,
+  "schoolCount": 7,
+  "results": [
+   {
+    "school": "UCLA",
+    "team": "UCLA",
+    "finish": "winner",
+    "place": 1,
+    "source": "TCPR"
+   },
+   {
+    "school": "UCLA",
+    "team": "UCLA 2",
+    "finish": "finalist",
+    "place": 2,
+    "source": "TCPR"
+   },
+   {
+    "school": "Pepperdine",
+    "team": "Pepperdine",
+    "finish": "semifinalist",
+    "place": null,
+    "source": "TCPR"
+   }
+  ],
+  "participants": [
+   "UCLA 1",
+   "UCLA 2",
+   "Pepperdine 1",
+   "Pepperdine 2",
+   "San Diego",
+   "USC",
+   "St. Mary's",
+   "Western State 1",
+   "Western State 2",
+   "Wilmington"
+  ],
+  "needsReview": false,
+  "ord": 154,
+  "source": "TCPR"
  },
  {
   "id": "2024-25-spring-american-s-capitol-city-challenge",
@@ -10415,7 +10515,7 @@
    "Temple"
   ],
   "needsReview": false,
-  "ord": 154
+  "ord": 155
  },
  {
   "id": "2024-25-spring-south-texas-challenge",
@@ -10506,7 +10606,7 @@
    "UC Law SF"
   ],
   "needsReview": false,
-  "ord": 155
+  "ord": 156
  },
  {
   "id": "2024-25-spring-amicus-cup-las-vegas-nevada",
@@ -10562,7 +10662,7 @@
    "UNLV"
   ],
   "needsReview": false,
-  "ord": 156
+  "ord": 157
  },
  {
   "id": "2024-25-spring-baylor-s-top-gun",
@@ -10620,7 +10720,7 @@
    "Villanova"
   ],
   "needsReview": false,
-  "ord": 157
+  "ord": 158
  },
  {
   "id": "2024-25-fall-flash-trial-competition",
@@ -10672,7 +10772,7 @@
    "UCLA"
   ],
   "needsReview": false,
-  "ord": 158
+  "ord": 159
  },
  {
   "id": "2024-25-fall-first-chair-competition-14-schools-new-york-regional",
@@ -10728,7 +10828,7 @@
    "William & Mary"
   ],
   "needsReview": false,
-  "ord": 159
+  "ord": 160
  },
  {
   "id": "2024-25-fall-first-chair-competition-10-schools-san-diego-regional",
@@ -10780,7 +10880,7 @@
    "UCLA"
   ],
   "needsReview": false,
-  "ord": 160
+  "ord": 161
  },
  {
   "id": "2024-25-fall-best-of-texas-voir-dire-competition",
@@ -10832,7 +10932,7 @@
    "Texas Tech"
   ],
   "needsReview": false,
-  "ord": 161
+  "ord": 162
  },
  {
   "id": "2024-25-fall-battle-of-experts-invitation-only",
@@ -10884,7 +10984,7 @@
    "UCLA"
   ],
   "needsReview": false,
-  "ord": 162
+  "ord": 163
  },
  {
   "id": "2024-25-fall-summit-cup-invitation-only",
@@ -10938,7 +11038,7 @@
    "UCLA"
   ],
   "needsReview": false,
-  "ord": 163
+  "ord": 164
  },
  {
   "id": "2024-25-fall-buffalo-niagara-national-criminal-trial-competition",
@@ -11003,7 +11103,7 @@
    "Washington"
   ],
   "needsReview": false,
-  "ord": 164
+  "ord": 165
  },
  {
   "id": "2024-25-fall-national-pre-trial-competition",
@@ -11061,7 +11161,7 @@
    "Virginia"
   ],
   "needsReview": false,
-  "ord": 165
+  "ord": 166
  },
  {
   "id": "2024-25-fall-uc-davis-mlk-civil-rights-trial-competition",
@@ -11121,7 +11221,7 @@
    "William & Mary"
   ],
   "needsReview": false,
-  "ord": 166
+  "ord": 167
  },
  {
   "id": "2024-25-fall-tournament-of-champions-invitation-only",
@@ -11179,7 +11279,7 @@
    "UCLA"
   ],
   "needsReview": false,
-  "ord": 167
+  "ord": 168
  },
  {
   "id": "2024-25-fall-national-trial-competition-sntc",
@@ -11233,7 +11333,7 @@
    "Western State"
   ],
   "needsReview": false,
-  "ord": 168
+  "ord": 169
  },
  {
   "id": "2024-25-fall-peter-james-johnson-civil-rights-competiton",
@@ -11315,7 +11415,7 @@
    "UNLV"
   ],
   "needsReview": false,
-  "ord": 169
+  "ord": 170
  },
  {
   "id": "2024-25-fall-gold-cup-trial-competition",
@@ -11397,7 +11497,7 @@
    "UC Law SF"
   ],
   "needsReview": false,
-  "ord": 170
+  "ord": 171
  },
  {
   "id": "2024-25-fall-national-trial-advocacy-competition",
@@ -11454,7 +11554,7 @@
    "Washington University"
   ],
   "needsReview": false,
-  "ord": 171
+  "ord": 172
  },
  {
   "id": "2024-25-fall-premiere-trial-competition-fort-lauderdale-regional",
@@ -11520,7 +11620,7 @@
    "Wake Forest"
   ],
   "needsReview": false,
-  "ord": 172
+  "ord": 173
  },
  {
   "id": "2024-25-fall-premiere-trial-competition-austin-regional",
@@ -11580,7 +11680,7 @@
    "UMKC 2"
   ],
   "needsReview": false,
-  "ord": 173
+  "ord": 174
  },
  {
   "id": "2024-25-fall-aba-criminal-advocacy-competition",
@@ -11635,7 +11735,7 @@
    "Villanova"
   ],
   "needsReview": false,
-  "ord": 174
+  "ord": 175
  },
  {
   "id": "2024-25-fall-premiere-trial-competition-los-angeles-regional",
@@ -11701,7 +11801,7 @@
    "Western State"
   ],
   "needsReview": false,
-  "ord": 175
+  "ord": 176
  },
  {
   "id": "2024-25-fall-premiere-trial-competition-philadelphia-regional",
@@ -11759,7 +11859,7 @@
    "Villanova"
   ],
   "needsReview": false,
-  "ord": 176
+  "ord": 177
  },
  {
   "id": "2024-25-fall-white-collar-crime-trial-competition",
@@ -11817,7 +11917,7 @@
    "William & Mary"
   ],
   "needsReview": false,
-  "ord": 177
+  "ord": 178
  },
  {
   "id": "2024-25-fall-medical-legal-trial-competition",
@@ -11875,7 +11975,7 @@
    "Maryland"
   ],
   "needsReview": false,
-  "ord": 178
+  "ord": 179
  },
  {
   "id": "2024-25-fall-chicago-cup-trial-competition",
@@ -11929,7 +12029,7 @@
    "Illinois Chicago 2"
   ],
   "needsReview": false,
-  "ord": 179
+  "ord": 180
  },
  {
   "id": "2024-25-fall-case-classic",
@@ -11995,7 +12095,7 @@
    "William & Mary"
   ],
   "needsReview": false,
-  "ord": 180
+  "ord": 181
  },
  {
   "id": "2024-25-fall-national-trial-league-september-november",
@@ -12051,7 +12151,7 @@
    "UCLA"
   ],
   "needsReview": false,
-  "ord": 181
+  "ord": 182
  },
  {
   "id": "2024-25-fall-interamerican-puerto-rico-trial-advocacy-competition-prtac",
@@ -12107,7 +12207,7 @@
    "UNLV"
   ],
   "needsReview": false,
-  "ord": 182
+  "ord": 183
  },
  {
   "id": "2024-25-fall-kelly-competition",
@@ -12191,7 +12291,7 @@
    "Illinois Chicago"
   ],
   "needsReview": false,
-  "ord": 183
+  "ord": 184
  },
  {
   "id": "2024-25-fall-national-civil-trial-competition-nctc",
@@ -12249,7 +12349,7 @@
    "Pacific McGeorge"
   ],
   "needsReview": false,
-  "ord": 184
+  "ord": 185
  },
  {
   "id": "2024-25-fall-zehmer-trial-competition",
@@ -12335,7 +12435,7 @@
    "William & Mary 2"
   ],
   "needsReview": false,
-  "ord": 185
+  "ord": 186
  },
  {
   "id": "2024-25-fall-william-daniel-criminal-trial-competition",
@@ -12391,7 +12491,7 @@
    "Stetson"
   ],
   "needsReview": false,
-  "ord": 186
+  "ord": 187
  },
  {
   "id": "2023-24-spring-chester-bedell-trial-competition",
@@ -12441,7 +12541,7 @@
    "St. Thomas (FL)"
   ],
   "needsReview": false,
-  "ord": 187
+  "ord": 188
  },
  {
   "id": "2023-24-spring-shark-beach-showdown-24-schools",
@@ -12531,7 +12631,7 @@
    "Villanova"
   ],
   "needsReview": false,
-  "ord": 188
+  "ord": 189
  },
  {
   "id": "2023-24-spring-online-national-championship",
@@ -12647,7 +12747,7 @@
    "William & Mary"
   ],
   "needsReview": false,
-  "ord": 189
+  "ord": 190
  },
  {
   "id": "2023-24-spring-trials-tribulations-competition-24-schools",
@@ -12742,7 +12842,7 @@
    "William & Mary"
   ],
   "needsReview": false,
-  "ord": 190
+  "ord": 191
  },
  {
   "id": "2023-24-spring-bayou-challenge-mock-trial-competition",
@@ -12786,7 +12886,7 @@
    "Washington University"
   ],
   "needsReview": false,
-  "ord": 191
+  "ord": 192
  },
  {
   "id": "2023-24-spring-ntc-region-1",
@@ -12864,7 +12964,7 @@
    "Vermont"
   ],
   "needsReview": false,
-  "ord": 192
+  "ord": 193
  },
  {
   "id": "2023-24-spring-ntc-region-2",
@@ -12941,7 +13041,7 @@
    "Yeshiva"
   ],
   "needsReview": false,
-  "ord": 193
+  "ord": 194
  },
  {
   "id": "2023-24-spring-ntc-region-3",
@@ -13017,7 +13117,7 @@
    "Villanova"
   ],
   "needsReview": false,
-  "ord": 194
+  "ord": 195
  },
  {
   "id": "2023-24-spring-ntc-region-4",
@@ -13095,7 +13195,7 @@
    "Widener"
   ],
   "needsReview": false,
-  "ord": 195
+  "ord": 196
  },
  {
   "id": "2023-24-spring-ntc-region-5",
@@ -13171,7 +13271,7 @@
    "Wake Forest"
   ],
   "needsReview": false,
-  "ord": 196
+  "ord": 197
  },
  {
   "id": "2023-24-spring-ntc-region-6",
@@ -13251,7 +13351,7 @@
    "Miami"
   ],
   "needsReview": false,
-  "ord": 197
+  "ord": 198
  },
  {
   "id": "2023-24-spring-ntc-region-7",
@@ -13328,7 +13428,7 @@
    "William & Mary"
   ],
   "needsReview": false,
-  "ord": 198
+  "ord": 199
  },
  {
   "id": "2023-24-spring-ntc-region-8",
@@ -13407,7 +13507,7 @@
    "Vanderbilt"
   ],
   "needsReview": false,
-  "ord": 199
+  "ord": 200
  },
  {
   "id": "2023-24-spring-ntc-region-9",
@@ -13484,7 +13584,7 @@
    "Washington University"
   ],
   "needsReview": false,
-  "ord": 200
+  "ord": 201
  },
  {
   "id": "2023-24-spring-ntc-region-10",
@@ -13560,7 +13660,7 @@
    "Texas"
   ],
   "needsReview": false,
-  "ord": 201
+  "ord": 202
  },
  {
   "id": "2023-24-spring-ntc-region-11",
@@ -13637,7 +13737,7 @@
    "Oklahoma"
   ],
   "needsReview": false,
-  "ord": 202
+  "ord": 203
  },
  {
   "id": "2023-24-spring-ntc-region-12",
@@ -13713,7 +13813,7 @@
    "Wisconsin"
   ],
   "needsReview": false,
-  "ord": 203
+  "ord": 204
  },
  {
   "id": "2023-24-spring-ntc-region-13",
@@ -13790,7 +13890,7 @@
    "Washington"
   ],
   "needsReview": false,
-  "ord": 204
+  "ord": 205
  },
  {
   "id": "2023-24-spring-ntc-region-14",
@@ -13869,7 +13969,7 @@
    "Pacific McGeorge"
   ],
   "needsReview": false,
-  "ord": 205
+  "ord": 206
  },
  {
   "id": "2023-24-spring-ntc-region-15",
@@ -13942,7 +14042,7 @@
    "Western State"
   ],
   "needsReview": false,
-  "ord": 206
+  "ord": 207
  },
  {
   "id": "2023-24-spring-ntc-nationals-houston-texas",
@@ -14038,7 +14138,7 @@
    "Villanova"
   ],
   "needsReview": false,
-  "ord": 207
+  "ord": 208
  },
  {
   "id": "2023-24-spring-aaj-region-1",
@@ -14120,7 +14220,7 @@
    "Touro"
   ],
   "needsReview": false,
-  "ord": 208
+  "ord": 209
  },
  {
   "id": "2023-24-spring-aaj-region-2",
@@ -14203,7 +14303,7 @@
    "William & Mary 2"
   ],
   "needsReview": false,
-  "ord": 209
+  "ord": 210
  },
  {
   "id": "2023-24-spring-aaj-region-3",
@@ -14284,7 +14384,7 @@
    "Virginia"
   ],
   "needsReview": false,
-  "ord": 210
+  "ord": 211
  },
  {
   "id": "2023-24-spring-aaj-region-4",
@@ -14366,7 +14466,7 @@
    "Wake Forest 2"
   ],
   "needsReview": false,
-  "ord": 211
+  "ord": 212
  },
  {
   "id": "2023-24-spring-aaj-region-5",
@@ -14448,7 +14548,7 @@
    "Washington and Lee"
   ],
   "needsReview": false,
-  "ord": 212
+  "ord": 213
  },
  {
   "id": "2023-24-spring-aaj-region-6",
@@ -14530,7 +14630,7 @@
    "Wayne State 2"
   ],
   "needsReview": false,
-  "ord": 213
+  "ord": 214
  },
  {
   "id": "2023-24-spring-aaj-region-7",
@@ -14612,7 +14712,7 @@
    "Washington University"
   ],
   "needsReview": false,
-  "ord": 214
+  "ord": 215
  },
  {
   "id": "2023-24-spring-aaj-region-8",
@@ -14694,7 +14794,7 @@
    "Washburn"
   ],
   "needsReview": false,
-  "ord": 215
+  "ord": 216
  },
  {
   "id": "2023-24-spring-aaj-region-9",
@@ -14776,7 +14876,7 @@
    "Wisconsin"
   ],
   "needsReview": false,
-  "ord": 216
+  "ord": 217
  },
  {
   "id": "2023-24-spring-aaj-region-10",
@@ -14858,7 +14958,7 @@
    "Western State"
   ],
   "needsReview": false,
-  "ord": 217
+  "ord": 218
  },
  {
   "id": "2023-24-spring-aaj-nationals",
@@ -14944,7 +15044,7 @@
    "Wake Forest"
   ],
   "needsReview": false,
-  "ord": 218
+  "ord": 219
  },
  {
   "id": "2023-24-spring-queens-county-district-attorney-competition",
@@ -15028,7 +15128,7 @@
    "St. Thomas (FL)"
   ],
   "needsReview": false,
-  "ord": 219
+  "ord": 220
  },
  {
   "id": "2023-24-spring-south-texas-challenge",
@@ -15172,7 +15272,7 @@
    "William & Mary"
   ],
   "needsReview": false,
-  "ord": 220
+  "ord": 221
  },
  {
   "id": "2023-24-spring-capitol-city-challenge",
@@ -15254,7 +15354,7 @@
    "Temple"
   ],
   "needsReview": false,
-  "ord": 221
+  "ord": 222
  },
  {
   "id": "2023-24-spring-pacific-mcgeorge-national-ethics-trial-competition",
@@ -15342,7 +15442,7 @@
    "UCLA"
   ],
   "needsReview": false,
-  "ord": 222
+  "ord": 223
  },
  {
   "id": "2023-24-spring-estrella-trial-competition-in-puerto-rico",
@@ -15398,7 +15498,7 @@
    "Virginia"
   ],
   "needsReview": false,
-  "ord": 223
+  "ord": 224
  },
  {
   "id": "2023-24-spring-san-fernando-bar-association-trial-competition",
@@ -15438,7 +15538,7 @@
    "West LA"
   ],
   "needsReview": false,
-  "ord": 224
+  "ord": 225
  },
  {
   "id": "2023-24-spring-amicus-cup-las-vegas-nevada",
@@ -15492,7 +15592,7 @@
    "UNLV"
   ],
   "needsReview": false,
-  "ord": 225
+  "ord": 226
  },
  {
   "id": "2023-24-spring-top-gun-competition-may-june",
@@ -15550,7 +15650,7 @@
    "UMKC"
   ],
   "needsReview": false,
-  "ord": 226
+  "ord": 227
  },
  {
   "id": "2023-24-fall-national-trial-league-various-dates",
@@ -15606,7 +15706,7 @@
    "South Carolina"
   ],
   "needsReview": false,
-  "ord": 227
+  "ord": 228
  },
  {
   "id": "2023-24-fall-national-flash-trial-competition",
@@ -15656,7 +15756,7 @@
    "South Carolina"
   ],
   "needsReview": false,
-  "ord": 228
+  "ord": 229
  },
  {
   "id": "2023-24-fall-texas-abota-best-in-texas-voir-dire-competition",
@@ -15708,7 +15808,7 @@
    "North Texas"
   ],
   "needsReview": false,
-  "ord": 229
+  "ord": 230
  },
  {
   "id": "2023-24-fall-battle-of-the-experts",
@@ -15760,7 +15860,7 @@
    "South Carolina"
   ],
   "needsReview": false,
-  "ord": 230
+  "ord": 231
  },
  {
   "id": "2023-24-fall-summit-cup",
@@ -15820,7 +15920,7 @@
    "Emory"
   ],
   "needsReview": false,
-  "ord": 231
+  "ord": 232
  },
  {
   "id": "2023-24-fall-medical-legal-trial-competition",
@@ -15906,7 +16006,7 @@
    "UNLV"
   ],
   "needsReview": false,
-  "ord": 232
+  "ord": 233
  },
  {
   "id": "2023-24-fall-the-verdict",
@@ -15956,7 +16056,7 @@
    "St. Mary's"
   ],
   "needsReview": false,
-  "ord": 233
+  "ord": 234
  },
  {
   "id": "2023-24-fall-national-pretrial-competition",
@@ -16038,7 +16138,7 @@
    "William & Mary"
   ],
   "needsReview": false,
-  "ord": 234
+  "ord": 235
  },
  {
   "id": "2023-24-fall-uc-davis-national-civil-rights-trial-competition",
@@ -16096,7 +16196,7 @@
    "San Diego"
   ],
   "needsReview": false,
-  "ord": 235
+  "ord": 236
  },
  {
   "id": "2023-24-fall-national-trial-competition",
@@ -16192,7 +16292,7 @@
    "Northern Kentucky"
   ],
   "needsReview": false,
-  "ord": 236
+  "ord": 237
  },
  {
   "id": "2023-24-fall-national-trial-competition-2",
@@ -16246,7 +16346,7 @@
    "Stetson"
   ],
   "needsReview": false,
-  "ord": 237
+  "ord": 238
  },
  {
   "id": "2023-24-fall-national-trial-competition-3",
@@ -16304,7 +16404,7 @@
    "Washington University"
   ],
   "needsReview": false,
-  "ord": 238
+  "ord": 239
  },
  {
   "id": "2023-24-fall-tournament-of-champions",
@@ -16362,7 +16462,7 @@
    "Wake Forest"
   ],
   "needsReview": false,
-  "ord": 239
+  "ord": 240
  },
  {
   "id": "2023-24-fall-criminal-justice-trial-competition",
@@ -16442,7 +16542,7 @@
    "South Carolina"
   ],
   "needsReview": false,
-  "ord": 240
+  "ord": 241
  },
  {
   "id": "2023-24-fall-national-civil-trial-competition",
@@ -16467,6 +16567,20 @@
     "team": "American",
     "finish": "finalist",
     "place": 2
+   },
+   {
+    "school": "Rutgers",
+    "team": "Rutgers",
+    "finish": "semifinalist",
+    "place": null,
+    "source": "TCPR"
+   },
+   {
+    "school": "William & Mary",
+    "team": "William & Mary",
+    "finish": "semifinalist",
+    "place": null,
+    "source": "TCPR"
    }
   ],
   "participants": [
@@ -16488,7 +16602,7 @@
    "LSU"
   ],
   "needsReview": false,
-  "ord": 241
+  "ord": 242
  },
  {
   "id": "2023-24-fall-loyola-los-angeles-national-civil-trial-competition",
@@ -16546,7 +16660,7 @@
    "Pacific McGeorge"
   ],
   "needsReview": false,
-  "ord": 242
+  "ord": 243
  },
  {
   "id": "2023-24-fall-puerto-rico-trial-advocacy-competition",
@@ -16624,7 +16738,7 @@
    "Pace"
   ],
   "needsReview": false,
-  "ord": 243
+  "ord": 244
  },
  {
   "id": "2023-24-fall-earle-zehmer-mock-trial-advocacy-competition",
@@ -16659,7 +16773,7 @@
    "Barry"
   ],
   "needsReview": false,
-  "ord": 244
+  "ord": 245
  },
  {
   "id": "2023-24-fall-white-collar-crime-trial-competition",
@@ -16717,7 +16831,7 @@
    "Villanova"
   ],
   "needsReview": false,
-  "ord": 245
+  "ord": 246
  },
  {
   "id": "2023-24-fall-the-premiere",
@@ -16777,7 +16891,7 @@
    "Texas Southern"
   ],
   "needsReview": false,
-  "ord": 246
+  "ord": 247
  },
  {
   "id": "2023-24-fall-chicago-cup",
@@ -16813,7 +16927,7 @@
    "Illinois"
   ],
   "needsReview": false,
-  "ord": 247
+  "ord": 248
  },
  {
   "id": "2023-24-fall-case-classic",
@@ -16885,7 +16999,7 @@
    "Harvard"
   ],
   "needsReview": false,
-  "ord": 248
+  "ord": 249
  },
  {
   "id": "2023-24-fall-gold-cup",
@@ -16942,7 +17056,7 @@
    "Brooklyn"
   ],
   "needsReview": false,
-  "ord": 249
+  "ord": 250
  },
  {
   "id": "2023-24-fall-kelly-trial-competition",
@@ -17026,7 +17140,7 @@
    "Maryland"
   ],
   "needsReview": false,
-  "ord": 250
+  "ord": 251
  },
  {
   "id": "2023-24-fall-mock-trial-community-competition-online",
@@ -17059,8 +17173,8 @@
     "place": null
    },
    {
-    "school": "Benjamin Crump",
-    "team": "Benjamin Crump",
+    "school": "St. Thomas (FL)",
+    "team": "St. Thomas (FL)",
     "finish": "semifinalist",
     "place": null
    },
@@ -17093,7 +17207,7 @@
    "Belmont",
    "Cardozo",
    "Charleston",
-   "Benjamin Crump",
+   "St. Thomas (FL)",
    "Texas Southern",
    "Faulkner",
    "George Mason",
@@ -17106,7 +17220,7 @@
    "Wisconsin"
   ],
   "needsReview": false,
-  "ord": 251
+  "ord": 252
  },
  {
   "id": "2023-24-fall-william-daniel-national-trial-competition",
@@ -17164,7 +17278,7 @@
    "Georgia State"
   ],
   "needsReview": false,
-  "ord": 252
+  "ord": 253
  },
  {
   "id": "2022-23-spring-chester-bedell-january-tbd",
@@ -17222,7 +17336,7 @@
    "Florida 2"
   ],
   "needsReview": false,
-  "ord": 253
+  "ord": 254
  },
  {
   "id": "2022-23-spring-costello-competition-tbd",
@@ -17272,7 +17386,7 @@
    "William & Mary"
   ],
   "needsReview": false,
-  "ord": 254
+  "ord": 255
  },
  {
   "id": "2022-23-spring-capitol-city-challenge",
@@ -17360,7 +17474,7 @@
    "Campbell"
   ],
   "needsReview": false,
-  "ord": 255
+  "ord": 256
  },
  {
   "id": "2022-23-spring-queens-county-district-attorney-s-competition",
@@ -17442,7 +17556,7 @@
    "Seton Hall"
   ],
   "needsReview": false,
-  "ord": 256
+  "ord": 257
  },
  {
   "id": "2022-23-spring-trials-tribulations",
@@ -17532,7 +17646,7 @@
    "Houston"
   ],
   "needsReview": false,
-  "ord": 257
+  "ord": 258
  },
  {
   "id": "2022-23-spring-south-texas-challenge",
@@ -17694,7 +17808,7 @@
    "William & Mary"
   ],
   "needsReview": false,
-  "ord": 258
+  "ord": 259
  },
  {
   "id": "2022-23-spring-pacific-mcgeorge-national-ethics-trial-competition",
@@ -17756,7 +17870,7 @@
    "UC Law SF"
   ],
   "needsReview": false,
-  "ord": 259
+  "ord": 260
  },
  {
   "id": "2022-23-spring-bayou-challenge-invitational",
@@ -17792,7 +17906,7 @@
    "Loyola New Orleans"
   ],
   "needsReview": false,
-  "ord": 260
+  "ord": 261
  },
  {
   "id": "2022-23-spring-estrella-competition-14-teams-teams",
@@ -17848,7 +17962,7 @@
    "Virginia"
   ],
   "needsReview": false,
-  "ord": 261
+  "ord": 262
  },
  {
   "id": "2022-23-spring-amicus-trial-competition-12-schools",
@@ -17902,7 +18016,7 @@
    "UNLV"
   ],
   "needsReview": false,
-  "ord": 262
+  "ord": 263
  },
  {
   "id": "2022-23-spring-crimson-cup-competition",
@@ -17968,7 +18082,7 @@
    "Emory"
   ],
   "needsReview": false,
-  "ord": 263
+  "ord": 264
  },
  {
   "id": "2022-23-spring-top-gun-competition",
@@ -18038,7 +18152,7 @@
    "Campbell"
   ],
   "needsReview": false,
-  "ord": 264
+  "ord": 265
  },
  {
   "id": "2022-23-spring-boston-quinnipiac-ntc-region-1-harvard-1-and-harvard-2-are-going-nationals",
@@ -18103,7 +18217,7 @@
    "Vermont"
   ],
   "needsReview": false,
-  "ord": 265
+  "ord": 266
  },
  {
   "id": "2022-23-spring-fordham-yeshiva-ntc-region-2",
@@ -18182,7 +18296,7 @@
    "Yeshiva"
   ],
   "needsReview": false,
-  "ord": 266
+  "ord": 267
  },
  {
   "id": "2022-23-spring-drexel-villanova-ntc-region-3",
@@ -18259,7 +18373,7 @@
    "Widener"
   ],
   "needsReview": false,
-  "ord": 267
+  "ord": 268
  },
  {
   "id": "2022-23-spring-ntc-region-4",
@@ -18337,7 +18451,7 @@
    "Baltimore"
   ],
   "needsReview": false,
-  "ord": 268
+  "ord": 269
  },
  {
   "id": "2022-23-spring-ntc-region-5",
@@ -18412,7 +18526,7 @@
    "William & Mary"
   ],
   "needsReview": false,
-  "ord": 269
+  "ord": 270
  },
  {
   "id": "2022-23-spring-ntc-region-6",
@@ -18490,7 +18604,7 @@
    "Miami"
   ],
   "needsReview": false,
-  "ord": 270
+  "ord": 271
  },
  {
   "id": "2022-23-spring-ntc-region-7",
@@ -18566,7 +18680,7 @@
    "Wayne State"
   ],
   "needsReview": false,
-  "ord": 271
+  "ord": 272
  },
  {
   "id": "2022-23-spring-ntc-region-8-23-teams-12-schools",
@@ -18644,7 +18758,7 @@
    "Vanderbilt"
   ],
   "needsReview": false,
-  "ord": 272
+  "ord": 273
  },
  {
   "id": "2022-23-spring-ntc-region-9",
@@ -18720,7 +18834,7 @@
    "Washington University"
   ],
   "needsReview": false,
-  "ord": 273
+  "ord": 274
  },
  {
   "id": "2022-23-spring-ntc-region-10",
@@ -18797,7 +18911,7 @@
    "Tulane"
   ],
   "needsReview": false,
-  "ord": 274
+  "ord": 275
  },
  {
   "id": "2022-23-spring-ntc-region-11",
@@ -18874,7 +18988,7 @@
    "Washburn"
   ],
   "needsReview": false,
-  "ord": 275
+  "ord": 276
  },
  {
   "id": "2022-23-spring-ntc-region-12",
@@ -18926,7 +19040,7 @@
    "Wisconsin"
   ],
   "needsReview": false,
-  "ord": 276
+  "ord": 277
  },
  {
   "id": "2022-23-spring-ntc-region-13",
@@ -19002,7 +19116,7 @@
    "Washington"
   ],
   "needsReview": false,
-  "ord": 277
+  "ord": 278
  },
  {
   "id": "2022-23-spring-ntc-region-14",
@@ -19078,7 +19192,7 @@
    "Santa Clara"
   ],
   "needsReview": false,
-  "ord": 278
+  "ord": 279
  },
  {
   "id": "2022-23-spring-ntc-region-15",
@@ -19154,7 +19268,7 @@
    "Western State"
   ],
   "needsReview": false,
-  "ord": 279
+  "ord": 280
  },
  {
   "id": "2022-23-spring-ntc-nationals-san-antonio-texas",
@@ -19250,7 +19364,7 @@
    "Mercer"
   ],
   "needsReview": false,
-  "ord": 280
+  "ord": 281
  },
  {
   "id": "2022-23-spring-aaj-stac-region-1",
@@ -19332,7 +19446,7 @@
    "Western New England"
   ],
   "needsReview": false,
-  "ord": 281
+  "ord": 282
  },
  {
   "id": "2022-23-spring-aaj-stac-region-2-nyu-and-drexel-are-going-nationals",
@@ -19402,7 +19516,7 @@
    "Northern Kentucky"
   ],
   "needsReview": false,
-  "ord": 282
+  "ord": 283
  },
  {
   "id": "2022-23-spring-aaj-stac-region-3",
@@ -19484,7 +19598,7 @@
    "UDC"
   ],
   "needsReview": false,
-  "ord": 283
+  "ord": 284
  },
  {
   "id": "2022-23-spring-aaj-stac-region-4",
@@ -19566,7 +19680,7 @@
    "Wayne State"
   ],
   "needsReview": false,
-  "ord": 284
+  "ord": 285
  },
  {
   "id": "2022-23-spring-aaj-stac-region-5",
@@ -19648,7 +19762,7 @@
    "Wake Forest"
   ],
   "needsReview": false,
-  "ord": 285
+  "ord": 286
  },
  {
   "id": "2022-23-spring-aaj-stac-region-6",
@@ -19731,7 +19845,7 @@
    "Wake Forest"
   ],
   "needsReview": false,
-  "ord": 286
+  "ord": 287
  },
  {
   "id": "2022-23-spring-aaj-stac-region-7",
@@ -19813,7 +19927,7 @@
    "Washington University"
   ],
   "needsReview": false,
-  "ord": 287
+  "ord": 288
  },
  {
   "id": "2022-23-spring-aaj-stac-region-8",
@@ -19895,7 +20009,7 @@
    "Vanderbilt"
   ],
   "needsReview": false,
-  "ord": 288
+  "ord": 289
  },
  {
   "id": "2022-23-spring-aaj-stac-region-9",
@@ -19977,7 +20091,7 @@
    "Wisconsin"
   ],
   "needsReview": false,
-  "ord": 289
+  "ord": 290
  },
  {
   "id": "2022-23-spring-aaj-stac-region-10",
@@ -20059,7 +20173,7 @@
    "Washington"
   ],
   "needsReview": false,
-  "ord": 290
+  "ord": 291
  },
  {
   "id": "2022-23-spring-aaj-stac-nationals-new-orleans-la",
@@ -20145,6 +20259,6 @@
    "UCLA 2"
   ],
   "needsReview": false,
-  "ord": 291
+  "ord": 292
  }
 ]

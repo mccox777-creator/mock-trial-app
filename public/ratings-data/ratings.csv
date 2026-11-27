@@ -1,200 +1,199 @@
 rank,school,rating,class,competitions,provisional,peak
-1,UCLA,2020.96,Expert,81,no,2035.91
-2,Drexel,1873.11,Class A,55,no,1933.06
-3,Stetson,1820.3,Class A,85,no,1917.3
-4,Harvard,1791.1,Class B,43,no,1793.44
-5,Texas,1769.14,Class B,44,no,1864.64
-6,American,1766.47,Class B,34,no,1766.47
-7,Boston College,1764.43,Class B,11,no,1830.39
-8,Georgetown,1763.92,Class B,42,no,1817.47
-9,Mercer,1758.63,Class B,67,no,1886.37
-10,San Diego,1736.28,Class B,29,no,1736.28
-11,Ohio State,1735.68,Class B,20,no,1821.34
-12,Florida International,1728.74,Class B,24,no,1809.27
-13,Baylor,1728.6,Class B,67,no,1820.65
-14,St. Thomas (FL),1724.18,Class B,31,no,1793.35
-15,St. Thomas,1721.3,Class B,4,yes,1721.3
-16,Houston,1718.74,Class B,77,no,1805.94
-17,Maryland,1709.38,Class B,60,no,1811.91
-18,NYU,1706.36,Class B,31,no,1778.35
-19,UC Berkeley,1703.63,Class B,49,no,1807.15
-20,Regent,1698.3,Class B,30,no,1744.94
-21,Georgia,1697.62,Class B,40,no,1836.01
-22,Cumberland,1693.42,Class B,62,no,1819.3
-23,Texas Southern,1687.12,Class B,32,no,1724.72
-24,Chicago-Kent,1678.62,Class B,51,no,1753.65
-25,Chapman,1677.1,Class B,27,no,1735.17
-26,UC Law SF,1671.27,Class B,36,no,1844.9
-27,Santa Clara,1670.15,Class B,14,no,1670.15
-28,Washington University,1668.95,Class B,19,no,1755.85
-29,Northwestern,1667.44,Class B,40,no,1735.61
-30,Campbell,1664.7,Class B,55,no,1781.72
-31,Michigan,1657.45,Class B,18,no,1731.83
-32,UNLV,1653.15,Class B,28,no,1684.02
-33,Minnesota,1642.49,Class B,5,no,1712.68
-34,Barry,1634.98,Class B,21,no,1658.57
-35,Villanova,1630.35,Class B,31,no,1800.85
-36,South Carolina,1624.35,Class B,68,no,1762.25
-37,Nebraska,1622.7,Class B,8,no,1624.44
-38,Howard,1621.58,Class B,31,no,1810.13
-39,Iowa,1619.46,Class B,5,no,1644
-40,Wake Forest,1611.64,Class B,21,no,1625.78
-41,Loyola LA,1608.6,Class B,36,no,1825.78
-42,Memphis,1605.97,Class B,5,no,1663.68
-43,Pepperdine,1605.86,Class B,20,no,1731.11
-44,Suffolk,1605.57,Class B,24,no,1638.39
-45,Akron,1605.32,Class B,28,no,1797.69
-46,Hofstra,1605.12,Class B,53,no,1775.37
-47,Cal Western,1604.11,Class B,24,no,1650.26
-48,Catholic,1594.21,Class C,16,no,1594.21
-49,Alabama,1592.29,Class C,27,no,1619.1
-50,Belmont,1588.99,Class C,10,no,1682.3
-51,Pace,1588.92,Class C,53,no,1703.36
-52,Pacific McGeorge,1585.93,Class C,55,no,1652.83
-53,Temple,1585.71,Class C,45,no,1737.74
-54,Colorado,1582.14,Class C,20,no,1635.42
-55,Denver,1582.06,Class C,42,no,1758.2
-56,Wilmington,1580.95,Class C,3,yes,1617.98
-57,Kentucky,1580.22,Class C,5,no,1580.22
-58,Benjamin Crump,1580.05,Class C,1,yes,1580.05
-59,Fordham,1573.47,Class C,77,no,1753.51
-60,Duke,1572.17,Class C,6,no,1572.17
-61,Liberty,1567.83,Class C,5,no,1598.09
-62,Missouri,1567.75,Class C,13,no,1631.82
-63,Western State,1567.36,Class C,18,no,1588.7
-64,UMKC,1562.31,Class C,32,no,1694.76
-65,South Texas,1557.34,Class C,56,no,1791.45
-66,DePaul,1551.42,Class C,19,no,1577.29
-67,William & Mary,1546.69,Class C,46,no,1627.16
-68,Ohio Northern,1543.32,Class C,28,no,1621.39
-69,Faulkner,1543.24,Class C,25,no,1658.18
-70,St. Mary's,1542.99,Class C,50,no,1600.19
-71,St. Louis,1542.38,Class C,8,no,1629.85
-72,Marquette,1541.36,Class C,5,no,1558.67
-73,Charleston,1527.5,Class C,22,no,1547.14
-74,University of Chicago,1524.09,Class C,4,yes,1524.09
-75,Florida,1523.69,Class C,24,no,1663.57
-76,New England,1522.88,Class C,4,yes,1615.66
-77,Rutgers,1521.51,Class C,24,no,1735.21
-78,Illinois,1504.95,Class C,45,no,1729.87
-79,Case Western,1503.35,Class C,24,no,1760.18
-80,Illinois Chicago,1500.93,Class C,50,no,1617.08
-81,North Carolina,1499.43,Class C,14,no,1502.16
-82,Cleveland State,1495.57,Class C,10,no,1637.7
-83,Drake,1493.43,Class C,13,no,1639.25
-84,Miami,1493.29,Class C,25,no,1573.48
-85,Appalachian,1492.98,Class C,1,yes,1500
-86,Vanderbilt,1488.42,Class C,12,no,1685.93
-87,Southwestern,1484.77,Class C,8,no,1549.09
-88,Texas Tech,1484.28,Class C,31,no,1736.51
-89,Washington,1477.98,Class C,9,no,1579.22
-90,UNT Dallas,1477.18,Class C,1,yes,1500
-91,West LA,1477.02,Class C,1,yes,1500
-92,Loyola Chicago,1474.45,Class C,31,no,1655.19
-93,New Hampshire,1470.42,Class C,6,no,1500
-94,Gonzaga,1469.22,Class C,4,yes,1500
-95,Purdue Global,1468.43,Class C,1,yes,1500
-96,St. John's,1468.15,Class C,57,no,1806.31
-97,Seattle,1460.34,Class C,8,no,1687.04
-98,Florida State,1456.52,Class C,34,no,1660.3
-99,Duquesne,1455.97,Class C,23,no,1559.75
-100,Arizona State,1452.4,Class C,10,no,1525.85
-101,Penn State,1449.03,Class C,8,no,1524.62
-102,Loyola,1447.94,Class C,2,yes,1500
-103,Arizona,1447.83,Class C,12,no,1500
-104,San Francisco,1439.44,Class C,1,yes,1500
-105,Washington and Lee,1436.2,Class C,1,yes,1500
-106,Baltimore,1435.9,Class C,16,no,1507.84
-107,Quinnipiac,1433.3,Class C,31,no,1572.02
-108,UC Davis,1431.56,Class C,28,no,1525.52
-109,Notre Dame,1430.1,Class C,10,no,1500
-110,Willamette,1429.88,Class C,4,yes,1500
-111,Nova Southeastern,1425.6,Class C,42,no,1544.43
-112,Syracuse,1423.61,Class C,49,no,1707.95
-113,Cincinnati,1423.18,Class C,9,no,1500
-114,SMU,1421.16,Class C,29,no,1500
-115,Arkansas,1420.29,Class C,7,no,1644.75
-116,Emory,1419.93,Class C,39,no,1658.9
-117,Jacksonville,1415.02,Class C,3,yes,1500
-118,Brooklyn,1415.01,Class C,44,no,1668.62
-119,Yale,1414.75,Class C,5,no,1647.46
-120,George Washington,1412.87,Class C,23,no,1538.37
-121,Touro,1409.45,Class C,7,no,1585.78
-122,Columbia,1407.46,Class C,1,yes,1500
-123,Cornell,1406.28,Class C,9,no,1617.76
-124,Stanford,1404.56,Class C,1,yes,1500
-125,Capital,1401.87,Class C,3,yes,1500
-126,Northern Kentucky,1401.76,Class C,15,no,1500
-127,USC,1401.26,Class C,13,no,1500
-128,CUNY,1399.8,Class D,3,yes,1500
-129,Roger Williams,1399.02,Class D,8,no,1500
-130,Lewis & Clark,1397.15,Class D,25,no,1696.58
-131,Wisconsin,1389.95,Class D,18,no,1500
-132,Buffalo,1387.81,Class D,46,no,1500
-133,Northeastern,1387.08,Class D,2,yes,1500
-134,Dayton,1384.48,Class D,6,no,1500
-135,Northern Illinois,1383.64,Class D,1,yes,1500
-136,Louisville,1379.53,Class D,7,no,1524.02
-137,Indiana,1379.41,Class D,3,yes,1500
-138,Connecticut,1379.06,Class D,15,no,1550.14
-139,North Carolina Central,1375.91,Class D,5,no,1500
-140,Arkansas Little Rock,1375.78,Class D,8,no,1500
-141,Tulane,1375.6,Class D,20,no,1640.7
-142,Boston University,1362.38,Class D,9,no,1500
-143,George Mason,1361,Class D,16,no,1532.62
-144,Richmond,1360.06,Class D,11,no,1580.84
-145,Mississippi College,1359.96,Class D,12,no,1500
-146,University of Puerto Rico,1358.17,Class D,11,no,1571.59
-147,Virginia,1357.42,Class D,18,no,1500
-148,Thomas Jefferson,1356.59,Class D,2,yes,1500
-149,Tulsa,1349.4,Class D,9,no,1500
-150,St. Thomas (MN),1343.79,Class D,8,no,1500
-151,Kansas,1335.37,Class D,25,no,1500
-152,Lincoln Memorial,1333.02,Class D,12,no,1500
-153,Western New England,1331.61,Class D,4,yes,1500
-154,North Dakota,1331.02,Class D,4,yes,1500
-155,New Mexico,1330.3,Class D,4,yes,1513.14
-156,UC Irvine,1324.5,Class D,5,no,1580
-157,Utah,1324.39,Class D,4,yes,1500
-158,Cooley,1323.38,Class D,5,no,1500
-159,Penn,1320.54,Class D,15,no,1500
-160,Montana,1317.68,Class D,4,yes,1500
-161,Ave Maria,1316.95,Class D,4,yes,1500
-162,BYU,1311.42,Class D,10,no,1500
-163,South Dakota,1311.26,Class D,27,no,1500
-164,Birmingham,1310.35,Class D,6,no,1500
-165,Albany,1307.32,Class D,8,no,1500
-166,Mississippi,1306.92,Class D,17,no,1500
-167,Wayne State,1303.34,Class D,10,no,1526.67
-168,Texas A&M,1301.86,Class D,25,no,1500
-169,Penn State Dickinson,1300.62,Class D,3,yes,1500
-170,Maine,1300.41,Class D,4,yes,1500
-171,Vermont,1300.41,Class D,4,yes,1500
-172,Massachusetts,1298.23,Class D,5,no,1500
-173,Cardozo,1295.18,Class D,21,no,1500
-174,Loyola New Orleans,1295,Class D,18,no,1500
-175,Widener,1294.95,Class D,7,no,1500
-176,LSU,1292.94,Class D,27,no,1500
-177,Hawaii,1290.02,Class D,4,yes,1500
-178,John Marshall Atlanta,1283.27,Class D,6,no,1500
-179,Oklahoma,1278.86,Class D,7,no,1500
-180,Washburn,1274.21,Class D,6,no,1500
-181,Yeshiva,1273.02,Class D,4,yes,1500
-182,InterAmerican Puerto Rico,1272.68,Class D,15,no,1500
-183,Creighton,1265.81,Class D,10,no,1500
-184,Golden Gate,1263.5,Class D,7,no,1500
-185,Tennessee,1261.31,Class D,7,no,1500
-186,New York Law School,1256.2,Class D,12,no,1500
-187,Oregon,1254.61,Class D,4,yes,1500
-188,Mitchell Hamline,1250.63,Class D,9,no,1500
-189,West Virginia,1249.54,Class D,6,no,1500
-190,North Texas,1247.77,Class D,14,no,1500
-191,UDC,1246.27,Class D,6,no,1500
-192,Oklahoma City,1246.17,Class D,4,yes,1500
-193,Elon,1243.59,Class D,6,no,1500
-194,Southern Illinois,1234.2,Class D,6,no,1500
-195,Michigan State,1226.57,Class D,13,no,1500
-196,Seton Hall,1224.47,Class D,26,no,1500
-197,Georgia State,1222.4,Class D,19,no,1500
-198,Southern,1220.7,Class D,19,no,1500
-199,Pittsburgh,1216.16,Class D,17,no,1500
+1,UCLA,2021.92,Expert,82,no,2037.2
+2,Drexel,1873.33,Class A,55,no,1933.61
+3,Stetson,1820.89,Class A,86,no,1917.83
+4,Harvard,1790.75,Class B,43,no,1792.08
+5,Texas,1769.08,Class B,44,no,1864.64
+6,American,1767.12,Class B,34,no,1767.12
+7,Boston College,1764.53,Class B,11,no,1831.11
+8,Georgetown,1764.18,Class B,42,no,1818.35
+9,Mercer,1759.04,Class B,67,no,1886.48
+10,Ohio State,1736.77,Class B,20,no,1822.24
+11,San Diego,1734.04,Class B,30,no,1734.04
+12,Florida International,1729.37,Class B,24,no,1809.93
+13,Baylor,1729.23,Class B,67,no,1820.2
+14,St. Thomas (FL),1725.52,Class B,32,no,1795.97
+15,St. Thomas,1721.17,Class B,4,yes,1721.17
+16,Houston,1719.01,Class B,77,no,1806.24
+17,Maryland,1708.79,Class B,60,no,1812.03
+18,NYU,1706.43,Class B,31,no,1778.54
+19,UC Berkeley,1704.46,Class B,49,no,1807.27
+20,Regent,1698.81,Class B,30,no,1745.74
+21,Georgia,1698.35,Class B,40,no,1836.66
+22,Cumberland,1693.27,Class B,62,no,1819.3
+23,Texas Southern,1687.39,Class B,32,no,1724.96
+24,Chapman,1677.9,Class B,27,no,1736.02
+25,Chicago-Kent,1676.42,Class B,51,no,1754.27
+26,UC Law SF,1671.68,Class B,36,no,1845.61
+27,Santa Clara,1670.6,Class B,14,no,1670.6
+28,Washington University,1668.68,Class B,19,no,1755.85
+29,Northwestern,1665.45,Class B,40,no,1731.77
+30,Campbell,1665.42,Class B,55,no,1781.72
+31,Michigan,1659.39,Class B,18,no,1734.09
+32,UNLV,1649.87,Class B,28,no,1680.62
+33,Minnesota,1642.73,Class B,5,no,1713.04
+34,Barry,1635.51,Class B,21,no,1659.19
+35,Villanova,1631.68,Class B,31,no,1801.65
+36,South Carolina,1624.27,Class B,68,no,1762.25
+37,Nebraska,1623.53,Class B,8,no,1624.44
+38,Howard,1621.27,Class B,31,no,1810.13
+39,Iowa,1619.49,Class B,5,no,1644
+40,Colorado,1617.9,Class B,20,no,1662.39
+41,Wake Forest,1611.76,Class B,21,no,1626.49
+42,Pepperdine,1611.26,Class B,21,no,1730.71
+43,Loyola LA,1609.17,Class B,36,no,1825.78
+44,Akron,1606.31,Class B,28,no,1796.78
+45,Memphis,1606.03,Class B,5,no,1663.68
+46,Suffolk,1605.62,Class B,24,no,1638.51
+47,Hofstra,1604.4,Class B,53,no,1766.33
+48,Cal Western,1603.87,Class B,24,no,1650.12
+49,Catholic,1594.29,Class C,16,no,1594.29
+50,Alabama,1593.26,Class C,27,no,1619.54
+51,Belmont,1589.85,Class C,10,no,1683.14
+52,Pace,1588.31,Class C,53,no,1703.36
+53,Temple,1586.51,Class C,45,no,1738.66
+54,Pacific McGeorge,1585.31,Class C,55,no,1652.16
+55,Denver,1583.12,Class C,42,no,1758.23
+56,Kentucky,1580.59,Class C,5,no,1580.59
+57,UMKC,1575.88,Class C,33,no,1714.19
+58,Duke,1573.63,Class C,6,no,1573.63
+59,Fordham,1573.01,Class C,77,no,1753.51
+60,Wilmington,1571.52,Class C,4,yes,1607.24
+61,Missouri,1568.79,Class C,13,no,1631.05
+62,Liberty,1568.36,Class C,5,no,1598.09
+63,Western State,1564.47,Class C,19,no,1585.73
+64,South Texas,1557.83,Class C,56,no,1790.44
+65,DePaul,1549.82,Class C,19,no,1575.61
+66,William & Mary,1549.73,Class C,46,no,1627.27
+67,Ohio Northern,1544.85,Class C,28,no,1624.02
+68,Faulkner,1543.84,Class C,25,no,1658.74
+69,St. Louis,1542.04,Class C,8,no,1629.55
+70,Marquette,1541.22,Class C,5,no,1558.65
+71,St. Mary's,1539.49,Class C,52,no,1594.52
+72,Rutgers,1533.08,Class C,24,no,1781.99
+73,Charleston,1527.63,Class C,22,no,1547.37
+74,Florida,1524.35,Class C,24,no,1664.2
+75,University of Chicago,1523.5,Class C,4,yes,1523.5
+76,New England,1523.16,Class C,4,yes,1615.66
+77,Illinois,1513.26,Class C,46,no,1729.87
+78,Case Western,1504.73,Class C,24,no,1760.18
+79,Illinois Chicago,1500.32,Class C,50,no,1617.08
+80,North Carolina,1499.62,Class C,14,no,1502.19
+81,Cleveland State,1496.28,Class C,10,no,1638.21
+82,Miami,1494.76,Class C,25,no,1573.48
+83,Drake,1493.48,Class C,13,no,1639.61
+84,Texas Tech,1492.97,Class C,32,no,1736.51
+85,Appalachian,1492.97,Class C,1,yes,1500
+86,Vanderbilt,1488.54,Class C,12,no,1685.93
+87,Southwestern,1485.02,Class C,8,no,1549.03
+88,Washington,1478.53,Class C,9,no,1579.22
+89,UNT Dallas,1477.42,Class C,1,yes,1500
+90,West LA,1477.02,Class C,1,yes,1500
+91,New Hampshire,1470.57,Class C,6,no,1500
+92,Gonzaga,1469.24,Class C,4,yes,1500
+93,Purdue Global,1468.53,Class C,1,yes,1500
+94,Loyola Chicago,1468.41,Class C,31,no,1655.19
+95,St. John's,1468.13,Class C,57,no,1806.63
+96,Seattle,1460.91,Class C,8,no,1687.05
+97,Duquesne,1458.25,Class C,23,no,1562.25
+98,Arizona State,1452.44,Class C,10,no,1525.84
+99,Penn State,1451.9,Class C,8,no,1524.62
+100,Loyola,1448.26,Class C,2,yes,1500
+101,Arizona,1447.76,Class C,12,no,1500
+102,Florida State,1444.61,Class C,35,no,1651.71
+103,San Francisco,1439.43,Class C,1,yes,1500
+104,Washington and Lee,1436.16,Class C,1,yes,1500
+105,Baltimore,1435.86,Class C,16,no,1507.81
+106,Quinnipiac,1433.07,Class C,31,no,1572.02
+107,Notre Dame,1431.9,Class C,10,no,1500
+108,UC Davis,1431.9,Class C,28,no,1525.61
+109,Willamette,1430.98,Class C,4,yes,1500
+110,Cincinnati,1426.91,Class C,9,no,1500
+111,Nova Southeastern,1426.28,Class C,42,no,1544.43
+112,SMU,1421.79,Class C,29,no,1500
+113,Arkansas,1420.77,Class C,7,no,1644.75
+114,Emory,1415.84,Class C,39,no,1658.9
+115,Jacksonville,1415.66,Class C,3,yes,1500
+116,Yale,1413.6,Class C,5,no,1647.46
+117,Syracuse,1412.17,Class C,50,no,1706.61
+118,Brooklyn,1410.11,Class C,44,no,1668.62
+119,George Washington,1409.3,Class C,23,no,1538.26
+120,Columbia,1407.46,Class C,1,yes,1500
+121,Cornell,1405.36,Class C,9,no,1617.76
+122,Stanford,1404.58,Class C,1,yes,1500
+123,Capital,1402.28,Class C,3,yes,1500
+124,Northern Kentucky,1402.14,Class C,15,no,1500
+125,CUNY,1400.89,Class C,3,yes,1500
+126,Roger Williams,1400.29,Class C,8,no,1500
+127,Lewis & Clark,1397.62,Class D,25,no,1697.02
+128,USC,1396.71,Class D,14,no,1500
+129,Touro,1394.22,Class D,7,no,1585.78
+130,Wisconsin,1390.42,Class D,18,no,1500
+131,Dayton,1388.32,Class D,6,no,1500
+132,Buffalo,1387.42,Class D,46,no,1500
+133,Northeastern,1387.2,Class D,2,yes,1500
+134,Northern Illinois,1383.64,Class D,1,yes,1500
+135,Louisville,1379.78,Class D,7,no,1524.02
+136,Connecticut,1379.63,Class D,15,no,1550.14
+137,Indiana,1379.21,Class D,3,yes,1500
+138,North Carolina Central,1377.01,Class D,5,no,1500
+139,Tulane,1376.33,Class D,20,no,1640.7
+140,Arkansas Little Rock,1374.33,Class D,8,no,1500
+141,Boston University,1363.12,Class D,9,no,1500
+142,Richmond,1360.95,Class D,11,no,1580.84
+143,George Mason,1360.34,Class D,16,no,1532.62
+144,Mississippi College,1359.9,Class D,12,no,1500
+145,Virginia,1357.17,Class D,18,no,1500
+146,Thomas Jefferson,1356.58,Class D,2,yes,1500
+147,University of Puerto Rico,1354.97,Class D,11,no,1571.16
+148,Tulsa,1349.97,Class D,9,no,1500
+149,St. Thomas (MN),1343.74,Class D,8,no,1500
+150,Kansas,1336.4,Class D,25,no,1500
+151,Lincoln Memorial,1333.41,Class D,12,no,1500
+152,Western New England,1332.64,Class D,4,yes,1500
+153,New Mexico,1331.28,Class D,4,yes,1513.14
+154,North Dakota,1331.16,Class D,4,yes,1500
+155,Cooley,1325.92,Class D,5,no,1500
+156,Utah,1324.42,Class D,4,yes,1500
+157,UC Irvine,1323.44,Class D,5,no,1580
+158,Penn,1318.7,Class D,15,no,1500
+159,Montana,1317.7,Class D,4,yes,1500
+160,Ave Maria,1316.75,Class D,4,yes,1500
+161,BYU,1311.73,Class D,10,no,1500
+162,Birmingham,1310.27,Class D,6,no,1500
+163,Albany,1307.59,Class D,8,no,1500
+164,South Dakota,1307.42,Class D,28,no,1500
+165,Mississippi,1307.07,Class D,17,no,1500
+166,Wayne State,1306.18,Class D,10,no,1526.67
+167,Texas A&M,1302.74,Class D,25,no,1500
+168,Penn State Dickinson,1302.54,Class D,3,yes,1500
+169,Maine,1300.55,Class D,4,yes,1500
+170,Vermont,1300.55,Class D,4,yes,1500
+171,Massachusetts,1299.26,Class D,5,no,1500
+172,Cardozo,1295.82,Class D,21,no,1500
+173,Widener,1295.55,Class D,7,no,1500
+174,Loyola New Orleans,1294.09,Class D,18,no,1500
+175,LSU,1290.85,Class D,27,no,1500
+176,Hawaii,1290.5,Class D,4,yes,1500
+177,John Marshall Atlanta,1283.48,Class D,6,no,1500
+178,Oklahoma,1279.32,Class D,7,no,1500
+179,Washburn,1274.17,Class D,6,no,1500
+180,InterAmerican Puerto Rico,1271.38,Class D,15,no,1500
+181,Yeshiva,1271.15,Class D,4,yes,1500
+182,Creighton,1265.56,Class D,10,no,1500
+183,Golden Gate,1263.51,Class D,7,no,1500
+184,Tennessee,1261.77,Class D,7,no,1500
+185,New York Law School,1254.92,Class D,12,no,1500
+186,Oregon,1254.63,Class D,4,yes,1500
+187,Mitchell Hamline,1250.57,Class D,9,no,1500
+188,West Virginia,1249.63,Class D,6,no,1500
+189,North Texas,1247.98,Class D,14,no,1500
+190,Oklahoma City,1246.96,Class D,4,yes,1500
+191,UDC,1246.21,Class D,6,no,1500
+192,Elon,1244.35,Class D,6,no,1500
+193,Southern Illinois,1233.97,Class D,6,no,1500
+194,Michigan State,1229.6,Class D,13,no,1500
+195,Seton Hall,1225.4,Class D,26,no,1500
+196,Georgia State,1222.22,Class D,19,no,1500
+197,Southern,1219.47,Class D,19,no,1500
+198,Pittsburgh,1217.81,Class D,17,no,1500

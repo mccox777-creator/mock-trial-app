@@ -306,7 +306,8 @@ export interface PastEvent {
   dates: string | null;
   teamCount: number | null;
   schoolCount: number | null;
-  results: { school: string; team: string; finish: PastFinish; place: number | null }[];
+  /** source 'TCPR': missing from the circuit record, filled in from the Trial Competition Performance Rankings. */
+  results: { school: string; team: string; finish: PastFinish; place: number | null; source?: 'TCPR' }[];
   /** Team names as listed, e.g. "Nova Southeastern 2". */
   participants: string[];
   /** The source text had a line the importer couldn't read; worth a look. */
@@ -315,4 +316,6 @@ export interface PastEvent {
   ord: number;
   /** Set when this comes from a competition run in the app (added once it closes), not the imported record. */
   tournamentId?: string;
+  /** 'TCPR': the whole competition is missing from the circuit record and comes from the TCPR spreadsheet. */
+  source?: 'TCPR';
 }
