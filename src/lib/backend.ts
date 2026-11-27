@@ -43,12 +43,12 @@ export interface Backend {
 
 const EMPTY: AppData = {
   programs: [], teams: [], tournaments: [], registrations: [], judgeSignups: [], matches: [], ballots: [],
-  cases: [], caseFiles: [], bulletins: [], recordings: [],
+  cases: [], caseFiles: [], bulletins: [], recordings: [], messages: [],
 };
 
 // ---------- Demo backend: sample season, saved on the device ----------
 
-const DEMO_KEY = 'mocktrial.demo.v3';
+const DEMO_KEY = 'mocktrial.demo.v4';
 const DEMO_USER_KEY = 'mocktrial.demo.user';
 
 function demoBackend(): Backend {
@@ -139,7 +139,7 @@ function demoBackend(): Backend {
 const TABLES: Record<TableName, string> = {
   programs: 'programs', teams: 'teams', tournaments: 'tournaments', registrations: 'registrations', judgeSignups: 'judge_signups',
   matches: 'matches', ballots: 'ballots', cases: 'cases', caseFiles: 'case_files',
-  bulletins: 'bulletins', recordings: 'recordings',
+  bulletins: 'bulletins', recordings: 'recordings', messages: 'messages',
 };
 
 const toSnake = (s: string) => s.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
@@ -161,7 +161,15 @@ function supabaseBackend(url: string, anonKey: string): Backend {
           return [k, (data ?? []).map((r) => mapKeys(r, toCamel))] as const;
         }),
       );
-      return Object.fromEntries(entries) as unknown as AppData;
+      const data = Object.fromEntries(entries) as unknown as AppData;
+      // Public standings: ballots you can't read in full still count, as totals only, once results are published.
+      const { data: pub } = await sb.from('published_results').select('*');
+      const have = new Set(data.ballots.map((b) => b.id));
+      for (const r of pub ?? []) {
+        if (have.has(r.id)) continue;
+        data.ballots.push({ id: r.id, matchId: r.match_id, judge: 'Ballot', judgeId: null, source: 'paper', sheet: null, comments: null, pScore: Number(r.p_score), dScore: Number(r.d_score), enteredBy: '', enteredAt: '' });
+      }
+      return data;
     },
     async upsert(table, row) {
       const { error } = await sb.from(TABLES[table]).upsert(mapKeys(row as unknown as Record<string, unknown>, toSnake));
@@ -185,11 +193,13 @@ function supabaseBackend(url: string, anonKey: string): Backend {
       const u = data.user;
       if (!u) return null;
       const { data: prof } = await sb.from('profiles').select('*').eq('id', u.id).maybeSingle();
+      const { data: mine } = await sb.from('team_members').select('team_id, role').eq('user_id', u.id);
       return {
         id: u.id,
         email: u.email ?? '',
         name: (prof?.name as string) || u.email || 'Member',
         teamIds: (prof?.team_ids as string[]) ?? [],
+        coachOf: (mine ?? []).filter((m) => m.role === 'coach').map((m) => m.team_id as string),
       };
     },
     async signIn(email) {

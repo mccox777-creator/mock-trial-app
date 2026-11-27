@@ -49,6 +49,9 @@ function tournament(t: Partial<Tournament> & Pick<Tournament, 'id' | 'name' | 's
     caseId: null,
     description: '',
     rules: { ...COMMON_RULES },
+    rankBy: 'ballots',
+    chatReplies: true,
+    scoring: { max: 10, parts: ['opening', 'direct', 'witness', 'cross', 'closing'], extra: [], comments: 'overall' },
     customRules: '',
     directorIds: [DEMO_DIRECTOR],
     witnessesPerSide: 3,
@@ -85,6 +88,7 @@ const tournaments: Tournament[] = [
     startDate: '2027-01-22', endDate: '2027-01-24', registrationDeadline: '2026-12-18', caseId: 'harmon-v-pryce', teamCap: 12,
     description: 'Civil case released December 15. Two teams per school maximum.',
     rules: { ...COMMON_RULES, teamsPerSchool: true, teamsPerSchoolMax: 2, witnessChoice: true, witnessNotice: true, witnessNoticeMinutes: 15, anyGender: true, spectators: true },
+    scoring: { max: 10, parts: ['opening', 'direct', 'witness', 'cross', 'closing'], extra: [], comments: 'both' },
     customRules: 'Teams check in at the clerk\'s desk 20 minutes before each round.',
   }),
   tournament({
@@ -92,6 +96,7 @@ const tournaments: Tournament[] = [
     hostProgramId: 'ridgeview', hostName: 'Ridgeview University College of Law', city: 'Ridgeview', venue: 'Ridgeview Moot Courtrooms',
     startDate: '2027-03-12', endDate: '2027-03-14', registrationDeadline: '2027-02-12', caseId: 'harmon-v-pryce', teamCap: 16, entryFee: 450, entryType: 'invitational',
     description: 'Season-ending invitational. Top eight after prelims advance to a single-elimination bracket.',
+    scoring: { max: 15, parts: ['pretrial', 'opening', 'direct', 'witness', 'cross', 'evidence', 'closing', 'professionalism'], extra: [], comments: 'both' },
     rules: { ...COMMON_RULES, woodsheddingMinutes: 45, pretrialMotion: true, jury: true, upperLevelOnly: true, recordingAllowed: true },
   }),
 ];
@@ -203,10 +208,16 @@ export const sampleData: AppData = {
       postedAt: '2026-11-24T08:00', postedBy: DEMO_DIRECTOR,
     },
   ],
+  messages: [
+    { id: 'msg-1', tournamentId: 'winter-classic', channel: 'all', authorId: DEMO_DIRECTOR, authorName: 'Demo Director', authorRole: 'organizer', body: 'Welcome to the Winter Trial Classic. Check-in opens at 8:00 AM in the Justice Center lobby.', createdAt: '2026-11-20T09:00:00' },
+    { id: 'msg-2', tournamentId: 'winter-classic', channel: 'all', authorId: 'demo-coach', authorName: 'Demo Coach', authorRole: 'coach', body: 'Is there parking at the Justice Center, or should teams use the garage on 3rd?', createdAt: '2026-11-20T10:15:00' },
+    { id: 'msg-3', tournamentId: 'winter-classic', channel: 'all', authorId: DEMO_DIRECTOR, authorName: 'Demo Director', authorRole: 'organizer', body: 'Use the 3rd Street garage. We will validate parking at check-in.', createdAt: '2026-11-20T10:30:00' },
+    { id: 'msg-4', tournamentId: 'winter-classic', channel: 'judges', authorId: DEMO_DIRECTOR, authorName: 'Demo Director', authorRole: 'organizer', body: 'Judges: a short orientation runs at 8:30 AM in Courtroom A, with the score sheet and comment guidelines.', createdAt: '2026-11-21T09:00:00' },
+  ],
   recordings: [
     {
-      id: 'rec-1', matchId: 'great-lakes-cup-r4-1', title: 'Round 4, Courtroom A (full trial)', provider: 'link',
-      url: 'https://example.com/recordings/great-lakes-r4-a', visibility: 'coaches', uploadedBy: DEMO_DIRECTOR, createdAt: '2026-11-15T20:00',
+      id: 'rec-1', matchId: 'great-lakes-cup-r4-1', title: 'Round 4, Courtroom A (full trial)', provider: 'youtube',
+      url: 'https://www.youtube.com/watch?v=aqz-KE-bpKQ', visibility: 'coaches', uploadedBy: DEMO_DIRECTOR, createdAt: '2026-11-15T20:00',
     },
   ],
 };
@@ -214,6 +225,6 @@ export const sampleData: AppData = {
 export const DEMO_USERS = {
   director: { id: DEMO_DIRECTOR, name: 'Demo Director', email: 'director@example.edu', teamIds: [] },
   judge: { id: 'demo-judge', name: 'Demo Judge', email: 'judge@example.com', teamIds: [] },
-  coach: { id: 'demo-coach', name: 'Demo Coach', email: 'coach@example.edu', teamIds: ['lakeshore-a', 'lakeshore-b'] },
-  competitor: { id: 'demo-competitor', name: 'Demo Competitor', email: 'student@example.edu', teamIds: ['lakeshore-a'] },
+  coach: { id: 'demo-coach', name: 'Demo Coach', email: 'coach@example.edu', teamIds: ['lakeshore-a', 'lakeshore-b'], coachOf: ['lakeshore-a', 'lakeshore-b'] },
+  competitor: { id: 'demo-competitor', name: 'Demo Competitor', email: 'student@example.edu', teamIds: ['lakeshore-a'], coachOf: [] },
 };

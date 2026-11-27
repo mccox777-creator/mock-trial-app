@@ -71,7 +71,7 @@ export default function ResultsScreen() {
             {published
               .filter((t) => seasonOf(t.startDate) === season)
               .map((t) => {
-                const top = computeStandings(d.matches.filter((m) => m.tournamentId === t.id), d.ballots)[0];
+                const top = computeStandings(d.matches.filter((m) => m.tournamentId === t.id), d.ballots, t.rankBy ?? 'ballots')[0];
                 return (
                   <Card key={t.id} onPress={() => router.push(`/tournament/${t.id}`)}>
                     <View style={{ flexDirection: 'row', gap: space.md }}>

@@ -47,7 +47,7 @@ export interface Standing {
  * Standings ordered by wins, then ballots won, then combined strength,
  * then point differential. Teams with no scored rounds are left out.
  */
-export function computeStandings(matches: Match[], ballots: Ballot[]): Standing[] {
+export function computeStandings(matches: Match[], ballots: Ballot[], rankBy: 'ballots' | 'wins' = 'ballots'): Standing[] {
   const table = new Map<string, Standing & { opps: string[] }>();
   const row = (id: string) => {
     let r = table.get(id);
@@ -89,7 +89,12 @@ export function computeStandings(matches: Match[], ballots: Ballot[]): Standing[
 
   const rows = [...table.values()];
   for (const r of rows) r.cs = r.opps.reduce((sum, o) => sum + (table.get(o)?.wins ?? 0), 0);
-  rows.sort((a, b) => b.wins - a.wins || b.ballots - a.ballots || b.cs - a.cs || b.pointDiff - a.pointDiff);
+  // Ranked continuously as ballots arrive: ballots won (or trials won) first, then the other, then combined strength, then point differential.
+  rows.sort((a, b) =>
+    rankBy === 'ballots'
+      ? b.ballots - a.ballots || b.wins - a.wins || b.cs - a.cs || b.pointDiff - a.pointDiff
+      : b.wins - a.wins || b.ballots - a.ballots || b.cs - a.cs || b.pointDiff - a.pointDiff,
+  );
 
   let prevKey = '';
   rows.forEach((r, i) => {

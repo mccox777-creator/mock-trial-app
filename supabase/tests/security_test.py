@@ -1,6 +1,6 @@
 import os, subprocess, sys, uuid
 # Attack tests for the database rules. Needs a scratch Postgres 15+ (never a real project):
-#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql
+#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql
 #   PGARGS='-h localhost -U postgres -d t' python3 supabase/tests/security_test.py
 PG = os.environ.get('PGARGS', '-d t').split()
 U = {n: str(uuid.uuid5(uuid.NAMESPACE_DNS, n)) for n in ['org','org2','judge','judge2','coachA','coachB','compA','evil']}
@@ -107,5 +107,36 @@ blocked('organizer changes a ballot after finalizing', "update ballots set p_sco
 blocked('organizer unfinalizes', "update tournaments set finalized_at=null where id='T1'", 'org')
 blocked('organizer deletes a ballot after finalizing', "delete from ballots where id='b2'", 'org')
 blocked('organizer re-pairs after finalizing', "update matches set courtroom='Z' where id='m1'", 'org')
+print('--- score sheet scale and YouTube links ---')
+ok('organizer sets a 1-15 sheet', "update tournaments set scoring='{\"max\":15,\"parts\":[\"opening\"],\"extra\":[]}' where id='T3'", 'org')
+blocked('scale other than 10 or 15', "update tournaments set scoring='{\"max\":100,\"parts\":[],\"extra\":[]}' where id='T3'", 'org')
+ok('confirm team B in T3 for a trial', "update registrations set status='approved' where id='r3b'", 'org')
+ok('organizer pairs a 1-15 trial', "insert into matches (id, tournament_id, round, starts_at, courtroom, p_team_id, d_team_id) values ('m3','T3',1,'9am','A','tA','tC')", 'org')
+ok('a 14 counts on a 1-15 sheet', "insert into ballots (id, match_id, judge, source, sheet, p_score, d_score, entered_by, entered_at) values ('b7','m3','Ballot 1','paper','{\"p\":[14],\"d\":[12]}',0,0,'org','now') returning p_score", 'org', 14)
+blocked('a 16 on a 1-15 sheet', "insert into ballots (id, match_id, judge, source, sheet, p_score, d_score, entered_by, entered_at) values ('b8','m3','Ballot 2','paper','{\"p\":[16],\"d\":[12]}',0,0,'org','now')", 'org')
+blocked('a 7.5 on any sheet', "insert into ballots (id, match_id, judge, source, sheet, p_score, d_score, entered_by, entered_at) values ('b9','m3','Ballot 3','paper','{\"p\":[7.5],\"d\":[12]}',0,0,'org','now')", 'org')
+blocked('changing the scale after ballots are in', "update tournaments set scoring='{\"max\":10,\"parts\":[\"opening\"],\"extra\":[]}' where id='T3'", 'org')
+ok('YouTube link saved', "insert into recordings (id, match_id, title, url, uploaded_by, created_at) values ('v2','m3','R1','https://www.youtube.com/watch?v=aqz-KE-bpKQ','" + U['org'] + "','now')", 'org')
+blocked('non-YouTube video link', "insert into recordings (id, match_id, title, url, uploaded_by, created_at) values ('v3','m3','R1','https://evil.example/x','" + U['org'] + "','now')", 'org')
+
+print('--- chat ---')
+ok('organizer posts to everyone', "insert into messages (id, tournament_id, channel, body) values ('c1','T3','all','Welcome')", 'org')
+ok('coach replies to everyone', "insert into messages (id, tournament_id, channel, body) values ('c2','T3','all','Thanks')", 'coachA')
+ok('law school competitor can post', "insert into messages (id, tournament_id, channel, body) values ('c3','T3','all','Hi')", 'compA')
+blocked('stranger reads the chat', "select count(*) from messages", 'evil', 0)
+blocked('stranger posts', "insert into messages (id, tournament_id, channel, body) values ('c4','T3','all','spam')", 'evil')
+blocked('coach posts as the organizer', "insert into messages (id, tournament_id, channel, body, author_role, author_name) values ('c5','T3','all','x','organizer','Organizer') returning author_role", 'coachA', 'coach')
+blocked('competitor reads the coaches channel', "select count(*) from messages where channel='coaches'", 'compA', 0)
+blocked('competitor posts in the coaches channel', "insert into messages (id, tournament_id, channel, body) values ('c6','T3','coaches','x')", 'compA')
+blocked('coach deletes the organizer message', "delete from messages where id='c1' returning id", 'coachA', '')
+psql("update tournaments set level='high_school' where id='T3'", superuser=True)
+blocked('high school student posts', "insert into messages (id, tournament_id, channel, body) values ('c7','T3','all','hey')", 'compA')
+ok('high school student still reads', "select count(*) from messages", 'compA', 4)
+ok('high school coach still posts', "insert into messages (id, tournament_id, channel, body) values ('c8','T3','all','On our way')", 'coachA')
+ok('organizer turns chat to announcements only', "update tournaments set chat_replies=false where id='T3'", 'org')
+blocked('coach posts in announcements-only chat', "insert into messages (id, tournament_id, channel, body) values ('c9','T3','all','x')", 'coachA')
+ok('organizer still announces', "insert into messages (id, tournament_id, channel, body) values ('c10','T3','all','Round 2 at 1pm')", 'org')
+blocked('public results show judge comments', "select count(*) from information_schema.columns where table_name='published_results' and column_name in ('comments','judge','sheet')", None, 0)
+
 print(f'\n{fails} failing')
 sys.exit(1 if fails else 0)

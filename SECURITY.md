@@ -30,7 +30,7 @@ These live in dashboards, not in code.
 1. Turn on CAPTCHA protection for sign-in (Cloudflare Turnstile is free). This stops bots from mass-creating accounts or spamming codes.
 2. Set email code expiry to 10 minutes or less, and leave the built-in rate limits on.
 3. Leave anonymous sign-ins off.
-4. Turn on Point-in-Time Recovery (Pro plan) so the database can be rewound to any second.
+4. Set up backups as described in [BACKUPS.md](BACKUPS.md): your computer, plus an encrypted nightly copy in Cloudflare R2.
 5. Use a long random database password, and turn on SSL enforcement.
 6. Never put the `service_role` key in the app or in GitHub. It belongs only in Supabase function secrets.
 

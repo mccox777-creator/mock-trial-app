@@ -41,3 +41,7 @@ yarn-error.*
 /android
 
 .env
+
+# Local backups and their key
+scripts/backup.env
+backups/

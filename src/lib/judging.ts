@@ -1,16 +1,65 @@
-import type { AppData, Ballot, JudgeSignup, Match, Profile, Tournament } from './types';
+import type { AppData, Ballot, CommentMode, JudgeSignup, Match, Profile, ScoringSetup, SheetPart, Tournament } from './types';
 
-/** Lines on the per-performance score sheet, the same for both sides. Each line is scored 1 to 10. */
-export function sheetLines(witnessesPerSide: number): string[] {
-  const lines = ['Opening statement'];
-  for (let i = 1; i <= witnessesPerSide; i++) lines.push(`Direct exam, witness ${i}`, `Witness ${i} performance`);
-  for (let i = 1; i <= witnessesPerSide; i++) lines.push(`Cross exam, opposing witness ${i}`);
-  lines.push('Closing argument');
-  return lines;
+/** What judges can be asked to score. The organizer ticks these in the wizard. */
+export const SHEET_PARTS: { id: SheetPart; label: string; help: string }[] = [
+  { id: 'pretrial', label: 'Pretrial motion', help: 'One line for the attorney who argues it.' },
+  { id: 'opening', label: 'Opening statements', help: 'One line per side.' },
+  { id: 'direct', label: 'Direct examinations', help: 'One line per witness called.' },
+  { id: 'witness', label: 'Witness performances', help: 'One line per witness: believability and staying in role.' },
+  { id: 'cross', label: 'Cross examinations', help: 'One line per opposing witness.' },
+  { id: 'evidence', label: 'Objections and evidence', help: 'One line per side: objections, responses, and getting exhibits in.' },
+  { id: 'closing', label: 'Closing arguments', help: 'One line per side, including any rebuttal.' },
+  { id: 'professionalism', label: 'Professionalism and decorum', help: 'One line per side for courtroom conduct.' },
+];
+
+export const SCALES = [10, 15] as const;
+export const SHEET_MIN = 1;
+export const DEFAULT_SCORING: ScoringSetup = { max: 10, parts: ['opening', 'direct', 'witness', 'cross', 'closing'], extra: [], comments: 'overall' };
+
+export const COMMENT_MODES: { id: CommentMode; label: string; help: string }[] = [
+  { id: 'none', label: 'No comments', help: 'Scores only.' },
+  { id: 'overall', label: 'One comment box', help: 'One box at the end of the ballot.' },
+  { id: 'per_line', label: 'After each performance', help: 'A comment for each side on every line.' },
+  { id: 'both', label: 'Both', help: 'Comments on each performance and one at the end.' },
+];
+
+/** Running totals and point differential, line by line. */
+export function runningTotals(p: number[], d: number[]) {
+  let pt = 0;
+  let dt = 0;
+  return p.map((pv, i) => {
+    pt += Number.isFinite(pv) ? pv : 0;
+    dt += Number.isFinite(d[i]) ? d[i] : 0;
+    return { line: (Number.isFinite(pv) ? pv : 0) - (Number.isFinite(d[i]) ? d[i] : 0), p: pt, d: dt, diff: pt - dt };
+  });
 }
 
-export const SHEET_MIN = 1;
-export const SHEET_MAX = 10;
+export const fmtDiff = (n: number) => (n > 0 ? `+${n}` : String(n));
+
+export const scoringOf = (t: { scoring?: ScoringSetup | null }): ScoringSetup => ({ ...DEFAULT_SCORING, ...(t.scoring ?? {}) });
+
+/** Lines on the score sheet, the same for both sides, in courtroom order. */
+export function sheetLines(witnessesPerSide: number, scoring: ScoringSetup = DEFAULT_SCORING): string[] {
+  const on = new Set(scoring.parts);
+  const lines: string[] = [];
+  if (on.has('pretrial')) lines.push('Pretrial motion');
+  if (on.has('opening')) lines.push('Opening statement');
+  for (let i = 1; i <= witnessesPerSide; i++) {
+    if (on.has('direct')) lines.push(`Direct exam, witness ${i}`);
+    if (on.has('witness')) lines.push(`Witness ${i} performance`);
+  }
+  if (on.has('cross')) for (let i = 1; i <= witnessesPerSide; i++) lines.push(`Cross exam, opposing witness ${i}`);
+  if (on.has('evidence')) lines.push('Objections and evidence');
+  if (on.has('closing')) lines.push('Closing argument');
+  if (on.has('professionalism')) lines.push('Professionalism and decorum');
+  return [...lines, ...scoring.extra];
+}
+
+/** One-line summary for the competition page, e.g. "1–15 per line · 14 lines per side". */
+export function describeScoring(witnessesPerSide: number, scoring: ScoringSetup): string {
+  const n = sheetLines(witnessesPerSide, scoring).length;
+  return `Each line scored ${SHEET_MIN}–${scoring.max} · ${n} lines per side`;
+}
 
 export const isOrganizer = (t: Tournament | undefined, me: Profile | null) => !!t && !!me && t.directorIds.includes(me.id);
 

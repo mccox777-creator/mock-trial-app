@@ -9,10 +9,12 @@ import { LEVELS, type Level, type Tournament } from '../../lib/types';
 import { radius, space, useTheme } from '../../lib/theme';
 import { RulesChecklist } from '../../components/RulesChecklist';
 import { ALL_RULES, describeRules } from '../../lib/rules';
+import { MAX_EXTRA_LINES, ScoringSetupForm, parseExtraLines } from '../../components/ScoringSetupForm';
+import { DEFAULT_SCORING, describeScoring, sheetLines } from '../../lib/judging';
 
-const STEPS = ['Basics', 'Dates & venue', 'Format', 'Rules', 'Case', 'Registration', 'Review'] as const;
+const STEPS = ['Basics', 'Dates & venue', 'Format', 'Score sheet', 'Rules', 'Case', 'Registration', 'Review'] as const;
 
-type Draft = Omit<Tournament, 'id' | 'createdAt' | 'directorIds' | 'status' | 'resultsPublished' | 'ballotsReturned' | 'finalizedAt' | 'witnessesPerSide' | 'hostProgramId' | 'teamCap' | 'entryFee' | 'prelimRounds' | 'ballotsPerRound' | 'randomRounds'> & {
+type Draft = { extraLines: string } & Omit<Tournament, 'id' | 'createdAt' | 'directorIds' | 'status' | 'resultsPublished' | 'ballotsReturned' | 'finalizedAt' | 'witnessesPerSide' | 'hostProgramId' | 'teamCap' | 'entryFee' | 'prelimRounds' | 'ballotsPerRound' | 'randomRounds'> & {
   randomRounds: string;
   witnessesPerSide: string;
   teamCap: string;
@@ -30,11 +32,11 @@ export default function TournamentWizard() {
   const [busy, setBusy] = useState(false);
   const [d, setD] = useState<Draft>(() =>
     existing
-      ? { ...existing, teamCap: String(existing.teamCap), entryFee: String(existing.entryFee), prelimRounds: String(existing.prelimRounds), ballotsPerRound: String(existing.ballotsPerRound), witnessesPerSide: String(existing.witnessesPerSide), randomRounds: String(existing.randomRounds), rules: existing.rules ?? {}, customRules: existing.customRules ?? '' }
+      ? { ...existing, teamCap: String(existing.teamCap), entryFee: String(existing.entryFee), prelimRounds: String(existing.prelimRounds), ballotsPerRound: String(existing.ballotsPerRound), witnessesPerSide: String(existing.witnessesPerSide), randomRounds: String(existing.randomRounds), rankBy: existing.rankBy ?? 'ballots', rules: existing.rules ?? {}, customRules: existing.customRules ?? '', scoring: existing.scoring ?? DEFAULT_SCORING, extraLines: (existing.scoring?.extra ?? []).join('\n') }
       : {
           level, name: '', hostName: '', city: '', venue: '', startDate: '', endDate: '', registrationDeadline: '',
           teamCap: '16', entryFee: '350', prelimRounds: '4', ballotsPerRound: '3', witnessesPerSide: '3', randomRounds: '1', sideConstraint: 'alternate', pairingMethod: 'power',
-          entryType: 'open', requireApproval: true, caseId: null, description: '', rules: {}, customRules: '',
+          entryType: 'open', requireApproval: true, caseId: null, description: '', rankBy: 'ballots', chatReplies: true, rules: {}, customRules: '', scoring: DEFAULT_SCORING, extraLines: '',
         },
   );
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setD((x) => ({ ...x, [k]: v }));
@@ -79,13 +81,21 @@ export default function TournamentWizard() {
       else if (Number.isInteger(r) && rr > r) e.randomRounds = 'Cannot be more than the number of rounds.';
     }
     if (s === 3) {
+      const extra = parseExtraLines(d.extraLines);
+      if (extra.length > MAX_EXTRA_LINES) e.scoring = `Up to ${MAX_EXTRA_LINES} lines of your own.`;
+      else if (extra.some((l) => l.length > 60)) e.scoring = 'Keep each of your own lines under 60 characters.';
+      const n = sheetLines(Number(d.witnessesPerSide) || 0, { ...d.scoring, extra }).length;
+      if (n === 0) e.scoring = 'Tick at least one thing for judges to score.';
+      else if (n > 40) e.scoring = 'That is more than 40 lines per side. Untick something or use fewer witnesses.';
+    }
+    if (s === 4) {
       for (const r of ALL_RULES) {
         if (!r.value || d.rules[r.id] !== true) continue;
         const v = d.rules[r.value.id];
         if (typeof v !== 'number' || !Number.isInteger(v) || v < 1) e.rules = `Fill in "${r.value.label.toLowerCase()}" for ${r.label.toLowerCase()}, or untick it.`;
       }
     }
-    if (s === 5) {
+    if (s === 6) {
       if (!isValidDate(d.registrationDeadline)) e.registrationDeadline = 'Use the format YYYY-MM-DD.';
       else if (isValidDate(d.startDate) && d.registrationDeadline > d.startDate) e.registrationDeadline = 'Registration must close before the competition starts.';
       const cap = Number(d.teamCap);
@@ -105,7 +115,8 @@ export default function TournamentWizard() {
     setBusy(true);
     const t: Tournament = {
       ...(existing ?? { id: newId('t'), createdAt: new Date().toISOString(), directorIds: [me!.id], hostProgramId: null, status: 'draft' as const, resultsPublished: false, ballotsReturned: false, finalizedAt: null }),
-      ...d,
+      ...withoutDraftFields(d),
+      scoring: { ...d.scoring, extra: parseExtraLines(d.extraLines) },
       name: d.name.trim(),
       customRules: d.customRules.trim(),
       teamCap: Number(d.teamCap),
@@ -126,6 +137,7 @@ export default function TournamentWizard() {
   }
 
   const cases = data.cases.filter((c) => c.level === d.level);
+  const scoringLocked = !!existing && data.matches.some((m) => m.tournamentId === existing.id && data.ballots.some((b) => b.matchId === m.id));
 
   return (
     <Screen>
@@ -180,6 +192,11 @@ export default function TournamentWizard() {
             <Segmented value={d.pairingMethod} onChange={(v) => set('pairingMethod', v)} options={[{ id: 'power', label: 'Power-match by record' }, { id: 'random', label: 'Keep drawing at random' }]} />
           </View>
           <View style={{ gap: 6 }}>
+            <Label>Rank teams by</Label>
+            <Segmented value={d.rankBy} onChange={(v) => set('rankBy', v)} options={[{ id: 'ballots', label: 'Ballots won' }, { id: 'wins', label: 'Trials won' }]} />
+            <Body muted>Ties are broken by the other measure, then combined strength, then point differential. Rankings update as each ballot comes in.</Body>
+          </View>
+          <View style={{ gap: 6 }}>
             <Label>Sides</Label>
             <Segmented
               value={d.sideConstraint}
@@ -193,6 +210,27 @@ export default function TournamentWizard() {
 
       {step === 3 && (
         <>
+          <Body muted>Set how judges score. Every judge sees the same sheet, and paper ballots are read against it.</Body>
+          {scoringLocked ? (
+            <Card>
+              <Body>Ballots are already in, so the score sheet can't change. Otherwise earlier ballots would be on a different scale.</Body>
+              <Body muted>{describeScoring(Number(d.witnessesPerSide) || 0, d.scoring)}</Body>
+            </Card>
+          ) : (
+          <ScoringSetupForm
+            scoring={d.scoring}
+            extraText={d.extraLines}
+            witnessesPerSide={Number(d.witnessesPerSide) || 0}
+            onChange={(v) => set('scoring', v)}
+            onExtraText={(v) => set('extraLines', v)}
+            error={errors.scoring}
+          />
+          )}
+        </>
+      )}
+
+      {step === 4 && (
+        <>
           <Body muted>Tick the rules that apply. They appear on the competition page so teams, coaches, and judges all work from the same list.</Body>
           <RulesChecklist rules={d.rules} onChange={(v) => set('rules', v)} />
           <Field label="Other rules (optional)" value={d.customRules} onChangeText={(v) => set('customRules', v)} multiline placeholder="One per line. For example: no objections during opening statements." />
@@ -200,7 +238,7 @@ export default function TournamentWizard() {
         </>
       )}
 
-      {step === 4 && (
+      {step === 5 && (
         <>
           <Body muted>Pick the case teams will try. You can also choose later, or release a new case from the Case Files tab.</Body>
           <Choice label="Decide later" on={d.caseId === null} onPress={() => set('caseId', null)} />
@@ -210,7 +248,7 @@ export default function TournamentWizard() {
         </>
       )}
 
-      {step === 5 && (
+      {step === 6 && (
         <>
           <Field label={d.entryType === 'invitational' ? 'Requests close' : 'Registration closes'} value={d.registrationDeadline} onChangeText={(v) => set('registrationDeadline', v)} placeholder="2026-12-18" error={errors.registrationDeadline} />
           <Row style={{ flexWrap: 'nowrap', alignItems: 'flex-start' }}>
@@ -240,7 +278,7 @@ export default function TournamentWizard() {
         </>
       )}
 
-      {step === 6 && (
+      {step === 7 && (
         <Card>
           <H2>{d.name || 'Untitled competition'}</H2>
           <Body muted>{LEVELS.find((l) => l.id === d.level)!.label} · hosted by {d.hostName || '—'}</Body>
@@ -254,6 +292,7 @@ export default function TournamentWizard() {
               return n === 0 ? 'No rules ticked' : `${n} rule${n === 1 ? '' : 's'} listed for teams`;
             })()}
           </Body>
+          <Body>Score sheet: {describeScoring(Number(d.witnessesPerSide) || 0, { ...d.scoring, extra: parseExtraLines(d.extraLines) })}</Body>
           <Body>Case: {d.caseId ? data.cases.find((c) => c.id === d.caseId)?.title : 'decide later'}</Body>
           <Body>
             {d.entryType === 'invitational' ? 'Invitational' : 'Open registration'} · up to {d.teamCap} teams · ${d.entryFee || 0} · {d.entryType === 'invitational' ? 'requests close' : 'registration closes'} {isValidDate(d.registrationDeadline) ? fmtDate(d.registrationDeadline) : '—'}
@@ -301,4 +340,9 @@ function Choice({ label, sub, on, onPress }: { label: string; sub?: string; on: 
       {sub && <Text style={{ color: c.muted, marginTop: 2 }}>{sub}</Text>}
     </Pressable>
   );
+}
+
+function withoutDraftFields(d: Draft) {
+  const { extraLines: _extra, ...rest } = d;
+  return rest;
 }
