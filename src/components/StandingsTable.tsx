@@ -1,10 +1,10 @@
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import type { Standing } from '../lib/scoring';
 import type { Team } from '../lib/types';
 import { ballotsText, signed } from '../lib/format';
 import { space, useTheme } from '../lib/theme';
 
-export function StandingsTable({ standings, teams }: { standings: Standing[]; teams: Team[] }) {
+export function StandingsTable({ standings, teams, onTeam }: { standings: Standing[]; teams: Team[]; onTeam?: (id: string) => void }) {
   const c = useTheme();
   const num = { width: 46, textAlign: 'right' as const, fontVariant: ['tabular-nums' as const], color: c.ink, fontSize: 14 };
   const head = { ...num, color: c.muted, fontSize: 11, fontWeight: '700' as const, letterSpacing: 0.6 };
@@ -21,7 +21,7 @@ export function StandingsTable({ standings, teams }: { standings: Standing[]; te
       {standings.map((s, i) => {
         const team = teams.find((t) => t.id === s.teamId);
         return (
-          <View key={s.teamId} style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.lg, paddingVertical: 12, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: c.line }}>
+          <Pressable key={s.teamId} disabled={!onTeam} onPress={() => onTeam?.(s.teamId)} accessibilityRole={onTeam ? 'button' : undefined} style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.lg, paddingVertical: 12, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: c.line }}>
             <Text style={[num, { width: 28, textAlign: 'left', fontWeight: '800', color: s.rank <= 3 ? c.accent : c.muted }]}>{s.rank}</Text>
             <Text style={{ flex: 1, color: c.ink, fontWeight: '600', fontSize: 15 }} numberOfLines={1}>
               {team?.name ?? 'Unknown team'}
@@ -30,7 +30,7 @@ export function StandingsTable({ standings, teams }: { standings: Standing[]; te
             <Text style={num}>{ballotsText(s.ballots)}</Text>
             <Text style={num}>{s.cs}</Text>
             <Text style={[num, { color: s.pointDiff >= 0 ? c.good : c.bad }]}>{signed(s.pointDiff)}</Text>
-          </View>
+          </Pressable>
         );
       })}
     </View>

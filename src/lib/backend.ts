@@ -6,6 +6,16 @@ import { sampleData, DEMO_USERS } from './sampleData';
 
 export type TableName = keyof AppData;
 
+/** What the ballot scanner read off a photo. Organizer confirms before anything is saved. */
+export interface BallotReading {
+  judge_name: string;
+  plaintiff_scores: (number | null)[];
+  defense_scores: (number | null)[];
+  plaintiff_total_written: number | null;
+  defense_total_written: number | null;
+  unreadable_notes: string;
+}
+
 /** Storage-agnostic backend. The app talks only to this interface. */
 export interface Backend {
   kind: 'demo' | 'supabase';
@@ -20,6 +30,8 @@ export interface Backend {
   signOut(): Promise<void>;
   /** Store a picked file (case packet, exhibit) and return a URL to open it. */
   uploadFile(name: string, uri: string, mimeType: string): Promise<string>;
+  /** Read a photographed paper ballot. */
+  readBallot(matchId: string, imageBase64: string, mediaType: string, lines: string[]): Promise<BallotReading>;
   /** Demo mode only: act as one of the sample users. */
   switchDemoUser?(who: keyof typeof DEMO_USERS | null): Promise<void>;
   /** Demo mode only: restore the sample season. */
@@ -27,13 +39,13 @@ export interface Backend {
 }
 
 const EMPTY: AppData = {
-  programs: [], teams: [], tournaments: [], registrations: [], matches: [], ballots: [],
+  programs: [], teams: [], tournaments: [], registrations: [], judgeSignups: [], matches: [], ballots: [],
   cases: [], caseFiles: [], bulletins: [], recordings: [],
 };
 
 // ---------- Demo backend: sample season, saved on the device ----------
 
-const DEMO_KEY = 'mocktrial.demo.v1';
+const DEMO_KEY = 'mocktrial.demo.v3';
 const DEMO_USER_KEY = 'mocktrial.demo.user';
 
 function demoBackend(): Backend {
@@ -90,6 +102,19 @@ function demoBackend(): Backend {
     async uploadFile(_name, uri) {
       return uri; // demo mode keeps the file on this device only
     },
+    async readBallot(_matchId, _img, _type, lines) {
+      // Demo mode has no server, so it simulates a reading to show the confirm step.
+      await new Promise((r) => setTimeout(r, 900));
+      const pick = () => 6 + Math.floor(Math.random() * 4);
+      return {
+        judge_name: 'Scanned ballot (demo)',
+        plaintiff_scores: lines.map(pick),
+        defense_scores: lines.map((_, i) => (i === 2 ? null : pick())),
+        plaintiff_total_written: null,
+        defense_total_written: null,
+        unreadable_notes: 'Demo mode: these scores are simulated. Line 3 for the defense was left blank to show how unreadable lines are flagged.',
+      };
+    },
     async signOut() {
       await AsyncStorage.setItem(DEMO_USER_KEY, 'none');
     },
@@ -106,7 +131,7 @@ function demoBackend(): Backend {
 // ---------- Supabase backend ----------
 
 const TABLES: Record<TableName, string> = {
-  programs: 'programs', teams: 'teams', tournaments: 'tournaments', registrations: 'registrations',
+  programs: 'programs', teams: 'teams', tournaments: 'tournaments', registrations: 'registrations', judgeSignups: 'judge_signups',
   matches: 'matches', ballots: 'ballots', cases: 'cases', caseFiles: 'case_files',
   bulletins: 'bulletins', recordings: 'recordings',
 };
@@ -172,6 +197,12 @@ function supabaseBackend(url: string, anonKey: string): Backend {
     },
     async signOut() {
       await sb.auth.signOut();
+    },
+    async readBallot(matchId, imageBase64, mediaType, lines) {
+      const { data, error } = await sb.functions.invoke('read-ballot', { body: { matchId, imageBase64, mediaType, lines } });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      return data as BallotReading;
     },
     async uploadFile(name, uri, mimeType) {
       const body = await (await fetch(uri)).arrayBuffer();

@@ -19,7 +19,7 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen name="index" options={{ title: 'Schedule', tabBarIcon: icon('calendar-outline') }} />
-      <Tabs.Screen name="rankings" options={{ title: 'Rankings', tabBarIcon: icon('podium-outline') }} />
+      <Tabs.Screen name="rankings" options={{ title: 'Results', tabBarIcon: icon('podium-outline') }} />
       <Tabs.Screen name="cases" options={{ title: 'Case Files', tabBarIcon: icon('folder-open-outline') }} />
       <Tabs.Screen name="bulletins" options={{ title: 'Bulletins', tabBarIcon: icon('megaphone-outline') }} />
       <Tabs.Screen name="account" options={{ title: 'Me', tabBarIcon: icon('person-circle-outline') }} />

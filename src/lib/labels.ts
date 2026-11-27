@@ -14,6 +14,11 @@ export const REG_LABEL: Record<RegistrationStatus, string> = {
   declined: 'Declined',
 };
 
+export function regLabel(status: RegistrationStatus, invitational: boolean) {
+  if (!invitational) return REG_LABEL[status];
+  return { pending: 'Invitation requested', approved: 'Invited', waitlisted: 'Alternate', declined: 'Not invited' }[status];
+}
+
 export const VIS_LABEL: Record<VideoVisibility, string> = {
   teams: 'The two teams in this trial',
   coaches: 'Coaches and staff',

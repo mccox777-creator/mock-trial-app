@@ -1,3 +1,4 @@
+import type { RuleSet } from './rules';
 // Core domain model. Every competition-facing record carries a `level` so the
 // same app serves law school, collegiate, and high school circuits.
 
@@ -52,15 +53,30 @@ export interface Tournament {
   ballotsPerRound: number;
   /** Whether teams must alternate sides between rounds. */
   sideConstraint: 'alternate' | 'balanced' | 'none';
-  /** How rounds after the first are paired. */
+  /** Rounds drawn at random before any power-matching (1 to 4). */
+  randomRounds: number;
+  /** How rounds after the random draws are paired. */
   pairingMethod: 'power' | 'random';
+  /** Open: schools register directly. Invitational: schools request an invitation. */
+  entryType: 'open' | 'invitational';
+  /** Open competitions only: the director reviews each sign-up before confirming. */
   requireApproval: boolean;
   caseId: string | null;
   description: string;
+  /** Ticked items from the rules checklist (see lib/rules.ts), plus any numeric details. */
+  rules: RuleSet;
+  /** Anything the checklist does not cover, one rule per line. */
+  customRules: string;
   status: TournamentStatus;
   directorIds: string[];
-  /** Staff (tab room) who may enter scores. Directors always can. */
-  staffIds: string[];
+  /** Witnesses per side; sets the lines on the judges' score sheet. */
+  witnessesPerSide: number;
+  /** Until the organizer publishes, only they see scores and standings. */
+  resultsPublished: boolean;
+  /** After publishing, the organizer may also return each team's own ballots to it. */
+  ballotsReturned: boolean;
+  /** When the organizer finalized results. After that (or AUTO_LOCK_DAYS after the last day) nothing can change. */
+  finalizedAt: string | null;
   createdAt: string;
 }
 
@@ -73,6 +89,8 @@ export interface Registration {
   status: RegistrationStatus;
   contactName: string;
   contactEmail: string;
+  /** Message to the director, used for invitation requests. */
+  note?: string;
   submittedBy: string;
   createdAt: string;
 }
@@ -85,16 +103,45 @@ export interface Match {
   courtroom: string;
   pTeamId: string;
   dTeamId: string;
+  /** Judges the organizer assigned to this trial (user ids). */
+  judgeIds: string[];
+}
+
+export interface ScoreSheet {
+  p: number[]; // one score per line, same order as sheetLines()
+  d: number[];
 }
 
 export interface Ballot {
   id: string;
   matchId: string;
-  judge: string; // "Ballot 1", or presiding judge's label
+  judge: string; // judge's name, or "Ballot 1" for a paper ballot
+  /** The judge who submitted it in the app; null for paper ballots the organizer typed in. */
+  judgeId: string | null;
+  source: 'app' | 'paper';
+  /** Line-by-line scores, when entered that way. Totals are always stored. */
+  sheet: ScoreSheet | null;
   pScore: number;
   dScore: number;
   enteredBy: string;
   enteredAt: string;
+}
+
+export type JudgeBackground = 'judge' | 'attorney' | 'coach' | 'alumni' | 'other';
+
+export interface JudgeSignup {
+  id: string;
+  tournamentId: string;
+  userId: string;
+  name: string;
+  email: string;
+  background: JudgeBackground;
+  /** Rounds this judge can cover. */
+  rounds: number[];
+  /** Schools the judge has ties to and must not judge. */
+  conflicts: string;
+  status: 'pending' | 'approved' | 'declined';
+  createdAt: string;
 }
 
 export type CaseKind = 'civil' | 'criminal';
@@ -152,6 +199,7 @@ export interface AppData {
   teams: Team[];
   tournaments: Tournament[];
   registrations: Registration[];
+  judgeSignups: JudgeSignup[];
   matches: Match[];
   ballots: Ballot[];
   cases: TrialCase[];

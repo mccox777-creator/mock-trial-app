@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 import { Body, Button, Card, Field, H1, H2, Label, Loading, Pill, Row, Screen, Segmented } from '../../components/ui';
 import { useStore } from '../../lib/store';
-import { REG_LABEL } from '../../lib/labels';
-import { fmtRange } from '../../lib/format';
+import { regLabel } from '../../lib/labels';
+import { fmtDateTime, fmtRange } from '../../lib/format';
+import { teamName } from '../../lib/scoring';
 import { DEMO_USERS } from '../../lib/sampleData';
 
 export default function AccountScreen() {
@@ -12,7 +13,9 @@ export default function AccountScreen() {
 
   const myTeams = me ? data.teams.filter((t) => me.teamIds.includes(t.id)) : [];
   const myRegs = data.registrations.filter((r) => me && (r.submittedBy === me.id || me.teamIds.includes(r.teamId)));
-  const directing = me ? data.tournaments.filter((t) => t.directorIds.includes(me.id) || t.staffIds.includes(me.id)) : [];
+  const directing = me ? data.tournaments.filter((t) => t.directorIds.includes(me.id)) : [];
+  const myJudging = me ? data.judgeSignups.filter((j) => j.userId === me.id) : [];
+  const myTrials = me ? data.matches.filter((m) => m.judgeIds.includes(me.id)).sort((a, b) => a.startsAt.localeCompare(b.startsAt)) : [];
   const demoWho = me ? (Object.keys(DEMO_USERS) as (keyof typeof DEMO_USERS)[]).find((k) => DEMO_USERS[k].id === me.id) : undefined;
 
   return (
@@ -24,7 +27,8 @@ export default function AccountScreen() {
           <Segmented
             value={demoWho ?? 'none'}
             options={[
-              { id: 'director', label: 'Director' },
+              { id: 'director', label: 'Organizer' },
+              { id: 'judge', label: 'Judge' },
               { id: 'coach', label: 'Coach' },
               { id: 'competitor', label: 'Student' },
               { id: 'none', label: 'Signed out' },
@@ -60,6 +64,37 @@ export default function AccountScreen() {
             ))
           )}
 
+          {(myJudging.length > 0 || myTrials.length > 0) && <Label>Your judging</Label>}
+          {myTrials.map((m) => {
+            const t = data.tournaments.find((x) => x.id === m.tournamentId);
+            const done = data.ballots.some((b) => b.matchId === m.id && b.judgeId === me.id);
+            return (
+              <Card key={m.id} onPress={() => router.push(`/match/${m.id}`)}>
+                <H2>
+                  {t?.name} · Round {m.round}
+                </H2>
+                <Body muted>
+                  {m.courtroom} · {fmtDateTime(m.startsAt)}
+                </Body>
+                <Body>
+                  {teamName(data.teams, m.pTeamId)} v. {teamName(data.teams, m.dTeamId)}
+                </Body>
+                <Pill text={done ? 'Ballot submitted' : 'Score this trial'} tone={done ? 'good' : 'warn'} />
+              </Card>
+            );
+          })}
+          {myJudging
+            .filter((j) => !myTrials.some((m) => m.tournamentId === j.tournamentId))
+            .map((j) => {
+              const t = data.tournaments.find((x) => x.id === j.tournamentId);
+              return (
+                <Card key={j.id} onPress={t ? () => router.push(`/tournament/${t.id}`) : undefined}>
+                  <H2>{t?.name ?? 'Competition'}</H2>
+                  <Pill text={j.status === 'approved' ? 'Confirmed to judge · no trials assigned yet' : j.status === 'pending' ? 'Waiting for the organizer' : 'Not needed this time'} tone={j.status === 'approved' ? 'good' : 'warn'} />
+                </Card>
+              );
+            })}
+
           {myTeams.length > 0 && <Label>Your teams</Label>}
           {myTeams.map((t) => (
             <Card key={t.id}>
@@ -70,13 +105,14 @@ export default function AccountScreen() {
 
           {myRegs.length > 0 && <Label>Your sign-ups</Label>}
           {myRegs.map((r) => {
+            const inv = data.tournaments.find((x) => x.id === r.tournamentId)?.entryType === 'invitational';
             const t = data.tournaments.find((x) => x.id === r.tournamentId);
             const team = data.teams.find((x) => x.id === r.teamId);
             return (
               <Card key={r.id} onPress={t ? () => router.push(`/tournament/${t.id}`) : undefined}>
                 <H2>{t?.name ?? 'Competition'}</H2>
                 <Body muted>{team?.name}</Body>
-                <Pill text={REG_LABEL[r.status]} tone={r.status === 'approved' ? 'good' : r.status === 'declined' ? 'bad' : 'warn'} />
+                <Pill text={regLabel(r.status, inv)} tone={r.status === 'approved' ? 'good' : r.status === 'declined' ? 'bad' : 'warn'} />
               </Card>
             );
           })}

@@ -43,25 +43,38 @@ function tournament(t: Partial<Tournament> & Pick<Tournament, 'id' | 'name' | 's
     ballotsPerRound: 3,
     sideConstraint: 'alternate',
     pairingMethod: 'power',
+    randomRounds: 1,
+    entryType: 'open',
     requireApproval: true,
     caseId: null,
     description: '',
+    rules: { ...COMMON_RULES },
+    customRules: '',
     directorIds: [DEMO_DIRECTOR],
-    staffIds: [],
+    witnessesPerSide: 3,
+    resultsPublished: false,
+    ballotsReturned: false,
+    finalizedAt: null,
     createdAt: '2026-08-01T12:00:00',
     ...t,
   };
 }
 
+const COMMON_RULES = {
+  woodshedding: true, woodsheddingMinutes: 30, inventionRule: true, negativeInference: true, fre: true, rebuttal: true,
+  timeOpening: true, openingMinutes: 5, timeDirect: true, directMinutes: 25, timeCross: true, crossMinutes: 20, timeClosing: true, closingMinutes: 9,
+  ownTimekeeper: true, noScouting: true, noCoachContact: true, rosterMin: true, rosterMinCount: 4, rosterMax: true, rosterMaxCount: 6,
+};
+
 const tournaments: Tournament[] = [
   tournament({
-    id: 'harvest-invitational', name: 'Harvest Trial Invitational', status: 'final',
+    id: 'harvest-invitational', name: 'Harvest Trial Invitational', status: 'final', resultsPublished: true, ballotsReturned: true, finalizedAt: '2026-10-19T10:00',
     hostProgramId: 'harbor', hostName: 'Harbor City Law School', city: 'Harbor City', venue: 'Harbor County Courthouse',
     startDate: '2026-10-16', endDate: '2026-10-18', registrationDeadline: '2026-09-25', caseId: 'state-v-delacroix',
     description: 'Four preliminary rounds, power-matched after Round 1. Awards for top four teams and best advocates.',
   }),
   tournament({
-    id: 'great-lakes-cup', name: 'Great Lakes Advocacy Cup', status: 'final',
+    id: 'great-lakes-cup', name: 'Great Lakes Advocacy Cup', status: 'final', resultsPublished: true, ballotsReturned: true,
     hostProgramId: 'lakeshore', hostName: 'Lakeshore School of Law', city: 'Lakeshore', venue: 'Lakeshore Federal Building',
     startDate: '2026-11-13', endDate: '2026-11-15', registrationDeadline: '2026-10-23', caseId: 'state-v-delacroix', entryFee: 400,
     description: 'Criminal case. Three ballots per round from practitioner judges.',
@@ -71,12 +84,15 @@ const tournaments: Tournament[] = [
     hostProgramId: 'pinecrest', hostName: 'Pinecrest Law Center', city: 'Pinecrest', venue: 'Pinecrest Justice Center',
     startDate: '2027-01-22', endDate: '2027-01-24', registrationDeadline: '2026-12-18', caseId: 'harmon-v-pryce', teamCap: 12,
     description: 'Civil case released December 15. Two teams per school maximum.',
+    rules: { ...COMMON_RULES, teamsPerSchool: true, teamsPerSchoolMax: 2, witnessChoice: true, witnessNotice: true, witnessNoticeMinutes: 15, anyGender: true, spectators: true },
+    customRules: 'Teams check in at the clerk\'s desk 20 minutes before each round.',
   }),
   tournament({
     id: 'spring-championship', name: 'Spring Invitational Championship', status: 'registration_open',
     hostProgramId: 'ridgeview', hostName: 'Ridgeview University College of Law', city: 'Ridgeview', venue: 'Ridgeview Moot Courtrooms',
-    startDate: '2027-03-12', endDate: '2027-03-14', registrationDeadline: '2027-02-12', caseId: 'harmon-v-pryce', teamCap: 16, entryFee: 450,
+    startDate: '2027-03-12', endDate: '2027-03-14', registrationDeadline: '2027-02-12', caseId: 'harmon-v-pryce', teamCap: 16, entryFee: 450, entryType: 'invitational',
     description: 'Season-ending invitational. Top eight after prelims advance to a single-elimination bracket.',
+    rules: { ...COMMON_RULES, woodsheddingMinutes: 45, pretrialMotion: true, jury: true, upperLevelOnly: true, recordingAllowed: true },
   }),
 ];
 
@@ -86,18 +102,18 @@ function playTournament(t: Tournament, teamIds: string[], seed: number, roundsTo
   const rand = mulberry32(seed);
   const days = [t.startDate, t.startDate, t.endDate, t.endDate];
   for (let round = 1; round <= t.prelimRounds; round++) {
-    const pairs = suggestPairings({ teamIds, round, priorMatches: matches, ballots, method: t.pairingMethod, sideConstraint: t.sideConstraint, seed: seed + round });
+    const pairs = suggestPairings({ teamIds, round, priorMatches: matches, ballots, method: t.pairingMethod, randomRounds: t.randomRounds, sideConstraint: t.sideConstraint, seed: seed + round });
     pairs.forEach((p, i) => {
       const id = `${t.id}-r${round}-${i + 1}`;
       const hour = round % 2 === 1 ? '09:00' : '14:00';
-      matches.push({ id, tournamentId: t.id, round, startsAt: `${days[round - 1] ?? t.endDate}T${hour}`, courtroom: `Courtroom ${String.fromCharCode(65 + i)}`, ...p });
+      matches.push({ id, tournamentId: t.id, round, startsAt: `${days[round - 1] ?? t.endDate}T${hour}`, courtroom: `Courtroom ${String.fromCharCode(65 + i)}`, judgeIds: [], ...p });
       if (round > roundsToScore) return;
       for (let b = 1; b <= t.ballotsPerRound; b++) {
         const base = 92 + Math.floor(rand() * 10);
         let edge = Math.round((strength[p.pTeamId] - strength[p.dTeamId]) * 1.6 + (rand() - 0.5) * 12);
         if (edge === 0) edge = rand() < 0.5 ? 1 : -1; // judges rarely tie; keep the sample realistic
         ballots.push({
-          id: `${id}-b${b}`, matchId: id, judge: `Ballot ${b}`,
+          id: `${id}-b${b}`, matchId: id, judge: `Ballot ${b}`, judgeId: null, source: 'paper', sheet: null,
           pScore: base + Math.ceil(edge / 2), dScore: base - Math.floor(edge / 2),
           enteredBy: DEMO_DIRECTOR, enteredAt: `${days[round - 1]}T18:00`,
         });
@@ -128,7 +144,26 @@ export const sampleData: AppData = {
       id: `reg-winter-${teamId}`, tournamentId: 'winter-classic', teamId, status: (i < 4 ? 'approved' : 'pending') as 'approved' | 'pending',
       contactName: 'Team coach', contactEmail: 'coach@example.edu', submittedBy: 'demo-coach', createdAt: `2026-11-0${i + 2}T10:00`,
     })),
+    {
+      id: 'reg-spring-harbor-a', tournamentId: 'spring-championship', teamId: 'harbor-a', status: 'pending' as const,
+      contactName: 'Team coach', contactEmail: 'coach@example.edu', submittedBy: 'demo-coach-2', createdAt: '2026-11-20T15:00',
+      note: 'Harbor A finished second at the Harvest Invitational and would love a spot.',
+    },
   ],
+  judgeSignups: [
+    ['demo-judge', 'Demo Judge', 'attorney', ''],
+    ['sj-1', 'Hon. Rita Alvarez (sample)', 'judge', ''],
+    ['sj-2', 'Marcus Webb (sample)', 'attorney', 'Lakeshore School of Law'],
+    ['sj-3', 'Dana Okafor (sample)', 'attorney', ''],
+    ['sj-4', 'Lena Petrov (sample)', 'alumni', 'Harbor City'],
+    ['sj-5', 'Sam Whitfield (sample)', 'attorney', ''],
+    ['sj-6', 'Priya Natarajan (sample)', 'judge', ''],
+    ['sj-7', 'Owen Brandt (sample)', 'coach', 'Sterling'],
+  ].map(([userId, name, background, conflicts], i) => ({
+    id: `js-winter-${userId}`, tournamentId: 'winter-classic', userId, name, email: `${userId}@example.com`,
+    background: background as 'attorney', rounds: [1, 2, 3, 4], conflicts, status: (i === 7 ? 'pending' : 'approved') as 'approved',
+    createdAt: '2026-11-18T12:00',
+  })),
   matches: [...harvest.matches, ...lakes.matches],
   ballots: [...harvest.ballots, ...lakes.ballots],
   cases: [
@@ -178,6 +213,7 @@ export const sampleData: AppData = {
 
 export const DEMO_USERS = {
   director: { id: DEMO_DIRECTOR, name: 'Demo Director', email: 'director@example.edu', teamIds: [] },
+  judge: { id: 'demo-judge', name: 'Demo Judge', email: 'judge@example.com', teamIds: [] },
   coach: { id: 'demo-coach', name: 'Demo Coach', email: 'coach@example.edu', teamIds: ['lakeshore-a', 'lakeshore-b'] },
   competitor: { id: 'demo-competitor', name: 'Demo Competitor', email: 'student@example.edu', teamIds: ['lakeshore-a'] },
 };

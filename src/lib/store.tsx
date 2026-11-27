@@ -15,7 +15,6 @@ interface StoreValue {
   refresh: () => Promise<void>;
   refreshUser: () => Promise<void>;
   canManage: (t: Tournament | undefined) => boolean;
-  canScore: (t: Tournament | undefined) => boolean;
   switchDemoUser?: (who: keyof typeof DEMO_USERS | null) => Promise<void>;
 }
 
@@ -66,7 +65,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       refresh,
       refreshUser,
       canManage: (t) => !!t && !!me && t.directorIds.includes(me.id),
-      canScore: (t) => !!t && !!me && (t.directorIds.includes(me.id) || t.staffIds.includes(me.id)),
       switchDemoUser: backend.switchDemoUser
         ? async (who) => {
             await backend.switchDemoUser!(who);
@@ -101,6 +99,7 @@ export function useLevelData() {
       cases: data.cases.filter((c) => c.level === level),
       bulletins: data.bulletins.filter((b) => b.level === level),
       matches: data.matches.filter((m) => tIds.has(m.tournamentId)),
+      judgeSignups: data.judgeSignups.filter((j) => tIds.has(j.tournamentId)),
     };
   }, [data, level]);
 }

@@ -16,6 +16,8 @@ export default function RegisterScreen() {
   const [teamLabel, setTeamLabel] = useState('');
   const [contactName, setContactName] = useState(me?.name ?? '');
   const [contactEmail, setContactEmail] = useState(me?.email ?? '');
+  const [note, setNote] = useState('');
+  const invitational = t?.entryType === 'invitational';
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -46,9 +48,9 @@ export default function RegisterScreen() {
         return setErr('That team is already signed up for this competition.');
       }
       const filled = data!.registrations.filter((r) => r.tournamentId === t!.id && r.status === 'approved').length;
-      const status: Registration['status'] = filled >= t!.teamCap ? 'waitlisted' : t!.requireApproval ? 'pending' : 'approved';
+      const status: Registration['status'] = invitational ? 'pending' : filled >= t!.teamCap ? 'waitlisted' : t!.requireApproval ? 'pending' : 'approved';
       await save('registrations', {
-        id: newId('reg'), tournamentId: t!.id, teamId: tid, status, contactName: contactName.trim(), contactEmail: contactEmail.trim(),
+        id: newId('reg'), tournamentId: t!.id, teamId: tid, status, contactName: contactName.trim(), contactEmail: contactEmail.trim(), note: note.trim() || undefined,
         submittedBy: me!.id, createdAt: nowLocal(),
       });
       router.back();
@@ -61,10 +63,10 @@ export default function RegisterScreen() {
   return (
     <Screen>
       <Card>
-        <Label>Registering for</Label>
+        <Label>{invitational ? 'Requesting an invitation to' : 'Registering for'}</Label>
         <H2>{t.name}</H2>
         <Body muted>
-          Closes {fmtDate(t.registrationDeadline)} · ${t.entryFee} per team · {t.requireApproval ? 'the director confirms each team' : 'confirmed automatically'}
+          Closes {fmtDate(t.registrationDeadline)} · ${t.entryFee} per team · {invitational ? 'the organizer chooses which teams to invite' : t.requireApproval ? 'the organizer confirms each team' : 'confirmed automatically'}
         </Body>
       </Card>
 
@@ -82,9 +84,12 @@ export default function RegisterScreen() {
       )}
 
       <Field label="Coach or contact name" value={contactName} onChangeText={setContactName} />
-      <Field label="Contact email" value={contactEmail} onChangeText={setContactEmail} keyboardType="email-address" autoCapitalize="none" hint="The director sees this. Other teams don't." />
+      <Field label="Contact email" value={contactEmail} onChangeText={setContactEmail} keyboardType="email-address" autoCapitalize="none" hint="The organizer sees this. Other teams don't." />
+      {invitational && (
+        <Field label="Note to the organizer" value={note} onChangeText={setNote} multiline placeholder="Recent results, why you'd like to compete, anything that helps your request." />
+      )}
       {err && <Body style={{ color: '#B3261E' }}>{err}</Body>}
-      <Button title="Submit registration" onPress={submit} disabled={busy} />
+      <Button title={invitational ? 'Send request' : 'Submit registration'} onPress={submit} disabled={busy} />
     </Screen>
   );
 }

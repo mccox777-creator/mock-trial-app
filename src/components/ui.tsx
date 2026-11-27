@@ -167,6 +167,7 @@ export function effectiveStatus(t: Tournament): { text: string; tone: 'neutral' 
   if (t.status === 'final' || t.endDate < today) return { text: 'Final', tone: 'neutral' };
   if (t.startDate <= today) return { text: 'In session', tone: 'good' };
   if (t.status === 'registration_open' && t.registrationDeadline >= today) return { text: 'Registration open', tone: 'accent' };
+  if (t.status === 'in_progress') return { text: 'Pairings posted', tone: 'accent' };
   return { text: 'Registration closed', tone: 'warn' };
 }
 

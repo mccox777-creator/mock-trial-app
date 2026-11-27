@@ -102,7 +102,7 @@ export function computeStandings(matches: Match[], ballots: Ballot[]): Standing[
 
 /**
  * Suggest pairings for the next round.
- * Round 1: random. Later rounds: power-matched by record (or random), avoiding
+ * The first `randomRounds` rounds are random. Later rounds: power-matched by record (or random), avoiding
  * rematches, with sides flipped from each team's previous round when the
  * tournament uses the "alternate" side constraint.
  */
@@ -112,6 +112,8 @@ export function suggestPairings(opts: {
   priorMatches: Match[];
   ballots: Ballot[];
   method: 'power' | 'random';
+  /** Rounds up to and including this one are drawn at random. */
+  randomRounds?: number;
   sideConstraint: 'alternate' | 'balanced' | 'none';
   seed?: number;
 }): { pTeamId: string; dTeamId: string }[] {
@@ -119,7 +121,7 @@ export function suggestPairings(opts: {
   const rand = mulberry32(opts.seed ?? round * 7919);
   let order = [...teamIds].sort(() => rand() - 0.5);
 
-  if (round > 1 && method === 'power') {
+  if (round > Math.max(1, opts.randomRounds ?? 1) && method === 'power') {
     const standings = computeStandings(priorMatches, ballots);
     const pos = new Map(standings.map((s, i) => [s.teamId, i]));
     order = order.sort((a, b) => (pos.get(a) ?? 999) - (pos.get(b) ?? 999));

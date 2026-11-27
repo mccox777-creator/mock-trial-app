@@ -77,8 +77,9 @@ function TournamentRow({ id }: { id: string }) {
           </Body>
           <Row>
             <Pill text={status.text} tone={status.tone} />
-            {status.text === 'Registration open' && <Pill text={`${approved}/${t.teamCap} teams`} />}
-            {isDirector && <Pill text="You direct" tone="accent" />}
+            {t.entryType === 'invitational' && <Pill text="Invitational" />}
+            {status.text === 'Registration open' && t.entryType === 'open' && <Pill text={`${approved}/${t.teamCap} teams`} />}
+            {isDirector && <Pill text="You organize" tone="accent" />}
           </Row>
         </View>
       </View>

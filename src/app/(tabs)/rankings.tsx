@@ -1,59 +1,98 @@
 import { useMemo, useState } from 'react';
+import { router } from 'expo-router';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { Body, Card, Empty, Label, LevelSwitcher, Loading, Screen } from '../../components/ui';
+import { Body, Card, DateBlock, Empty, H2, Label, LevelSwitcher, Loading, Pill, Row, Screen, Segmented } from '../../components/ui';
 import { StandingsTable } from '../../components/StandingsTable';
-import { useLevelData } from '../../lib/store';
-import { computeStandings } from '../../lib/scoring';
+import { useLevelData, useStore } from '../../lib/store';
+import { computeStandings, teamName } from '../../lib/scoring';
+import { fmtRange, todayLocal } from '../../lib/format';
+import { isLocked, seasonOf } from '../../lib/judging';
 import { radius, space, useTheme } from '../../lib/theme';
 
-export default function RankingsScreen() {
+export default function ResultsScreen() {
   const d = useLevelData();
+  const { data } = useStore();
   const c = useTheme();
+  const [view, setView] = useState<'rankings' | 'archive'>('rankings');
   const [scope, setScope] = useState<string>('season');
 
-  const scored = useMemo(() => {
-    if (!d) return [];
-    const ids = new Set(d.ballots.map((b) => b.matchId));
-    return d.tournaments.filter((t) => d.matches.some((m) => m.tournamentId === t.id && ids.has(m.id))).sort((a, b) => b.startDate.localeCompare(a.startDate));
-  }, [d]);
+  // Only published competitions count toward public rankings and the archive.
+  const published = useMemo(() => (d ? d.tournaments.filter((t) => t.resultsPublished).sort((a, b) => b.startDate.localeCompare(a.startDate)) : []), [d]);
+  const currentSeason = seasonOf(todayLocal());
 
   const standings = useMemo(() => {
     if (!d) return [];
-    const matches = scope === 'season' ? d.matches : d.matches.filter((m) => m.tournamentId === scope);
-    return computeStandings(matches, d.ballots);
-  }, [d, scope]);
+    const ids = new Set(scope === 'season' ? published.filter((t) => seasonOf(t.startDate) === currentSeason).map((t) => t.id) : [scope]);
+    return computeStandings(d.matches.filter((m) => ids.has(m.tournamentId)), d.ballots);
+  }, [d, scope, published, currentSeason]);
 
-  if (!d) return <Loading />;
+  if (!d || !data) return <Loading />;
 
-  const chips = [{ id: 'season', label: 'Season' }, ...scored.map((t) => ({ id: t.id, label: t.name }))];
+  const chips = [{ id: 'season', label: `${currentSeason} season` }, ...published.filter((t) => seasonOf(t.startDate) === currentSeason).map((t) => ({ id: t.id, label: t.name }))];
+  const seasons = [...new Set(published.map((t) => seasonOf(t.startDate)))];
 
   return (
     <Screen>
       <LevelSwitcher />
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: space.sm }}>
-        {chips.map((ch) => {
-          const on = ch.id === scope;
-          return (
-            <Pressable key={ch.id} onPress={() => setScope(ch.id)} accessibilityRole="button" style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: radius.md, backgroundColor: on ? c.accent : c.surfaceAlt }}>
-              <Text style={{ color: on ? c.accentInk : c.ink, fontWeight: '600' }}>{ch.label}</Text>
-            </Pressable>
-          );
-        })}
-      </ScrollView>
+      <Segmented value={view} onChange={setView} options={[{ id: 'rankings', label: 'Rankings' }, { id: 'archive', label: 'Past events' }]} />
 
-      {standings.length === 0 ? (
-        <Empty title="No scored rounds yet" body="Rankings fill in as tournament staff enter ballots after each round." />
+      {view === 'rankings' ? (
+        <>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: space.sm }}>
+            {chips.map((ch) => {
+              const on = ch.id === scope;
+              return (
+                <Pressable key={ch.id} onPress={() => setScope(ch.id)} accessibilityRole="button" style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: radius.md, backgroundColor: on ? c.accent : c.surfaceAlt }}>
+                  <Text style={{ color: on ? c.accentInk : c.ink, fontWeight: '600' }}>{ch.label}</Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+          {standings.length === 0 ? (
+            <Empty title="No published results yet" body="Rankings fill in as organizers publish their competitions' results." />
+          ) : (
+            <Card style={{ padding: 0, overflow: 'hidden' }}>
+              <StandingsTable standings={standings} teams={d.teams} onTeam={(id) => router.push(`/team/${id}`)} />
+            </Card>
+          )}
+          <View style={{ gap: 4 }}>
+            <Label>How teams are ranked</Label>
+            <Body muted>
+              Wins first, then ballots won, then combined strength (CS, the total wins of every opponent faced), then point differential (PD). Only results an organizer has published count. Tap a team to see its history.
+            </Body>
+          </View>
+        </>
+      ) : seasons.length === 0 ? (
+        <Empty title="No past events yet" body="Competitions appear here, with final standings, as soon as their organizers publish results." />
       ) : (
-        <Card style={{ padding: 0, overflow: 'hidden' }}>
-          <StandingsTable standings={standings} teams={d.teams} />
-        </Card>
+        seasons.map((season) => (
+          <View key={season} style={{ gap: space.sm }}>
+            <Label>{season} season</Label>
+            {published
+              .filter((t) => seasonOf(t.startDate) === season)
+              .map((t) => {
+                const top = computeStandings(d.matches.filter((m) => m.tournamentId === t.id), d.ballots)[0];
+                return (
+                  <Card key={t.id} onPress={() => router.push(`/tournament/${t.id}`)}>
+                    <View style={{ flexDirection: 'row', gap: space.md }}>
+                      <DateBlock date={t.startDate} />
+                      <View style={{ flex: 1, gap: 4, minWidth: 0 }}>
+                        <H2 numberOfLines={2}>{t.name}</H2>
+                        <Body muted numberOfLines={1}>
+                          {fmtRange(t.startDate, t.endDate)} · {t.hostName}
+                        </Body>
+                        <Row>
+                          {top && <Pill text={`Champion: ${teamName(d.teams, top.teamId)}`} tone="good" />}
+                          {isLocked(t, todayLocal()) ? <Pill text="Final" /> : <Pill text="Results may still change" tone="warn" />}
+                        </Row>
+                      </View>
+                    </View>
+                  </Card>
+                );
+              })}
+          </View>
+        ))
       )}
-      <View style={{ gap: 4 }}>
-        <Label>How teams are ranked</Label>
-        <Body muted>
-          Wins first, then ballots won, then combined strength (CS, the total wins of every opponent faced), then point differential (PD). A tied ballot counts as half to each side.
-        </Body>
-      </View>
     </Screen>
   );
 }
