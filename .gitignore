@@ -45,3 +45,4 @@ yarn-error.*
 # Local backups and their key
 scripts/backup.env
 backups/
+__pycache__/
