@@ -1,4 +1,4 @@
-# Mock Trial Docket
+# Mock Trial Central
 
 One app for the mock trial world: tournament schedules and sign-ups, round pairings, live scores and rankings, case file releases, bulletins, and round recordings. It starts with law school competitions; every record carries a `level` (`law_school`, `collegiate`, `high_school`) so the other circuits slot in without a rebuild.
 
@@ -45,7 +45,7 @@ Type check: `npx tsc --noEmit`
 4. Restart `npx expo start`. The app now uses email sign-in codes and shared data.
 5. Work through the dashboard settings in [SECURITY.md](SECURITY.md).
 6. Ballot photo reading: `supabase secrets set ANTHROPIC_API_KEY=...`, then `supabase functions deploy read-ballot`.
-7. Notifications: create a free [Resend](https://resend.com) account and verify your sending domain, then `supabase secrets set RESEND_API_KEY=... EMAIL_FROM="Mock Trial Docket <notices@yourdomain.org>" NOTIFY_CRON_SECRET=<long random string>`, deploy `send-notifications`, and schedule it as described at the top of `supabase/functions/send-notifications/index.ts`. Phone alerts also need `eas init` once, so the app has a project id.
+7. Notifications: create a free [Resend](https://resend.com) account and verify your sending domain, then `supabase secrets set RESEND_API_KEY=... EMAIL_FROM="Mock Trial Central <notices@mocktrialcentral.com>" NOTIFY_CRON_SECRET=<long random string>`, deploy `send-notifications`, and schedule it as described at the top of `supabase/functions/send-notifications/index.ts`. Phone alerts also need `eas init` once, so the app has a project id.
 8. Backups: follow [BACKUPS.md](BACKUPS.md) (free: your computer plus an encrypted nightly copy in Cloudflare R2). Every insert, update, and delete is also written to `change_log`, which nobody can edit.
 
 ## Ship to the stores

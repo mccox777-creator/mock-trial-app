@@ -9,7 +9,7 @@
 //     headers := jsonb_build_object('Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'notify_cron_secret'))) $$);
 //
 // Secrets: NOTIFY_CRON_SECRET (long random string, also stored in vault as notify_cron_secret),
-//          RESEND_API_KEY and EMAIL_FROM (e.g. "Mock Trial Docket <notices@yourdomain.org>") for email.
+//          RESEND_API_KEY and EMAIL_FROM (e.g. "Mock Trial Central <notices@mocktrialcentral.com>") for email.
 // Without Resend settings, only phone alerts go out; notices still appear in each person's inbox.
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
@@ -27,7 +27,7 @@ async function sameSecret(a: string, b: string) {
 }
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
-const FOOTER = '<p style="color:#5A6679;font-size:12px">You get these because of your notification settings in the Mock Trial Docket app (Me &gt; Notifications). Change or turn them off there at any time.</p>';
+const FOOTER = '<p style="color:#5A6679;font-size:12px">You get these because of your notification settings in the Mock Trial Central app (Me &gt; Notifications). Change or turn them off there at any time.</p>';
 
 Deno.serve(async (req) => {
   const secret = Deno.env.get('NOTIFY_CRON_SECRET') ?? '';
@@ -89,7 +89,7 @@ Deno.serve(async (req) => {
       if (!to) continue;
       const batches = digest ? [items] : items.map((r) => [r]);
       for (const batch of batches) {
-        const subject = batch.length === 1 ? batch[0].title : `${batch.length} updates from Mock Trial Docket`;
+        const subject = batch.length === 1 ? batch[0].title : `${batch.length} updates from Mock Trial Central`;
         const html = batch.map((r) => `<h3 style="margin:16px 0 4px">${esc(r.title)}</h3><p style="margin:0">${esc(r.body)}</p>`).join('') + FOOTER;
         const res = await fetch('https://api.resend.com/emails', {
           method: 'POST',
