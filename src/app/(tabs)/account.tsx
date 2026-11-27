@@ -39,6 +39,11 @@ export default function AccountScreen() {
         </Card>
       )}
 
+      <Card onPress={() => router.push('/timer')}>
+        <H2>Trial timer</H2>
+        <Body muted>Two clocks, one per side, with time for each opening, exam and closing. Works without signal.</Body>
+      </Card>
+
       {me ? (
         <>
           <H1>{me.name}</H1>
