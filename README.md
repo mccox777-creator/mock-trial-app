@@ -87,3 +87,11 @@ The website runs on Cloudflare Workers as **mock-trial-app**, built from `main` 
 - `wrangler.jsonc` serves `dist/` as a single-page app, and `public/_headers` adds security headers
 
 Production builds read the live database settings from `.env.production`.
+
+### Public Elo leaderboard
+
+`https://app.mocktrialcentral.com/api/ratings` returns the school Elo ratings as JSON, for other sites (courtroomdrills.com shows the top 20). It runs `worker/index.ts` and uses the same code as the app (`src/lib/elo.ts`, `src/lib/closedCompetitions.ts`): the shipped circuit record, `past_events` rows, and every closed competition with published results. It reads only what a signed-out visitor can see, and each answer is cached for 5 minutes, so a competition shows up within 5 minutes of closing.
+
+- `?limit=20` (1 to 200), `?level=law_school` (default)
+- Each row: `rank`, `school`, `rating`, `peak`, `events`, `provisional`, `class`, `lastChange`, `lastEvent`
+- `live: false` means the database couldn't be reached and only the shipped record was used
