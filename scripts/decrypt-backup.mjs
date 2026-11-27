@@ -16,7 +16,7 @@ if (!file) {
 }
 const bytes = new Uint8Array(await readFile(file));
 if (new TextDecoder().decode(bytes.slice(0, 5)) !== MAGIC) {
-  console.error('This is not a Mock Trial Docket backup file.');
+  console.error('This is not a Mock Trial Central backup file.');
   process.exit(1);
 }
 let passphrase = process.env.BACKUP_PASSPHRASE;
