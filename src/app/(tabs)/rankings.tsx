@@ -4,7 +4,9 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 import { Body, Card, DateBlock, Empty, H2, Label, LevelSwitcher, Loading, Pill, Row, Screen, Segmented } from '../../components/ui';
 import { StandingsTable } from '../../components/StandingsTable';
 import { CircuitHistory } from '../../components/CircuitHistory';
-import { useLevelData, useStore } from '../../lib/store';
+import { EloTable } from '../../components/EloTable';
+import { eloFor } from '../../lib/elo';
+import { useHistory, useLevelData, useStore } from '../../lib/store';
 import { computeStandings, teamName } from '../../lib/scoring';
 import { fmtRange, todayLocal } from '../../lib/format';
 import { isLocked, seasonOf } from '../../lib/judging';
@@ -13,6 +15,8 @@ import { radius, space, useTheme } from '../../lib/theme';
 export default function ResultsScreen() {
   const d = useLevelData();
   const { data } = useStore();
+  const { events: history } = useHistory();
+  const elo = useMemo(() => (history && history.length ? eloFor(history) : null), [history]);
   const c = useTheme();
   const [view, setView] = useState<'rankings' | 'archive' | 'history'>('rankings');
   const [scope, setScope] = useState<string>('season');
@@ -51,19 +55,24 @@ export default function ResultsScreen() {
               );
             })}
           </ScrollView>
-          {standings.length === 0 ? (
+          {standings.length === 0 && scope === 'season' && elo ? (
+            <Body muted>No competition run in the app has published results this season yet. School ratings from the whole circuit record are below.</Body>
+          ) : standings.length === 0 ? (
             <Empty title="No published results yet" body="Rankings fill in as organizers publish their competitions' results." />
           ) : (
             <Card style={{ padding: 0, overflow: 'hidden' }}>
               <StandingsTable standings={standings} teams={d.teams} onTeam={(id) => router.push(`/team/${id}`)} />
             </Card>
           )}
+          {standings.length > 0 && (
           <View style={{ gap: 4 }}>
             <Label>How teams are ranked</Label>
             <Body muted>
               Wins first, then ballots won, then combined strength (CS, the total wins of every opponent faced), then point differential (PD). Only results an organizer has published count. Tap a team to see its history.
             </Body>
           </View>
+          )}
+          {scope === 'season' && elo && <EloTable ranked={elo.ranked} title="School ratings (Elo), whole circuit" />}
         </>
       ) : seasons.length === 0 ? (
         <Empty title="No past events yet" body="Competitions appear here, with final standings, as soon as their organizers publish results." />

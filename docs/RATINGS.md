@@ -1,0 +1,100 @@
+# How school ratings are calculated
+
+Mock Trial Central rates law schools with the Elo system from chess. This page gives every rule, the data, and a way to check
+every number yourself. The app shows the same explanation at https://app.mocktrialcentral.com/ratings.
+
+## Check it yourself
+
+Everything needed to recompute the ratings is published with the site:
+
+| File | What it is |
+| --- | --- |
+| [events.json](https://app.mocktrialcentral.com/ratings-data/events.json) | Every competition used: finishes and participating teams |
+| [ratings.csv](https://app.mocktrialcentral.com/ratings-data/ratings.csv) | Every school's current rating, class and number of competitions |
+| [rating-changes.csv](https://app.mocktrialcentral.com/ratings-data/rating-changes.csv) | Every rating change in the order computed, with each input to the formula |
+| [verify_ratings.py](https://app.mocktrialcentral.com/ratings-data/verify_ratings.py) | Recomputes every rating from events.json and compares it with ratings.csv |
+
+Put the four files in one folder and run `python3 verify_ratings.py` (Python 3, nothing to install). The script was written
+separately from the app's code, in a different language, using only the rules below. It prints `0 mismatches` when the
+published ratings are exactly what the rules produce.
+
+Any single line of rating-changes.csv can be checked by hand: `after = before + k * weight * (ahead - expected)`.
+
+In the repository, `npm run ratings:export` regenerates the files in `public/ratings-data/` and `npm run check:elo` fails if
+they are out of date.
+
+## The rules
+
+1. **Start.** A school's rating starts at 1500 at its first competition in the record (Spring 2023 onward).
+2. **Finishes.** A school's finish at a competition is its best team's finish. From best to worst: won or qualified out of
+   a regional (0), final (1), semifinal (2), quarterfinal (3), octofinal (4), took part (5). A numbered place counts as one
+   less than the place (3rd = 2), capped at 4.5, so 4th beats 5th and every placed school beats those who only took part.
+   A competition run in the app uses its full final standings: 1st beats 2nd beats 3rd and so on.
+3. **Games.** Finishing ahead of a school is a win against it, finishing behind is a loss. Schools that finish in the same
+   round don't count against each other.
+4. **Expected score.** Against each school in a different round: `1 / (1 + 10^((their rating - your rating) / 400))`.
+   Ratings from before the competition are used for everyone.
+5. **Change.** `new = old + K * weight * (wins - expected)`, where wins is the number of schools finished ahead of and
+   expected is the sum of the expected scores.
+   - `weight = min(8, n - 1) / (n - 1)`, where n is the number of schools in the field, so a competition is worth at most 8
+     games however large it is.
+   - `K` is 40 for a school's first 5 competitions, then 20, and 10 at 2400 or above (as in FIDE chess).
+   - A competition counts for a school only if at least one other school there finished in a different round. A competition
+     with no results changes nothing and doesn't count toward a school's total.
+6. **Order.** Competitions are applied oldest first by start date. One with no date in the record takes the date of the one
+   listed just before it in the same term. Competitions run in the app count once they close (finalized by the organizer,
+   or 7 days after the last day) and their results are published.
+7. **Labels.** Fewer than 5 competitions is provisional (`*`). Classes follow US Chess: Senior Master 2400+, Master 2200+,
+   Expert 2000+, Class A 1800+, Class B 1600+, Class C 1400+, Class D 1200+, Class E below.
+
+The code is in [`src/lib/elo.ts`](../src/lib/elo.ts).
+
+## The data
+
+The results come from the circuit record of law school competitions, read by
+[`scripts/history/parse_results.py`](../scripts/history/parse_results.py). The parser:
+
+- maps short names and typos to one school name (for example "Johns" and "St, Mary's" to St. John's and St. Mary's,
+  "Ole Miss" to Mississippi, "Boston" to Boston University, "Puerto Rico" to University of Puerto Rico);
+- splits teams that ran together without a comma ("Hofstra 1 Hofstra 2", "Barry 2 Case Western");
+- expands "Cumberland x 3" and "Case Western 1, 2, 3, 4, & 5" into separate teams;
+- matches a result to the school named in the participant list ("St. Thomas" wins, "St. Thomas (FL)" took part), and treats
+  an unqualified St. Thomas at a Florida competition as St. Thomas (FL) and at NTC Region 12 as St. Thomas (MN).
+
+### Known gaps
+
+- A few results say only "St. Thomas" (4 competitions) or "Loyola" (2) without saying which school. They are rated as
+  separate entries until the record is corrected.
+- Online competitions split into divisions are rated as one competition, so a division winner counts as finishing ahead
+  of other divisions' semifinalists.
+- Some participant lists in the record are shorter than the stated team count, so a few schools that took part may be
+  missing from those competitions. A missing school simply has no games there.
+- One competition (Syracuse's Military Law Trial, Spring 2025) has no results in the record and is not rated.
+
+## Audit, 27 November 2026
+
+A review of the math and the data found and fixed these problems:
+
+| Problem | Effect | Fix |
+| --- | --- | --- |
+| Competitions within a term were applied newest first (the record lists terms newest first but competitions within a term oldest first) | Ratings came out as if each term were played backwards | Order by each competition's start date |
+| "Tournament of Champions" (Fall 2023) and "Online National Championship" (Spring 2024) were dropped because their titles contain the word champion | Two major competitions missing | Title lines are no longer mistaken for results |
+| One school split into several names (St. Thomas (FL) under three names; Johns, John's, Mary's, St, Thomas, Ole Miss, Boston, Puerto Rico, run-together names) | 218 school names in the data, now 199; St. Thomas (FL) was rated 1406 instead of 1782 | Name matching above |
+| "4th place St. Thomas" was read as "St" | Wrong school credited | Fixed the place reader |
+| 4th and 5th place counted as the same finish | Lost information | Places count by number |
+| A competition with no results still counted toward a school's total | Wrong K factor and competition counts | Only competitions with games count |
+
+After the fixes the top 10 is:
+
+| # | School | Rating | Class | Competitions |
+| --- | --- | --- | --- | --- |
+| 1 | UCLA | 2093 | Expert | 81 |
+| 2 | Drexel | 1926 | Class A | 55 |
+| 3 | Stetson | 1851 | Class A | 85 |
+| 4 | Harvard | 1821 | Class A | 43 |
+| 5 | Georgetown | 1809 | Class A | 42 |
+| 6 | Texas | 1807 | Class A | 44 |
+| 7 | San Diego | 1797 | Class B | 29 |
+| 8 | American | 1788 | Class B | 34 |
+| 9 | Florida International | 1788 | Class B | 24 |
+| 10 | Boston College | 1785 | Class B | 11 |

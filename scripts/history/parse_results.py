@@ -27,7 +27,48 @@ ALIASES = {
     'southern university law center': 'Southern', 'new hampshire franklin pierce': 'New Hampshire', 'cleveland': 'Cleveland State',
     'umass': 'Massachusetts', 'texas a&m': 'Texas A&M', 'william and mary': 'William & Mary', 'lewis and clark': 'Lewis & Clark', 'louis & clark': 'Lewis & Clark',
     'mississippi christian': 'Mississippi College', 'southern california': 'USC',
+    # Added in the 2026-11-27 audit: short or misspelled names that split one school into two.
+    'johns': "St. John's", "john's": "St. John's", "mary's": "St. Mary's", 'thomas': 'St. Thomas',
+    'st thomas': 'St. Thomas', 'st. thomas (florida)': 'St. Thomas (FL)', 'st. thomas (minnesota)': 'St. Thomas (MN)',
+    'boston': 'Boston University', 'bu': 'Boston University', 'ole miss': 'Mississippi', 'puerto rico': 'University of Puerto Rico',
+    'upr': 'University of Puerto Rico', 'university of chicago': 'University of Chicago',
 }
+
+# Typos in the source where two schools ran together with no comma, or a name was doubled.
+SPLITS = {
+    'penn state penn state': ['Penn State'], 'uc berkeley uc davis': ['UC Berkeley', 'UC Davis'],
+    'pacific mcgeorge puerto rico': ['Pacific McGeorge', 'Puerto Rico'], "st. john's stetson": ["St. John's", 'Stetson'],
+    "st. john's temple": ["St. John's", 'Temple'], "st. mary's south texas": ["St. Mary's", 'South Texas'],
+}
+
+# Schools that the record sometimes names without saying which campus. Florida events mean the Miami school.
+FLORIDA = {'Barry', 'Florida International', 'Nova Southeastern', 'Stetson', 'Florida', 'Florida State', 'Miami', 'Cooley',
+           'Jacksonville', 'Ave Maria', 'Florida A&M'}
+
+
+def resolve_schools(ev):
+    """Make results and participants name the same school, and pin down 'St. Thomas' where the event says which one."""
+    schools = {p['school'] for p in ev['participants']} | {r['school'] for r in ev['results']}
+    if re.fullmatch(r'NTC Region 12', ev['name'] or '', re.I):
+        schools.add('St. Thomas (MN)')  # Region 12 is the upper Midwest; the 2026 record names St. Thomas (MN) there.
+    florida = bool(schools & FLORIDA) or re.search(r'florida|zehmer|bedell', ' '.join(ev['source'] + [ev['name'] or '']), re.I)
+    def fix(school):
+        if school == 'St. Thomas':
+            if 'St. Thomas (FL)' in schools or (florida and 'St. Thomas (MN)' not in schools):
+                return 'St. Thomas (FL)'
+            if 'St. Thomas (MN)' in schools:
+                return 'St. Thomas (MN)'
+        if schools and school not in schools:
+            longer = [s for s in schools if s.startswith(school + ' ')]
+            if len(longer) == 1:
+                return longer[0]
+        return school
+    for coll in (ev['results'], ev['participants']):
+        for r in coll:
+            new = fix(r['school'])
+            if new != r['school']:
+                r['team'] = new + r['team'][len(r['school']):]
+                r['school'] = new
 
 
 def clean(s):
@@ -53,6 +94,10 @@ def split_team(raw):
 
 
 def names(chunk):
+    chunk = re.sub(r'\bSt,\s+', 'St. ', chunk)
+    chunk = re.sub(r'\bSt\s+(?=(?:Mary|John|Thomas|Louis)\b)', 'St. ', chunk)
+    # "Hofstra 1 Hofstra 2" and "Barry 2 Case Western": a missing comma after a team number.
+    chunk = re.sub(r'(\b\d)\s+(?=[A-Z])', r'\1, ', chunk)
     chunk = re.sub(r'\((?!MN|FL|TX|CA|Florida|Minnesota|Chicago|LA|Atlanta|Texas)[^)]*\)', '', chunk)
     # "Akron 1 & 2" means two teams from one school.
     chunk = re.sub(r"([A-Z][\w.' ]*?)\s+1\s*&\s*2\b", r"\1 1, \1 2", chunk)
@@ -61,9 +106,20 @@ def names(chunk):
     out = []
     for p in parts:
         p = clean(p)
-        if not p or p.lower() in ('and',) or re.fullmatch(r'\d', p):
+        p = re.sub(r'\s+and$', '', p)
+        # "Cumberland x 3": three teams from one school.
+        mx = re.fullmatch(r'(.+?)\s+x\s*(\d)', p)
+        if mx:
+            out.extend(f'{mx.group(1)} {i}' for i in range(1, int(mx.group(2)) + 1))
             continue
-        out.append(p)
+        # "Case Western 1, 2, 3, 4, & 5": a bare number is another team from the school before it.
+        mnum = re.fullmatch(r'&?\s*(\d)', p)
+        if mnum and out:
+            out.append(re.sub(r'\s+\d$', '', out[-1]) + ' ' + mnum.group(1))
+            continue
+        if not p or p.lower() in ('and',) or re.fullmatch(r'\d+', p):
+            continue
+        out.extend(SPLITS.get(p.lower(), [p]))
     return out
 
 
@@ -113,7 +169,10 @@ def build(block, participants, term, year):
           'dates': None, 'teams': None, 'schools': None, 'results': [], 'participants': [], 'unparsed': [], 'source': block[:]}
     header, res = [], []
     for ln in block:
-        (res if (res or (RESULT.search(ln) and not re.search(r'COMPETITION|CHALLENGE|TOURNAMENT|INVITATIONAL|CUP', ln) )) else header).append(ln)
+        title_like = re.search(r'COMPETITION|CHALLENGE|TOURNAMENT|INVITATIONAL|CUP', ln) or (
+            re.search(r'competition|tournament|championship|invitational', ln, re.I)
+            and not re.search(r'\b(?:wins?|were|are|was|is|over|advanc\w*)\b', ln, re.I))
+        (res if (res or (RESULT.search(ln) and not title_like)) else header).append(ln)
     title = []
     for ln in header:
         c = clean(ln)
@@ -169,7 +228,7 @@ def build(block, participants, term, year):
             if m.group(2):
                 for n in names(re.sub(r'\s*\(.*$', '', m.group(2))):
                     add(n, 'finalist', 2)
-        places = re.findall(r'(\d)(?:st|nd|rd|th) place:?\s*([^.]+?)(?=\.|$|\s+\d(?:st|nd|rd|th) place)', c, re.I)
+        places = re.findall(r'(\d)(?:st|nd|rd|th) place:?\s*((?:St\.\s|[^.])+?)(?=\.|$|\s+\d(?:st|nd|rd|th) place)', c, re.I)
         for p, who in places:
             ok = add(who, 'winner' if p == '1' else 'finalist' if p == '2' else 'place', int(p)) or ok
         for kind, finish in (('quarter', 'quarterfinalist'), ('octo', 'octofinalist'), ('semi', 'semifinalist')):
@@ -219,6 +278,7 @@ def build(block, participants, term, year):
             continue
         seen.add(team.lower())
         ev['participants'].append({'school': school, 'team': team})
+    resolve_schools(ev)
     return ev
 
 

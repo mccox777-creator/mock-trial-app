@@ -1,7 +1,7 @@
 // Sanity checks for school Elo ratings. Run with: npm run check:elo
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { computeElo, expectedScore, classOf } from '../src/lib/elo.ts';
+import { computeElo, expectedScore, classOf, chronological, startDay } from '../src/lib/elo.ts';
 import type { PastEvent } from '../src/lib/types.ts';
 
 const ev = (id: string, ord: number, results: PastEvent['results'], participants: string[]): PastEvent => ({
@@ -17,7 +17,7 @@ assert.ok(r1.get('A')!.rating > r1.get('B')!.rating && r1.get('B')!.rating > r1.
 assert.equal(r1.get('C')!.rating, r1.get('D')!.rating, 'same round, no change between them');
 
 // Beating a higher-rated school is worth more than beating an equal one.
-const seq = computeElo([ev('late', 0, [W('C'), F('A')], ['A', 'C']), ev('early', 1, [W('A'), F('B')], ['A', 'B'])]);
+const seq = computeElo([{ ...ev('late', 0, [W('C'), F('A')], ['A', 'C']), dates: 'November 7-9' }, { ...ev('early', 1, [W('A'), F('B')], ['A', 'B']), dates: 'September 12' }]);
 const gainVsStrong = seq.get('C')!.rating - 1500;
 assert.ok(gainVsStrong > 20, `upset gain ${gainVsStrong}`);
 
@@ -33,8 +33,30 @@ assert.ok(r3.get('A')!.rating > r3.get('B')!.rating && r3.get('B')!.rating > r3.
 const r4 = computeElo([app, ev('imp', 0, [W('D'), F('C')], ['A', 'B', 'C', 'D'])]);
 assert.deepEqual(r4.get('D')!.history.map((h) => h.eventId), ['imp', 'app-t1']);
 
+// Competitions run in date order, whatever order the record lists them in.
+const dated = (id: string, ord: number, dates: string | null) => ({ ...ev(id, ord, [W('A'), F('B')], ['A', 'B']), dates });
+assert.equal(startDay(dated('x', 0, 'October 2-4')), 20251002);
+assert.equal(startDay({ ...dated('y', 0, 'February 6-8'), term: 'Spring' }), 20260206);
+assert.deepEqual(chronological([dated('nov', 0, 'November 7-9'), dated('sep', 1, 'September 12'), dated('none', 2, null)]).map((e) => e.id), ['sep', 'none', 'nov'], 'undated takes the date of the one listed before it');
+
+// A competition with no results (everyone in the same round) doesn't count as played.
+const empty = computeElo([ev('e', 0, [], ['A', 'B', 'C'])]);
+assert.equal(empty.size, 0);
+// 4th place finishes ahead of 5th.
+const places = computeElo([ev('p', 0, [P('A', 1), P('B', 2), P('C', 3), P('D', 4), P('E', 5)], ['A', 'B', 'C', 'D', 'E', 'F'])]);
+assert.ok(places.get('D')!.rating > places.get('E')!.rating && places.get('E')!.rating > places.get('F')!.rating);
+
 // Real data: UCLA first, Drexel second.
 const real = JSON.parse(readFileSync(new URL('../src/data/history-law-school.json', import.meta.url), 'utf8')) as PastEvent[];
 const ranked = [...computeElo(real).values()].sort((a, b) => b.rating - a.rating);
 assert.deepEqual(ranked.slice(0, 2).map((r) => r.school), ['UCLA', 'Drexel']);
 console.log('elo checks passed; top 5:', ranked.slice(0, 5).map((r) => `${r.school} ${Math.round(r.rating)}`).join(', '));
+
+// The published files (npm run ratings:export) must match what the app computes.
+const published = readFileSync(new URL('../public/ratings-data/ratings.csv', import.meta.url), 'utf8').trim().split('\n').slice(1);
+assert.equal(published.length, ranked.length, 'public/ratings-data is out of date: run npm run ratings:export');
+for (const [i, line] of published.entries()) {
+  const [, school, rating] = line.match(/^\d+,("(?:[^"]|"")*"|[^,]*),([\d.]+)/)!;
+  assert.equal(school.replace(/^"|"$/g, '').replace(/""/g, '"'), ranked[i].school, 'public/ratings-data is out of date: run npm run ratings:export');
+  assert.ok(Math.abs(Number(rating) - ranked[i].rating) < 0.01, 'public/ratings-data is out of date: run npm run ratings:export');
+}
