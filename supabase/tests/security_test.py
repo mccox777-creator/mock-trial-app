@@ -1,6 +1,6 @@
 import os, subprocess, sys, uuid
 # Attack tests for the database rules. Needs a scratch Postgres 15+ (never a real project):
-#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0005_pairing_options.sql (plus 0004 once merged)
+#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0004_notifications.sql -f supabase/migrations/0005_pairing_options.sql
 #   PGARGS='-h localhost -U postgres -d t' python3 supabase/tests/security_test.py
 PG = os.environ.get('PGARGS', '-d t').split()
 U = {n: str(uuid.uuid5(uuid.NAMESPACE_DNS, n)) for n in ['org','org2','judge','judge2','coachA','coachB','compA','evil']}
@@ -137,6 +137,27 @@ ok('organizer turns chat to announcements only', "update tournaments set chat_re
 blocked('coach posts in announcements-only chat', "insert into messages (id, tournament_id, channel, body) values ('c9','T3','all','x')", 'coachA')
 ok('organizer still announces', "insert into messages (id, tournament_id, channel, body) values ('c10','T3','all','Round 2 at 1pm')", 'org')
 blocked('public results show judge comments', "select count(*) from information_schema.columns where table_name='published_results' and column_name in ('comments','judge','sheet')", None, 0)
+
+print('--- notifications and judge recruiting ---')
+ok('authors are not notified of their own chat messages', "select count(*) from notifications where kind='chat' and title like 'Organizer ·%'", 'org', 0)
+ok('coach got the organizer announcement', "select count(*) > 0 from notifications where kind='chat'", 'coachA', 't')
+blocked('stranger reads someone else\'s inbox', "select count(*) from notifications", 'evil', 0)
+blocked('stranger creates a notification', "insert into notifications (user_id, kind, title) values ('" + U['coachA'] + "','chat','phish')", 'evil')
+blocked('stranger rewrites a notification', "update notifications set title='phish' returning id", 'coachA', '')
+ok('owner marks notices read', "update notifications set read_at=now() where user_id='" + U['coachA'] + "' returning 1", 'coachA')
+blocked('stranger reads someone else\'s settings', "select count(*) from notification_prefs", 'evil', 0)
+ok('judge volunteers for law school calls', "insert into notification_prefs (willing_to_judge, judge_levels) values (true, '{law_school}')", 'judge2')
+ok('law school director follows only law school', "insert into notification_prefs (levels) values ('{law_school}')", 'org2')
+ok('new law school competition', T('T5','org'), 'org')
+ok('law school follower hears about it', "select count(*) from notifications where kind='new_competition'", 'org2', 1)
+ok('new high school competition', T('T6','org').replace("'law_school'", "'high_school'"), 'org')
+ok('law school follower does not hear about high school', "select count(*) from notifications where kind='new_competition'", 'org2', 1)
+blocked('people who never chose a circuit get no circuit notices', "select count(*) from notifications where kind='new_competition'", 'coachB', 0)
+ok('organizer asks for judges', "insert into bulletins (id, level, tournament_id, kind, title, body, posted_at, posted_by) values ('bj1','law_school','T5','judges_needed','Judges needed','Rounds 1-4','now','" + U['org'] + "')", 'org')
+ok('willing judge hears the call', "select count(*) from notifications where kind='judges_needed'", 'judge2', 1)
+blocked('non-organizer posts a judge call', "insert into bulletins (id, level, tournament_id, kind, title, body, posted_at, posted_by) values ('bj2','law_school','T5','judges_needed','x','x','now','" + U['evil'] + "')", 'evil')
+blocked('push token saved for someone else', "insert into push_tokens (token, user_id) values ('ExponentPushToken[x]','" + U['coachA'] + "')", 'evil')
+
 
 # Pairing options (0005)
 ok('organizer picks high-low power matching within records', "update tournaments set power_style='high_low', bracketed=true, side_constraint='flip_even', avoid_same_school=false where id='T3'", 'org')

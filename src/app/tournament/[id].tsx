@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { Body, Button, Card, Empty, H1, H2, Label, Loading, Mono, Pill, Row, Screen, SideTag, effectiveStatus } from '../../components/ui';
+import { Body, Button, Card, Empty, Field, H1, H2, Label, Loading, Mono, Pill, Row, Screen, SideTag, effectiveStatus } from '../../components/ui';
 import { StandingsTable } from '../../components/StandingsTable';
 import { newId, useStore } from '../../lib/store';
 import { computeStandings, describePairing, resultFor, teamName } from '../../lib/scoring';
@@ -10,7 +10,7 @@ import { regLabel } from '../../lib/labels';
 import { AUTO_LOCK_DAYS, BACKGROUND_LABEL, autoAssign, autoLockDate, canChange, isLocked, isOrganizer, resultsVisible, describeScoring, scoringOf, SHEET_PARTS } from '../../lib/judging';
 import type { AppData, Match, Registration, RegistrationStatus, Tournament } from '../../lib/types';
 import { radius, space, useTheme } from '../../lib/theme';
-import type { ScoringSetup } from '../../lib/types';
+import { LEVELS, type ScoringSetup } from '../../lib/types';
 import { ChatPanel } from '../../components/ChatPanel';
 import { chatRole } from '../../lib/chat';
 import { describeRules, type RuleSet } from '../../lib/rules';
@@ -445,6 +445,7 @@ function JudgesTab({ t, matches }: { t: Tournament; matches: Match[] }) {
   const rounds = [...new Set(matches.map((m) => m.round))].sort((a, b) => a - b);
   return (
     <>
+      <AskForJudges t={t} confirmed={signups.filter((j) => j.status === 'approved').length} />
       {rounds.length > 0 && <Label>Coverage</Label>}
       {rounds.map((round) => {
         const rm = matches.filter((m) => m.round === round);
@@ -535,4 +536,45 @@ function RulesCard({ rules, custom }: { rules: RuleSet; custom: string }) {
 function sheetSummary(scoring: ScoringSetup) {
   const parts = SHEET_PARTS.filter((p) => scoring.parts.includes(p.id)).map((p) => p.label);
   return [...parts, ...scoring.extra].join(', ');
+}
+
+/** Organizer posts a call for judges; volunteers who judge in this circuit get an alert. */
+function AskForJudges({ t, confirmed }: { t: Tournament; confirmed: number }) {
+  const { data, me, save } = useStore();
+  const [open, setOpen] = useState(false);
+  const need = t.prelimRounds * t.ballotsPerRound * Math.ceil(Math.max(2, data?.registrations.filter((r) => r.tournamentId === t.id && r.status === 'approved').length ?? 2) / 2);
+  const [body, setBody] = useState('');
+  const [busy, setBusy] = useState(false);
+  const last = data?.bulletins.filter((b) => b.tournamentId === t.id && b.kind === 'judges_needed').sort((a, b) => b.postedAt.localeCompare(a.postedAt))[0];
+  if (!open)
+    return (
+      <Card>
+        <H2>Need more judges?</H2>
+        <Body muted>
+          {confirmed} confirmed. Post a call and everyone who volunteers to judge {LEVELS.find((l) => l.id === t.level)!.label.toLowerCase()} competitions gets an alert, with a button to sign up.
+        </Body>
+        {last && <Body muted>{`Last call posted ${fmtDateTime(last.postedAt.slice(0, 16))}.`}</Body>}
+        <Button title="Ask for judges" kind="secondary" onPress={() => {
+          setBody(`We need judges for ${t.prelimRounds} rounds, ${fmtRange(t.startDate, t.endDate)}${t.city ? ` in ${t.city}` : ''}. About ${Math.max(0, need - confirmed)} more ballots to cover. Practitioners, judges, and alumni welcome.`);
+          setOpen(true);
+        }} />
+      </Card>
+    );
+  return (
+    <Card>
+      <H2>Ask for judges</H2>
+      <Field label="Message to volunteers" value={body} onChangeText={setBody} multiline maxLength={1000} />
+      <Button
+        title={busy ? 'Posting…' : 'Post the call'}
+        disabled={busy || !body.trim()}
+        onPress={async () => {
+          setBusy(true);
+          await save('bulletins', { id: newId('bl'), level: t.level, tournamentId: t.id, caseId: null, kind: 'judges_needed', title: `Judges needed: ${t.name}`, body: body.trim(), postedAt: nowLocal(), postedBy: me!.id });
+          setBusy(false);
+          setOpen(false);
+        }}
+      />
+      <Button title="Cancel" kind="ghost" onPress={() => setOpen(false)} />
+    </Card>
+  );
 }

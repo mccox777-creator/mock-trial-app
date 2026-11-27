@@ -205,6 +205,11 @@ export const sampleData: AppData = {
       postedAt: '2026-11-15T19:30', postedBy: DEMO_DIRECTOR,
     },
     {
+      id: 'bl-judges-spring', level: 'law_school', tournamentId: 'spring-championship', caseId: null, kind: 'judges_needed',
+      title: 'Judges needed: Spring Invitational Championship', body: 'Ridgeview needs practitioner judges for four preliminary rounds, March 12 to 14. Sign up for the rounds you can make.',
+      postedAt: '2026-11-26T15:00', postedBy: DEMO_DIRECTOR,
+    },
+    {
       id: 'bl-3', level: 'law_school', tournamentId: 'winter-classic', caseId: null, kind: 'schedule',
       title: 'Winter Trial Classic: registration closes December 18',
       body: 'Eight of twelve slots remain. Coaches can register directly from the tournament page.',
