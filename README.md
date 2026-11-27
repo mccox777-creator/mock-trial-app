@@ -40,7 +40,7 @@ Type check: `npx tsc --noEmit`
 ## Connect a real backend
 
 1. Create a Supabase project.
-2. Run the files in `supabase/migrations/` in order (0001 to 0004) in the SQL editor. It creates the tables, row-level security rules (organizers edit only their competitions, judges score only their own assigned trials, ballots hidden until results are published, case files hidden until release, recordings limited by visibility), lock triggers, an append-only change log, private `case-files` and `backups` storage buckets, and live-update publication.
+2. Run the files in `supabase/migrations/` in order (0001 onward) in the SQL editor. It creates the tables, row-level security rules (organizers edit only their competitions, judges score only their own assigned trials, ballots hidden until results are published, case files hidden until release, recordings limited by visibility), lock triggers, an append-only change log, private `case-files` and `backups` storage buckets, and live-update publication.
 3. Copy `.env.example` to `.env` and fill in the project URL and anon key.
 4. Restart `npx expo start`. The app now uses email sign-in codes and shared data.
 5. Work through the dashboard settings in [SECURITY.md](SECURITY.md).

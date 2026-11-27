@@ -69,12 +69,18 @@ export interface Tournament {
   entryFee: number; // USD
   prelimRounds: number;
   ballotsPerRound: number;
-  /** Whether teams must alternate sides between rounds. */
-  sideConstraint: 'alternate' | 'balanced' | 'none';
+  /** Side rule. alternate: flip every round. flip_even: rounds 2, 4, 6 flip from the round before (AMTA style). balanced: even out over the event. none: any. */
+  sideConstraint: 'alternate' | 'flip_even' | 'balanced' | 'none';
   /** Rounds drawn at random before any power-matching (1 to 4). */
   randomRounds: number;
   /** How rounds after the random draws are paired. */
   pairingMethod: 'power' | 'random';
+  /** Power-match style. high_high: 1 v 2, 3 v 4. high_low: best v worst. slide: top half v bottom half. */
+  powerStyle: 'high_high' | 'high_low' | 'slide';
+  /** Pair within groups of teams with the same record, moving one team down when a group is odd. */
+  bracketed: boolean;
+  /** Never pair two teams from the same school. */
+  avoidSameSchool: boolean;
   /** Open: schools register directly. Invitational: schools request an invitation. */
   entryType: 'open' | 'invitational';
   /** Open competitions only: the director reviews each sign-up before confirming. */

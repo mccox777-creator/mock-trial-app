@@ -39,7 +39,8 @@
     "backup": "node scripts/backup.mjs",
     "restore": "node scripts/restore.mjs",
     "import-history": "node scripts/import-history.mjs",
-    "check:elo": "node --experimental-strip-types --no-warnings scripts/check-elo.ts"
+    "check:elo": "node --experimental-strip-types --no-warnings scripts/check-elo.ts",
+    "check:pairings": "node --experimental-strip-types --no-warnings scripts/check-pairings.ts"
   },
   "private": true
 }

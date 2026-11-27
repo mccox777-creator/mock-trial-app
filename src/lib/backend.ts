@@ -56,7 +56,7 @@ const EMPTY: AppData = {
 
 // ---------- Demo backend: sample season, saved on the device ----------
 
-const DEMO_KEY = 'mocktrial.demo.v4';
+const DEMO_KEY = 'mocktrial.demo.v5';
 const DEMO_USER_KEY = 'mocktrial.demo.user';
 const DEMO_PREFS_KEY = 'mocktrial.demo.prefs';
 const DEMO_INBOX: Notice[] = [
