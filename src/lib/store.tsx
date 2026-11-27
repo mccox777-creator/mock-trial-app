@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { AppState } from 'react-native';
 import { createBackend, type Backend, type TableName } from './backend';
 import { openAlertsOnTap, registerForPush } from './push';
 import type { AppData, Level, PastEvent, Profile, Tournament } from './types';
@@ -47,7 +48,19 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     refresh();
     refreshUser();
-    return backend.subscribe(refresh);
+    const stop = backend.subscribe(refresh);
+    // A phone pauses the live connection while the app is in the background, so catch up on anything
+    // changed elsewhere (the website or another phone) as soon as the app is opened again.
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        refresh();
+        refreshUser();
+      }
+    });
+    return () => {
+      stop();
+      sub.remove();
+    };
   }, [backend, refresh, refreshUser]);
 
   useEffect(() => openAlertsOnTap(), []);
