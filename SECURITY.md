@@ -40,10 +40,27 @@ These live in dashboards, not in code.
 
 **GitHub.** Protect the `main` branch (require a pull request), and turn on secret scanning and Dependabot alerts.
 
+## Organizers, admins and reports
+
+Set up in `supabase/migrations/0007_entry_controls_and_moderation.sql`, all enforced in the database:
+
+- **Platform admins** are listed in `platform_admins`, which only the dashboard can change. Add yourself once in the SQL editor:
+  `insert into platform_admins (user_id) select id from auth.users where email = 'you@example.org';`
+- **Organizer approval.** Anyone can set up a competition, but it stays unlisted (visible only to its organizers and the
+  admins, closed to registration, and left out of the Mock Trial ELO Ratings) until an admin approves the organizer on the
+  Admin page, or lists that one competition. Approved organizers' competitions are listed at once. Admins can pause an
+  organizer; their new competitions are unlisted again.
+- **Take-downs.** Admins can hide any competition, even a locked one, and delete bulletins and chat messages.
+- **Reports.** Anyone signed in can report a competition to the admins, who get an alert in their inbox.
+- **Rate limits** per person: 5 competitions a day (3 an hour), 40 registrations a day, 20 teams, 10 cases, 20 bulletins,
+  300 chat messages (60 an hour) and 20 reports. Admins and the dashboard are not limited.
+- **Registration:** organizers can close registration early, cap teams per school and remove a team; coaches can withdraw
+  their own team, and in competitions that confirm automatically the waitlist moves up.
+
 ## What's still a risk, honestly
 
 - **A stolen organizer email.** Sign-in is by email code, so whoever controls an organizer's inbox can act as them until the competition locks. The change log shows exactly what they did, and an admin can restore it. Two-factor sign-in for organizers is a good next step.
-- **Fake competitions.** Any signed-in person can create a competition, as designed. A report button and a verified-organizer badge would help once the app is public.
+- **Fake competitions.** Handled by organizer approval (below), but an approved organizer can still misbehave; reports and admin take-downs cover that.
 - **Flooding.** Supabase rate-limits sign-in and API calls, but a determined flood of traffic is handled by the hosting provider, not the app.
 - **Dependencies.** `npm audit` reports 3 moderate issues in Expo's build tooling (`minimatch`). They run on the developer's machine, not in the app people install, and clear with the next Expo update.
 

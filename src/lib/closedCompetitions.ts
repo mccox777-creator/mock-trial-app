@@ -37,7 +37,8 @@ export function closedCompetitionEvents(d: Data, today: string, known: Iterable<
     return p ? recordName(p.name, knownList) : teams.get(teamId)?.name ?? teamId;
   };
   return d.tournaments
-    .filter((t) => t.resultsPublished && isLocked(t, today))
+    // Only listed competitions count: an unapproved organizer's competition, or one an admin took down, never reaches the ratings.
+    .filter((t) => t.resultsPublished && isLocked(t, today) && t.approved !== false && !t.hidden)
     .map((t): PastEvent => {
       const standings = computeStandings(d.matches.filter((m) => m.tournamentId === t.id), d.ballots, t.rankBy ?? 'ballots');
       const month = Number(t.startDate.slice(5, 7));

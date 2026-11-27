@@ -6,6 +6,7 @@ import { regLabel } from '../../lib/labels';
 import { fmtDateTime, fmtRange } from '../../lib/format';
 import { teamName } from '../../lib/scoring';
 import { DEMO_USERS } from '../../lib/sampleData';
+import { OrganizerCard } from '../../components/Moderation';
 
 export default function AccountScreen() {
   const { me, data, backend, switchDemoUser, refreshUser, refresh } = useStore();
@@ -54,6 +55,7 @@ export default function AccountScreen() {
           </Card>
 
           <Label>Competitions you run</Label>
+          <OrganizerCard />
           {directing.length === 0 ? (
             <Card>
               <Body muted>Directing a tournament? Create it here and teams can sign up in the app.</Body>
@@ -67,6 +69,8 @@ export default function AccountScreen() {
                 <Row>
                   <Pill text={t.directorIds.includes(me.id) ? 'Director' : 'Tab staff'} tone="accent" />
                   {t.status === 'draft' && <Pill text="Draft" tone="warn" />}
+                  {t.status !== 'draft' && t.approved === false && !t.hidden && <Pill text="Unlisted until approved" tone="warn" />}
+                  {t.hidden && <Pill text="Taken down" tone="bad" />}
                   {data.registrations.some((r) => r.tournamentId === t.id && r.status === 'pending') && <Pill text="Sign-ups to review" tone="warn" />}
                 </Row>
               </Card>
@@ -121,7 +125,7 @@ export default function AccountScreen() {
               <Card key={r.id} onPress={t ? () => router.push(`/tournament/${t.id}`) : undefined}>
                 <H2>{t?.name ?? 'Competition'}</H2>
                 <Body muted>{team?.name}</Body>
-                <Pill text={regLabel(r.status, inv)} tone={r.status === 'approved' ? 'good' : r.status === 'declined' ? 'bad' : 'warn'} />
+                <Pill text={regLabel(r.status, inv)} tone={r.status === 'approved' ? 'good' : r.status === 'declined' || r.status === 'withdrawn' ? 'bad' : 'warn'} />
               </Card>
             );
           })}

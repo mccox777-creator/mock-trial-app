@@ -15,7 +15,7 @@ import { DEFAULT_SCORING, describeScoring, sheetLines } from '../../lib/judging'
 
 const STEPS = ['Basics', 'Dates & venue', 'Format', 'Score sheet', 'Rules', 'Case', 'Registration', 'Review'] as const;
 
-type Draft = { extraLines: string } & Omit<Tournament, 'id' | 'createdAt' | 'directorIds' | 'status' | 'resultsPublished' | 'ballotsReturned' | 'finalizedAt' | 'witnessesPerSide' | 'hostProgramId' | 'teamCap' | 'entryFee' | 'prelimRounds' | 'ballotsPerRound' | 'randomRounds'> & {
+type Draft = { extraLines: string; perSchool: string } & Omit<Tournament, 'id' | 'createdAt' | 'directorIds' | 'status' | 'resultsPublished' | 'ballotsReturned' | 'finalizedAt' | 'witnessesPerSide' | 'hostProgramId' | 'teamCap' | 'entryFee' | 'prelimRounds' | 'ballotsPerRound' | 'randomRounds' | 'maxTeamsPerSchool' | 'approved' | 'hidden'> & {
   randomRounds: string;
   witnessesPerSide: string;
   teamCap: string;
@@ -26,18 +26,18 @@ type Draft = { extraLines: string } & Omit<Tournament, 'id' | 'createdAt' | 'dir
 
 export default function TournamentWizard() {
   const { id } = useLocalSearchParams<{ id?: string }>();
-  const { data, me, level, save } = useStore();
+  const { data, me, level, save, backend } = useStore();
   const existing = id ? data?.tournaments.find((t) => t.id === id) : undefined;
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const [d, setD] = useState<Draft>(() =>
     existing
-      ? { ...existing, teamCap: String(existing.teamCap), entryFee: String(existing.entryFee), prelimRounds: String(existing.prelimRounds), ballotsPerRound: String(existing.ballotsPerRound), witnessesPerSide: String(existing.witnessesPerSide), randomRounds: String(existing.randomRounds), rankBy: existing.rankBy ?? 'ballots', powerStyle: existing.powerStyle ?? 'high_high', bracketed: existing.bracketed ?? false, avoidSameSchool: existing.avoidSameSchool ?? true, rules: existing.rules ?? {}, customRules: existing.customRules ?? '', scoring: existing.scoring ?? DEFAULT_SCORING, extraLines: (existing.scoring?.extra ?? []).join('\n') }
+      ? { ...existing, teamCap: String(existing.teamCap), entryFee: String(existing.entryFee), prelimRounds: String(existing.prelimRounds), ballotsPerRound: String(existing.ballotsPerRound), witnessesPerSide: String(existing.witnessesPerSide), randomRounds: String(existing.randomRounds), rankBy: existing.rankBy ?? 'ballots', powerStyle: existing.powerStyle ?? 'high_high', bracketed: existing.bracketed ?? false, avoidSameSchool: existing.avoidSameSchool ?? true, rules: existing.rules ?? {}, customRules: existing.customRules ?? '', scoring: existing.scoring ?? DEFAULT_SCORING, extraLines: (existing.scoring?.extra ?? []).join('\n'), perSchool: existing.maxTeamsPerSchool ? String(existing.maxTeamsPerSchool) : '' }
       : {
           level, name: '', hostName: '', city: '', venue: '', startDate: '', endDate: '', registrationDeadline: '',
           teamCap: '16', entryFee: '350', prelimRounds: '4', ballotsPerRound: '3', witnessesPerSide: '3', randomRounds: '1', sideConstraint: 'alternate', pairingMethod: 'power', powerStyle: 'high_high', bracketed: false, avoidSameSchool: true,
-          entryType: 'open', requireApproval: true, caseId: null, description: '', rankBy: 'ballots', chatReplies: true, rules: {}, customRules: '', scoring: DEFAULT_SCORING, extraLines: '',
+          entryType: 'open', requireApproval: true, caseId: null, description: '', rankBy: 'ballots', chatReplies: true, rules: {}, customRules: '', scoring: DEFAULT_SCORING, extraLines: '', perSchool: '',
         },
   );
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setD((x) => ({ ...x, [k]: v }));
@@ -102,6 +102,8 @@ export default function TournamentWizard() {
       const cap = Number(d.teamCap);
       if (!Number.isInteger(cap) || cap < 2) e.teamCap = 'At least 2 teams.';
       if (d.entryFee.trim() && !(Number(d.entryFee) >= 0)) e.entryFee = 'Enter a dollar amount, or 0.';
+      const per = Number(d.perSchool);
+      if (d.perSchool.trim() && !(Number.isInteger(per) && per >= 1 && per <= 20)) e.perSchool = 'A whole number from 1 to 20, or leave it blank.';
     }
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -126,6 +128,7 @@ export default function TournamentWizard() {
       ballotsPerRound: Number(d.ballotsPerRound),
       witnessesPerSide: Number(d.witnessesPerSide),
       randomRounds: Number(d.randomRounds),
+      maxTeamsPerSchool: d.perSchool.trim() ? Number(d.perSchool) : null,
       status: publish ? (existing && existing.status !== 'draft' ? existing.status : 'registration_open') : existing?.status ?? 'draft',
     };
     try {
@@ -277,6 +280,7 @@ export default function TournamentWizard() {
               <Field label="Entry fee (USD)" value={d.entryFee} onChangeText={(v) => set('entryFee', v)} keyboardType="decimal-pad" error={errors.entryFee} />
             </View>
           </Row>
+          <Field label="Most teams per school (optional)" hint="Leave blank for no limit." value={d.perSchool} onChangeText={(v) => set('perSchool', v)} keyboardType="number-pad" error={errors.perSchool} />
           <View style={{ gap: 6 }}>
             <Label>Competition type</Label>
             <Segmented value={d.entryType} onChange={(v) => set('entryType', v)} options={[{ id: 'open', label: 'Open registration' }, { id: 'invitational', label: 'Invitational' }]} />
@@ -324,6 +328,11 @@ export default function TournamentWizard() {
           <Button title="Next" onPress={() => validate(step) && setStep(step + 1)} />
         ) : (
           <>
+            {backend.kind === 'supabase' && me.organizer !== 'approved' && !me.isAdmin && (!existing || existing.approved === false) && (
+              <Body muted>
+                It stays unlisted, visible only to you, until a site admin approves you as an organizer. Ask for approval on the Me tab; it only happens once.
+              </Body>
+            )}
             <Button title={existing && existing.status !== 'draft' ? 'Save changes' : 'Publish and open registration'} disabled={busy} onPress={() => finish(true)} />
             {(!existing || existing.status === 'draft') && <Button title="Save as draft" kind="secondary" disabled={busy} onPress={() => finish(false)} />}
           </>
@@ -361,6 +370,6 @@ function Choice({ label, sub, on, onPress }: { label: string; sub?: string; on: 
 }
 
 function withoutDraftFields(d: Draft) {
-  const { extraLines: _extra, ...rest } = d;
+  const { extraLines: _extra, perSchool: _per, ...rest } = d;
   return rest;
 }

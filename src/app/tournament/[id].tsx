@@ -14,6 +14,7 @@ import { LEVELS, type ScoringSetup } from '../../lib/types';
 import { ChatPanel } from '../../components/ChatPanel';
 import { chatRole } from '../../lib/chat';
 import { describeRules, type RuleSet } from '../../lib/rules';
+import { ReportButton } from '../../components/Moderation';
 
 type Tab = 'overview' | 'teams' | 'pairings' | 'grid' | 'standings' | 'chat' | 'judges';
 
@@ -64,6 +65,8 @@ export default function TournamentScreen() {
           <Pill text={status.text} tone={status.tone} />
           <Pill text={invitational ? 'Invitational' : 'Open'} />
           {organizer && <Pill text="You organize this" tone="accent" />}
+          {organizer && t.status !== 'draft' && t.approved === false && !t.hidden && <Pill text="Unlisted until approved" tone="warn" />}
+          {t.hidden && <Pill text="Taken down" tone="bad" />}
           {locked && <Pill text="Final and locked" />}
           {myJudging?.status === 'approved' && <Pill text="You're judging" tone="accent" />}
         </Row>
@@ -82,13 +85,47 @@ export default function TournamentScreen() {
               <Button title="Publish" onPress={() => save('tournaments', { ...t, status: 'registration_open' })} />
             </Card>
           )}
+          {organizer && t.status !== 'draft' && t.approved === false && !t.hidden && (
+            <Card>
+              <H2>Waiting for approval</H2>
+              <Body muted>
+                To keep fake competitions off the site, the site's admins approve each organizer once. Until then only you can see this competition and
+                no one can register. It is listed for everyone, and followers are told about it, as soon as you are approved. Ask for approval on the Me tab.
+              </Body>
+            </Card>
+          )}
+          {t.hidden && (
+            <Card>
+              <H2>Taken down</H2>
+              <Body muted>A site admin has taken this competition down, so only its organizers and the admins can see it. Contact the site if this is a mistake.</Body>
+            </Card>
+          )}
+          {organizer && !locked && (t.status === 'registration_open' || t.status === 'registration_closed') && t.registrationDeadline >= todayLocal() && (
+            <Card>
+              <Label>Registration</Label>
+              <Body muted>
+                {t.status === 'registration_open'
+                  ? `Open until ${fmtDate(t.registrationDeadline)}. Close it early if you are full or need to stop new entries.`
+                  : `Closed early. You can reopen it until ${fmtDate(t.registrationDeadline)}.`}
+              </Body>
+              <Button
+                small
+                kind={t.status === 'registration_open' ? 'secondary' : 'primary'}
+                title={t.status === 'registration_open' ? 'Close registration now' : 'Reopen registration'}
+                onPress={() => save('tournaments', { ...t, status: t.status === 'registration_open' ? 'registration_closed' : 'registration_open' })}
+              />
+            </Card>
+          )}
           {organizer && <ResultsControls t={t} />}
           {regOpen && !organizer && (
             <Card>
               {myReg ? (
                 <>
                   <H2>{teamName(data.teams, myReg.teamId)}</H2>
-                  <Pill text={regLabel(myReg.status, invitational)} tone={myReg.status === 'approved' ? 'good' : myReg.status === 'declined' ? 'bad' : 'warn'} />
+                  <Pill text={regLabel(myReg.status, invitational)} tone={myReg.status === 'approved' ? 'good' : myReg.status === 'declined' || myReg.status === 'withdrawn' ? 'bad' : 'warn'} />
+                  {me?.coachOf?.includes(myReg.teamId) && myReg.status !== 'declined' && myReg.status !== 'withdrawn' && (
+                    <Button small kind="ghost" title="Withdraw this team" onPress={() => save('registrations', { ...myReg, status: 'withdrawn' })} />
+                  )}
                 </>
               ) : (
                 <>
@@ -150,6 +187,7 @@ export default function TournamentScreen() {
               <Button title="Post a bulletin to teams" kind="secondary" onPress={() => router.push(`/bulletin/new?tournamentId=${t.id}`)} />
             </View>
           )}
+          {!organizer && <ReportButton kind="tournament" targetId={t.id} what="competition" />}
         </>
       )}
 
@@ -394,7 +432,7 @@ function TeamsTab({ t, regs, organizer }: { t: Tournament; regs: Registration[];
   const { data, save } = useStore();
   if (!data) return null;
   const invitational = t.entryType === 'invitational';
-  const order: RegistrationStatus[] = ['pending', 'approved', 'waitlisted', 'declined'];
+  const order: RegistrationStatus[] = ['pending', 'approved', 'waitlisted', 'declined', 'withdrawn'];
   const visible = organizer ? regs : regs.filter((r) => r.status === 'approved');
   if (visible.length === 0)
     return <Empty title="No teams yet" body={invitational ? 'Invited teams appear here.' : 'Teams appear here once they register and the organizer confirms them.'} />;
@@ -424,7 +462,7 @@ function TeamsTab({ t, regs, organizer }: { t: Tournament; regs: Registration[];
                       {!isLocked(t, todayLocal()) && <Row>
                         {r.status !== 'approved' && <Button small title={invitational ? 'Invite' : 'Confirm'} onPress={() => save('registrations', { ...r, status: 'approved' })} />}
                         {r.status !== 'waitlisted' && <Button small kind="secondary" title={invitational ? 'Alternate' : 'Waitlist'} onPress={() => save('registrations', { ...r, status: 'waitlisted' })} />}
-                        {r.status !== 'declined' && <Button small kind="ghost" title="Decline" onPress={() => save('registrations', { ...r, status: 'declined' })} />}
+                        {r.status !== 'declined' && r.status !== 'withdrawn' && <Button small kind="ghost" title={r.status === 'approved' ? 'Remove' : 'Decline'} onPress={() => save('registrations', { ...r, status: 'declined' })} />}
                       </Row>}
                     </>
                   )}

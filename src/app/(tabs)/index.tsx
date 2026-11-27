@@ -12,7 +12,8 @@ export default function ScheduleScreen() {
   if (!d) return error ? <Screen><Body>{error}</Body></Screen> : <Loading />;
 
   const today = todayLocal();
-  const visible = d.tournaments.filter((t) => t.status !== 'draft' || (me && t.directorIds.includes(me.id)));
+  // Unlisted (waiting for approval) and taken-down competitions show only to their organizers.
+  const visible = d.tournaments.filter((t) => (t.status !== 'draft' && t.approved !== false && !t.hidden) || (me && t.directorIds.includes(me.id)));
   const upcoming = visible.filter((t) => t.endDate >= today).sort((a, b) => a.startDate.localeCompare(b.startDate));
   const past = visible.filter((t) => t.endDate < today).sort((a, b) => b.startDate.localeCompare(a.startDate));
   const nextRelease = d.cases.filter((c) => c.releaseAt > nowLocal()).sort((a, b) => a.releaseAt.localeCompare(b.releaseAt))[0];

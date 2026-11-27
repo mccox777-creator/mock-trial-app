@@ -13,11 +13,12 @@ export const REG_LABEL: Record<RegistrationStatus, string> = {
   approved: 'Confirmed',
   waitlisted: 'Waitlisted',
   declined: 'Declined',
+  withdrawn: 'Withdrawn',
 };
 
 export function regLabel(status: RegistrationStatus, invitational: boolean) {
   if (!invitational) return REG_LABEL[status];
-  return { pending: 'Invitation requested', approved: 'Invited', waitlisted: 'Alternate', declined: 'Not invited' }[status];
+  return { pending: 'Invitation requested', approved: 'Invited', waitlisted: 'Alternate', declined: 'Not invited', withdrawn: 'Withdrawn' }[status];
 }
 
 export const VIS_LABEL: Record<VideoVisibility, string> = {
