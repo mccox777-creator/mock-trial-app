@@ -1,4 +1,4 @@
-"""Recompute the Mock Trial Central school ratings from scratch and compare them with the published ones.
+"""Recompute the Mock Trial ELO Ratings from scratch and compare them with the published ones.
 
 Written separately from the app's code, in a different language, so it is an independent check.
 Usage (Python 3, no extra packages), in a folder holding events.json and ratings.csv from

@@ -8,14 +8,14 @@ import { space, useTheme } from '../lib/theme';
 const W = [32, undefined, 52, 104, 52];
 
 /** School Elo ratings, top 25 with a button for the rest, and a link to how they're calculated. */
-export function EloTable({ ranked, filter = '', title = 'Elo ratings, as of the latest results' }: { ranked: EloRow[]; filter?: string; title?: string }) {
+export function EloTable({ ranked, filter = '', title = 'Mock Trial ELO Ratings, as of the latest results' }: { ranked: EloRow[]; filter?: string; title?: string }) {
   const [showAll, setShowAll] = useState(false);
   const shown = filter ? ranked.filter((r) => r.school.toLowerCase().includes(filter)) : showAll ? ranked : ranked.slice(0, 25);
   return (
     <>
       <Label>{title}</Label>
       <Card style={{ padding: 0, overflow: 'hidden' }}>
-        <PointsRow head cells={['#', 'School', 'Elo', 'Class', 'Comps']} widths={W} />
+        <PointsRow head cells={['#', 'School', 'ELO', 'Class', 'Comps']} widths={W} />
         {shown.map((r) => (
           <PointsRow
             key={r.school}
@@ -29,7 +29,7 @@ export function EloTable({ ranked, filter = '', title = 'Elo ratings, as of the 
       <Body muted>
         Chess rules: every school starts at 1500 and gains or loses points for finishing ahead of or behind other schools, more for beating a higher-rated school. A 200-point gap means the higher school finishes ahead about 3 times in 4. * means provisional (under 5 competitions). Classes follow US Chess: Expert 2000+, Class A 1800+, Class B 1600+. Competitions run in the app count as soon as they close with published results.
       </Body>
-      <Button small kind="secondary" title="How ratings are calculated, with the data" onPress={() => router.push('/ratings')} />
+      <Button small kind="secondary" title="How the Mock Trial ELO Ratings are calculated" onPress={() => router.push('/ratings')} />
     </>
   );
 }

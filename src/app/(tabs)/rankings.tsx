@@ -56,7 +56,7 @@ export default function ResultsScreen() {
             })}
           </ScrollView>
           {standings.length === 0 && scope === 'season' && elo ? (
-            <Body muted>No competition run in the app has published results this season yet. School ratings from the whole circuit record are below.</Body>
+            <Body muted>No competition run in the app has published results this season yet. The Mock Trial ELO Ratings for the whole circuit are below.</Body>
           ) : standings.length === 0 ? (
             <Empty title="No published results yet" body="Rankings fill in as organizers publish their competitions' results." />
           ) : (
@@ -72,7 +72,7 @@ export default function ResultsScreen() {
             </Body>
           </View>
           )}
-          {scope === 'season' && elo && <EloTable ranked={elo.ranked} title="School ratings (Elo), whole circuit" />}
+          {scope === 'season' && elo && <EloTable ranked={elo.ranked} title="Mock Trial ELO Ratings" />}
         </>
       ) : seasons.length === 0 ? (
         <Empty title="No past events yet" body="Competitions appear here, with final standings, as soon as their organizers publish results." />
