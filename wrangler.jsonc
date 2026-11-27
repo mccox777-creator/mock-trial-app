@@ -1,0 +1,11 @@
+// Cloudflare hosting for the web version (app.mocktrialcentral.com).
+// Cloudflare runs `npx expo export --platform web` (build) then `npx wrangler deploy` (deploy).
+{
+  "name": "mock-trial-app",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    // Every path (like /tournament/abc) loads the app, which then shows the right screen.
+    "not_found_handling": "single-page-application"
+  }
+}
