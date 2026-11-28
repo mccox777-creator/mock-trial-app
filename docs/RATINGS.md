@@ -68,6 +68,13 @@ The results come from the circuit record of law school competitions, read by
 - drops the Spring 2025 "St. John's Civil Rights" entry, a second copy of the Peter James Johnson Civil Rights
   competition from Fall 2024 (same final four). St. John's holds that competition each October.
 
+### Results reported after the record
+
+Competitions the record lists without results yet can be filled in from
+[`scripts/history/record_updates.json`](../scripts/history/record_updates.json), for results reported directly
+(for example the Cambridge Clash Invitational, Fall 2026). An event that already has results in the record is never
+changed this way.
+
 ### Gaps filled from TCPR
 
 Where the circuit record is missing a result, it is filled in from the Trial Competition Performance Rankings (TCPR)
