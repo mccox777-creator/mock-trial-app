@@ -1,6 +1,6 @@
 import os, subprocess, sys, uuid
 # Attack tests for the database rules. Needs a scratch Postgres 15+ (never a real project):
-#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0004_notifications.sql -f supabase/migrations/0005_pairing_options.sql -f supabase/migrations/0006_past_results.sql -f supabase/migrations/0007_entry_controls_and_moderation.sql -f supabase/migrations/0008_account_deletion.sql -f supabase/migrations/0010_admin_roles.sql
+#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0004_notifications.sql -f supabase/migrations/0005_pairing_options.sql -f supabase/migrations/0006_past_results.sql -f supabase/migrations/0007_entry_controls_and_moderation.sql -f supabase/migrations/0008_account_deletion.sql -f supabase/migrations/0010_admin_roles.sql -f supabase/migrations/0011_admin_levels.sql
 #   PGARGS='-h localhost -U postgres -d t' python3 supabase/tests/security_test.py
 PG = os.environ.get('PGARGS', '-d t').split()
 U = {n: str(uuid.uuid5(uuid.NAMESPACE_DNS, n)) for n in ['org','org2','judge','judge2','coachA','coachB','compA','evil','admin','newbie']}
@@ -208,7 +208,7 @@ blocked('nobody else can see it', "select count(*) from tournaments where id='N1
 blocked('the public cannot see it', "select count(*) from tournaments where id='N1'", None, 0)
 blocked('nobody can register for it', R('n1a','N1','tA','coachA'), 'coachA')
 blocked('organizer approves their own competition', "update tournaments set approved=true where id='N1'; select approved from tournaments where id='N1'", 'newbie', 'f')
-# Two: N1, and the high school T6 from an organizer approved only for law school (0010: no crossover).
+# Two: N1, and the high school T6 from an organizer approved only for law school (0011: no crossover).
 ok('admin is told', "select count(*) from notifications where kind='admin'", 'admin', 2)
 blocked('followers are not told about it', "select count(*) from notifications where kind='new_competition' and link='/tournament/N1'", 'org2', 0)
 ok('new organizer asks to be approved', "insert into organizer_requests (name, school, role) values ('New', 'Harbor', 'Coach')", 'newbie')
@@ -254,7 +254,7 @@ su('registration kept, contact removed', "select coalesce(submitted_by::text,'no
 su('team kept for its other members', "select count(*) from team_members where team_id='tA'", 1)
 su('coach no longer on the team', f"select count(*) from team_members where user_id='{U['coachA']}'", 0)
 
-print('--- owner and admin roles, scoped by level (0010) ---')
+print('--- owner and admin roles, scoped by level (0010, 0011) ---')
 psql(f"update profiles set level='law_school' where id='{U['newbie']}'", superuser=True)
 psql(f"update profiles set level='high_school' where id='{U['evil']}'", superuser=True)
 psql(f"insert into tournaments (id, level, name, start_date, end_date, registration_deadline, team_cap, status, director_ids, approved) values ('HS1', 'high_school', 'HS1', current_date+30, current_date+32, current_date+10, 2, 'registration_open', array['{U['org']}'::uuid], true)", superuser=True)
