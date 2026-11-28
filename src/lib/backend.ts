@@ -33,7 +33,11 @@ export interface Backend {
   currentUser(): Promise<Profile | null>;
   signIn(email: string): Promise<{ needsCode: boolean }>;
   verifyCode?(email: string, code: string): Promise<void>;
+  /** Password sign-in, for accounts given a password in the Supabase dashboard (such as Apple's review account). */
+  signInWithPassword?(email: string, password: string): Promise<void>;
   signOut(): Promise<void>;
+  /** Permanently delete the signed-in account. Shared records (results, ballots) stay without the person's name. */
+  deleteAccount?(): Promise<void>;
   /** Store a picked file (case packet, exhibit) for a case and return a reference to save on the file record. */
   uploadFile(caseId: string, name: string, uri: string, mimeType: string): Promise<string>;
   /** Turn a saved file reference into a link to open now. Private files get a short-lived link, checked against the release time. */
@@ -294,8 +298,17 @@ function supabaseBackend(url: string, anonKey: string): Backend {
       const { error } = await sb.auth.verifyOtp({ email, token: code, type: 'email' });
       if (error) throw error;
     },
+    async signInWithPassword(email, password) {
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    },
     async signOut() {
       await sb.auth.signOut();
+    },
+    async deleteAccount() {
+      const { error } = await sb.rpc('delete_my_account');
+      if (error) throw error;
+      await sb.auth.signOut({ scope: 'local' });
     },
     async getPrefs() {
       const { data } = await sb.from('notification_prefs').select('*').maybeSingle();

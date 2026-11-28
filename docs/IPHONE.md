@@ -31,6 +31,9 @@ Later builds: `npm run ios:build` again. The build number goes up automatically.
 
 ## What the Apple review will look for
 
-- A way to delete an account inside the app. Not built yet; needed before App Store review (TestFlight works without it).
+- A way to delete an account inside the app: Me tab, "Delete my account" (migration 0008, `delete_my_account()`).
 - A privacy policy URL and a support contact.
-- A demo account or sign-in instructions for the reviewer, since the app needs an emailed code to sign in.
+- A demo account for the reviewer, since normal sign-in needs an emailed code. Create it in the Supabase dashboard
+  (Authentication, Users, Add user, "Create new user" with a password and "Auto Confirm User" ticked). The reviewer
+  signs in on the Me tab with "I have a password". Put the email and password in App Store Connect under
+  App Review Information, Sign-In Information. Keep that account free of real student data.

@@ -131,6 +131,7 @@ export default function AccountScreen() {
           })}
 
           {backend.kind === 'supabase' && <Button title="Sign out" kind="ghost" onPress={async () => { await backend.signOut(); await refreshUser(); }} />}
+          {backend.kind === 'supabase' && <DeleteAccount />}
         </>
       ) : backend.kind === 'supabase' ? (
         <SignIn />
@@ -142,12 +143,80 @@ export default function AccountScreen() {
   );
 }
 
+function DeleteAccount() {
+  const { backend, refreshUser, refresh } = useStore();
+  const [open, setOpen] = useState(false);
+  const [confirm, setConfirm] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  if (!backend.deleteAccount) return null;
+  if (!open) return <Button title="Delete my account" kind="ghost" onPress={() => setOpen(true)} />;
+  return (
+    <Card>
+      <H2>Delete your account</H2>
+      <Body muted>
+        This permanently deletes your account, your profile, your team memberships, your notifications and your chat messages. It cannot be undone.
+        Results, ballots you judged and teams' registrations stay so competitions keep their records, but without your name or email.
+      </Body>
+      <Field label='Type DELETE to confirm' value={confirm} onChangeText={setConfirm} autoCapitalize="characters" />
+      {err && <Body style={{ color: '#B3261E' }}>{err}</Body>}
+      <Row>
+        <Button
+          small
+          kind="danger"
+          title={busy ? 'Deleting…' : 'Delete my account'}
+          disabled={busy || confirm.trim().toUpperCase() !== 'DELETE'}
+          onPress={async () => {
+            setBusy(true);
+            setErr(null);
+            try {
+              await backend.deleteAccount!();
+              await Promise.all([refreshUser(), refresh()]);
+            } catch (e) {
+              setErr(e instanceof Error ? e.message : 'Could not delete the account. Try again.');
+              setBusy(false);
+            }
+          }}
+        />
+        <Button small kind="ghost" title="Cancel" onPress={() => { setOpen(false); setConfirm(''); setErr(null); }} />
+      </Row>
+    </Card>
+  );
+}
+
 function SignIn() {
   const { backend, refreshUser } = useStore();
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [sent, setSent] = useState(false);
+  const [usePassword, setUsePassword] = useState(false);
+  const [password, setPassword] = useState('');
   const [err, setErr] = useState<string | null>(null);
+  if (usePassword && backend.signInWithPassword) {
+    return (
+      <Card>
+        <H2>Sign in with a password</H2>
+        <Body muted>Only for accounts that were given a password. Everyone else signs in with an emailed code.</Body>
+        <Field label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" />
+        <Field label="Password" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete="password" />
+        {err && <Body style={{ color: '#B3261E' }}>{err}</Body>}
+        <Button
+          title="Sign in"
+          disabled={!email.trim() || !password}
+          onPress={async () => {
+            setErr(null);
+            try {
+              await backend.signInWithPassword!(email.trim(), password);
+              await refreshUser();
+            } catch (e) {
+              setErr(e instanceof Error ? e.message : 'Sign-in failed. Check the email and password.');
+            }
+          }}
+        />
+        <Button title="Email me a code instead" kind="ghost" small onPress={() => { setUsePassword(false); setErr(null); }} />
+      </Card>
+    );
+  }
   return (
     <Card>
       <H2>Sign in</H2>
@@ -172,6 +241,7 @@ function SignIn() {
           }
         }}
       />
+      {backend.signInWithPassword && <Button title="I have a password" kind="ghost" small onPress={() => { setUsePassword(true); setErr(null); }} />}
     </Card>
   );
 }
