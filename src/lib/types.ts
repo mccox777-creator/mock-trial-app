@@ -22,6 +22,8 @@ export interface Profile {
   coachOf?: string[];
   /** Platform admin: approves organizers and handles reports. */
   isAdmin?: boolean;
+  /** The circuit they chose when they made their account. They see and act only in it. Null until chosen. */
+  level?: Level | null;
   /** Site owner: an admin who can also make and remove admins. */
   isOwner?: boolean;
   /** Where their request to run competitions stands. 'approved' organizers' competitions are listed at once. */
@@ -320,6 +322,66 @@ export interface Recording {
   createdAt: string;
 }
 
+/** A student's year of law school at the time of one competition. 'other': LLM, part-time 4L, and the like. */
+export type ClassYear = '2L' | '3L' | 'other';
+
+export const CLASS_YEARS: { id: ClassYear; label: string }[] = [
+  { id: '2L', label: '2L' },
+  { id: '3L', label: '3L' },
+  { id: 'other', label: 'Other' },
+];
+
+/** What a student does at a competition: attorney or witness, for the plaintiff/prosecution (p) or the defense (d). */
+export type TrialRole = 'p_attorney' | 'p_witness' | 'd_attorney' | 'd_witness';
+
+export const TRIAL_ROLES: TrialRole[] = ['p_attorney', 'p_witness', 'd_attorney', 'd_witness'];
+
+export function trialRoleLabel(r: TrialRole, kind?: 'civil' | 'criminal') {
+  const side = r.startsWith('p') ? (kind === 'criminal' ? 'Prosecution' : kind === 'civil' ? 'Plaintiff' : 'P') : kind ? 'Defense' : 'D';
+  return `${side} ${r.endsWith('attorney') ? 'attorney' : 'witness'}`;
+}
+
+/** One person on a team's roster at one competition. People are matched across competitions by school and name. */
+export interface RosterEntry {
+  id: string;
+  tournamentId: string;
+  registrationId: string;
+  teamId: string;
+  name: string;
+  role: 'coach' | 'student';
+  /** Students only: their year at this competition. */
+  classYear: ClassYear | null;
+  /** Students only: the parts they play, set at registration. */
+  roles: TrialRole[];
+}
+
+export type AwardKind = 'best_advocate' | 'best_witness' | 'best_opening' | 'best_closing' | 'best_direct' | 'best_cross' | 'other';
+
+export const AWARD_KINDS: { id: AwardKind; label: string }[] = [
+  { id: 'best_advocate', label: 'Best Advocate' },
+  { id: 'best_witness', label: 'Best Witness' },
+  { id: 'best_opening', label: 'Best Opening' },
+  { id: 'best_closing', label: 'Best Closing' },
+  { id: 'best_direct', label: 'Best Direct' },
+  { id: 'best_cross', label: 'Best Cross' },
+  { id: 'other', label: 'Other' },
+];
+
+/** An individual award given at a competition. Public once results are published. */
+export interface Award {
+  id: string;
+  tournamentId: string;
+  kind: AwardKind;
+  /** The organizer's own name for it; required for 'other'. */
+  label: string;
+  /** 1 for the top award, 2 for second; null when not ranked. */
+  place: number | null;
+  teamId: string;
+  recipient: string;
+  /** Set when picked from the team's roster. */
+  rosterEntryId: string | null;
+}
+
 export interface AppData {
   programs: Program[];
   teams: Team[];
@@ -333,6 +395,8 @@ export interface AppData {
   bulletins: Bulletin[];
   recordings: Recording[];
   messages: Message[];
+  rosterEntries: RosterEntry[];
+  awards: Award[];
 }
 
 /** How a team finished at a past competition. "advanced" = qualified out of a regional to the national round. */

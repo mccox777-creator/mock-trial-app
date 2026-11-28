@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Body, Button, Card, Field, H2, Label, Loading, Screen, Segmented } from '../../components/ui';
 import { newId, useStore } from '../../lib/store';
 import { fmtDate, nowLocal } from '../../lib/format';
 import type { Program, Registration, Team } from '../../lib/types';
+import { RosterEditor, blankRow, rosterProblem, saveRoster, type RosterDraft } from '../../components/Roster';
+import { lastRoster } from '../../lib/stats';
 
 export default function RegisterScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -20,6 +22,19 @@ export default function RegisterScreen() {
   const invitational = t?.entryType === 'invitational';
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const level = t?.level ?? 'law_school';
+  const [roster, setRoster] = useState<RosterDraft[]>([]);
+  // Start from the team's last roster (class years may need a bump), or a blank one.
+  useEffect(() => {
+    if (!data) return;
+    const prior = mode === 'existing' && teamId ? lastRoster(data, teamId) : [];
+    setRoster(
+      prior.length
+        ? prior.map((e) => ({ ...blankRow(e.role, level), name: e.name, classYear: e.classYear, roles: e.roles ?? [] }))
+        : [{ ...blankRow('coach', level), name: me?.coachOf?.length || mode === 'new' ? me?.name ?? '' : '' }, blankRow('student', level)],
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, teamId, !!data]);
 
   if (!data) return <Loading />;
   if (!t) return <Screen><Body>Competition not found.</Body></Screen>;
@@ -30,6 +45,10 @@ export default function RegisterScreen() {
     if (mode === 'new' && (!school.trim() || !teamLabel.trim())) return setErr('Enter both the school and the team name.');
     if (mode === 'existing' && !teamId) return setErr('Choose a team.');
     if (!contactName.trim() || !/^\S+@\S+\.\S+$/.test(contactEmail.trim())) return setErr('Enter a contact name and a valid email address.');
+    if (!roster.some((r) => r.role === 'coach' && r.name.trim())) return setErr('List at least one coach.');
+    if (!roster.some((r) => r.role === 'student' && r.name.trim())) return setErr('List at least one student.');
+    const problem = rosterProblem(roster, level);
+    if (problem) return setErr(problem);
     setBusy(true);
     try {
       let tid = teamId;
@@ -59,10 +78,12 @@ export default function RegisterScreen() {
       }
       const filled = data!.registrations.filter((r) => r.tournamentId === t!.id && r.status === 'approved').length;
       const status: Registration['status'] = invitational ? 'pending' : filled >= t!.teamCap ? 'waitlisted' : t!.requireApproval ? 'pending' : 'approved';
+      const regId = newId('reg');
       await save('registrations', {
-        id: newId('reg'), tournamentId: t!.id, teamId: tid, status, contactName: contactName.trim(), contactEmail: contactEmail.trim(), note: note.trim() || undefined,
+        id: regId, tournamentId: t!.id, teamId: tid, status, contactName: contactName.trim(), contactEmail: contactEmail.trim(), note: note.trim() || undefined,
         submittedBy: me!.id, createdAt: nowLocal(),
       });
+      await saveRoster(roster, [], { tournamentId: t!.id, registrationId: regId, teamId: tid }, (row) => save('rosterEntries', row), async () => {});
       router.back();
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Could not submit. Try again.');
@@ -98,6 +119,14 @@ export default function RegisterScreen() {
       {invitational && (
         <Field label="Note to the organizer" value={note} onChangeText={setNote} multiline placeholder="Recent results, why you'd like to compete, anything that helps your request." />
       )}
+      <Card>
+        <Label>Roster</Label>
+        <Body muted>
+          {level === 'law_school' ? 'List your coaches and students. Mark each student 2L or 3L as of this competition, and the parts they play. ' : 'List your coaches and students, and the parts each student plays. '}
+          You can change names until the competition locks. Rosters and awards become public with the results{level === 'high_school' ? ', except at high school competitions, where only the organizer and your team see them' : ''}.
+        </Body>
+        <RosterEditor rows={roster} onChange={setRoster} level={level} kind={data.cases.find((c) => c.id === t.caseId)?.kind} />
+      </Card>
       {err && <Body style={{ color: '#B3261E' }}>{err}</Body>}
       <Button title={invitational ? 'Send request' : 'Submit registration'} onPress={submit} disabled={busy} />
     </Screen>

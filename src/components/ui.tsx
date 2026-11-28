@@ -133,7 +133,8 @@ export function Segmented<T extends string>({ value, options, onChange }: { valu
 }
 
 export function LevelSwitcher() {
-  const { level, setLevel } = useStore();
+  const { level, setLevel, me } = useStore();
+  if (me?.level) return null; // accounts are locked to the circuit they chose
   return <Segmented<Level> value={level} options={LEVELS.map((l) => ({ id: l.id, label: l.label }))} onChange={setLevel} />;
 }
 
