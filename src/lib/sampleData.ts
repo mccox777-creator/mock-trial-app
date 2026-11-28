@@ -1,6 +1,6 @@
 // Fictional sample season used in demo mode (no backend configured).
 // Every school, team, and case here is invented.
-import type { AppData, Ballot, Match, Program, Team, Tournament } from './types';
+import type { AppData, Award, AwardKind, Ballot, Match, Program, RosterEntry, Team, Tournament, TrialRole } from './types';
 import { mulberry32, pairingSettings, suggestPairings } from './scoring';
 
 const DEMO_DIRECTOR = 'demo-director';
@@ -134,6 +134,51 @@ function playTournament(t: Tournament, teamIds: string[], seed: number, roundsTo
 const harvest = playTournament(tournaments[0], teams.slice(0, 10).map((t) => t.id), 101, 4);
 const lakes = playTournament(tournaments[1], teams.map((t) => t.id), 202, 4);
 
+// Invented rosters: one coach per school and six students per team, the same people at both fall competitions.
+const FIRST = ['Avery', 'Jordan', 'Riley', 'Morgan', 'Casey', 'Quinn', 'Rowan', 'Emerson', 'Parker', 'Sasha', 'Devon', 'Reese'];
+const LAST = ['Hale', 'Okoro', 'Lindqvist', 'Marsh', 'Tran', 'Delgado', 'Pryor', 'Abbott', 'Kaur', 'Whitaker', 'Moreau', 'Ellison'];
+const COACHES: Record<string, string> = {
+  lakeshore: 'Prof. Helen Marsh', ridgeview: 'Prof. Daniel Ocampo', harbor: 'Prof. Grace Whitfield',
+  pinecrest: 'Prof. Tomas Reyes', sterling: 'Prof. Nadia Brooks', granite: 'Prof. Victor Lane',
+};
+function studentsOf(teamIndex: number) {
+  return [0, 1, 2, 3, 4, 5].map((k) => ({
+    name: `${FIRST[(teamIndex * 5 + k) % FIRST.length]} ${LAST[(teamIndex * 7 + k * 5) % LAST.length]}`,
+    classYear: (k % 3 === 0 ? '2L' : '3L') as '2L' | '3L',
+  }));
+}
+// Students 0-2 are attorneys (one side each, plus a swing), 3-5 witnesses.
+const SAMPLE_ROLES: TrialRole[][] = [['p_attorney'], ['d_attorney'], ['p_attorney', 'd_attorney'], ['p_witness'], ['d_witness'], ['p_witness', 'd_witness']];
+function rosterFor(tid: string, list: Team[]): RosterEntry[] {
+  return list.flatMap((team) => {
+    const reg = `reg-${tid}-${team.id}`;
+    const base = { tournamentId: tid, registrationId: reg, teamId: team.id };
+    return [
+      { ...base, id: `ro-${tid}-${team.id}-c`, name: COACHES[team.programId], role: 'coach' as const, classYear: null, roles: [] },
+      ...studentsOf(teams.indexOf(team)).map((st, k) => ({ ...base, id: `ro-${tid}-${team.id}-${k}`, name: st.name, role: 'student' as const, classYear: st.classYear, roles: SAMPLE_ROLES[k] })),
+    ];
+  });
+}
+const rosterEntries = [...rosterFor('harvest-invitational', teams.slice(0, 10)), ...rosterFor('great-lakes-cup', teams)];
+function awardsFor(tid: string, picks: [AwardKind, string, number][]): Award[] {
+  return picks.map(([kind, teamId, k], i) => {
+    const entry = rosterEntries.find((r) => r.id === `ro-${tid}-${teamId}-${k}`)!;
+    const place = picks.slice(0, i).filter((p) => p[0] === kind).length + 1;
+    return { id: `aw-${tid}-${i}`, tournamentId: tid, kind, label: '', place, teamId, recipient: entry.name, rosterEntryId: entry.id };
+  });
+}
+const awards = [
+  ...awardsFor('harvest-invitational', [
+    ['best_advocate', 'lakeshore-a', 0], ['best_advocate', 'harbor-a', 1], ['best_advocate', 'ridgeview-a', 2],
+    ['best_witness', 'harbor-a', 4], ['best_witness', 'lakeshore-a', 5], ['best_witness', 'pinecrest-a', 3],
+  ]),
+  ...awardsFor('great-lakes-cup', [
+    ['best_advocate', 'lakeshore-a', 0], ['best_advocate', 'ridgeview-a', 1], ['best_advocate', 'harbor-b', 2],
+    ['best_witness', 'lakeshore-a', 5], ['best_witness', 'sterling-a', 4], ['best_witness', 'harbor-a', 4],
+    ['best_opening', 'ridgeview-a', 0], ['best_closing', 'lakeshore-a', 1],
+  ]),
+];
+
 export const sampleData: AppData = {
   programs,
   teams,
@@ -228,11 +273,13 @@ export const sampleData: AppData = {
       url: 'https://www.youtube.com/watch?v=aqz-KE-bpKQ', visibility: 'coaches', uploadedBy: DEMO_DIRECTOR, createdAt: '2026-11-15T20:00',
     },
   ],
+  rosterEntries,
+  awards,
 };
 
 export const DEMO_USERS = {
-  director: { id: DEMO_DIRECTOR, name: 'Demo Director', email: 'director@example.edu', teamIds: [] },
-  judge: { id: 'demo-judge', name: 'Demo Judge', email: 'judge@example.com', teamIds: [] },
-  coach: { id: 'demo-coach', name: 'Demo Coach', email: 'coach@example.edu', teamIds: ['lakeshore-a', 'lakeshore-b'], coachOf: ['lakeshore-a', 'lakeshore-b'] },
-  competitor: { id: 'demo-competitor', name: 'Demo Competitor', email: 'student@example.edu', teamIds: ['lakeshore-a'], coachOf: [] },
+  director: { id: DEMO_DIRECTOR, name: 'Demo Director', email: 'director@example.edu', teamIds: [], level: 'law_school' as const },
+  judge: { id: 'demo-judge', name: 'Demo Judge', email: 'judge@example.com', teamIds: [], level: 'law_school' as const },
+  coach: { id: 'demo-coach', name: 'Demo Coach', email: 'coach@example.edu', teamIds: ['lakeshore-a', 'lakeshore-b'], coachOf: ['lakeshore-a', 'lakeshore-b'], level: 'law_school' as const },
+  competitor: { id: 'demo-competitor', name: 'Demo Competitor', email: 'student@example.edu', teamIds: ['lakeshore-a'], coachOf: [], level: 'law_school' as const },
 };

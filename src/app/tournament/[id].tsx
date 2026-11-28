@@ -15,6 +15,8 @@ import { ChatPanel } from '../../components/ChatPanel';
 import { chatRole } from '../../lib/chat';
 import { describeRules, type RuleSet } from '../../lib/rules';
 import { ReportButton } from '../../components/Moderation';
+import { RosterList } from '../../components/Roster';
+import { awardTitle } from '../../lib/stats';
 
 type Tab = 'overview' | 'teams' | 'pairings' | 'grid' | 'standings' | 'chat' | 'judges';
 
@@ -117,6 +119,7 @@ export default function TournamentScreen() {
             </Card>
           )}
           {organizer && <ResultsControls t={t} />}
+          <AwardsCard t={t} organizer={organizer} locked={locked} />
           {regOpen && !organizer && (
             <Card>
               {myReg ? (
@@ -125,6 +128,9 @@ export default function TournamentScreen() {
                   <Pill text={regLabel(myReg.status, invitational)} tone={myReg.status === 'approved' ? 'good' : myReg.status === 'declined' || myReg.status === 'withdrawn' ? 'bad' : 'warn'} />
                   {me?.coachOf?.includes(myReg.teamId) && myReg.status !== 'declined' && myReg.status !== 'withdrawn' && (
                     <Button small kind="ghost" title="Withdraw this team" onPress={() => save('registrations', { ...myReg, status: 'withdrawn' })} />
+                  )}
+                  {(me?.coachOf?.includes(myReg.teamId) || myReg.submittedBy === me?.id) && myReg.status !== 'declined' && myReg.status !== 'withdrawn' && (
+                    <Button small kind="secondary" title="Edit roster" onPress={() => router.push(`/tournament/roster?reg=${myReg.id}`)} />
                   )}
                 </>
               ) : (
@@ -429,7 +435,7 @@ function StandingsTab({ t, matches }: { t: Tournament; matches: Match[] }) {
 }
 
 function TeamsTab({ t, regs, organizer }: { t: Tournament; regs: Registration[]; organizer: boolean }) {
-  const { data, save } = useStore();
+  const { data, save, me } = useStore();
   if (!data) return null;
   const invitational = t.entryType === 'invitational';
   const order: RegistrationStatus[] = ['pending', 'approved', 'waitlisted', 'declined', 'withdrawn'];
@@ -453,6 +459,7 @@ function TeamsTab({ t, regs, organizer }: { t: Tournament; regs: Registration[];
                 <Card key={r.id}>
                   <H2>{team?.name ?? 'Unknown team'}</H2>
                   <Body muted>{program?.name}</Body>
+                  <TeamRoster t={t} r={r} programId={program?.id} organizer={organizer} mine={!!me && (r.submittedBy === me.id || me.teamIds.includes(r.teamId))} canEdit={!!me && (organizer || r.submittedBy === me.id || !!me.coachOf?.includes(r.teamId))} />
                   {organizer && (
                     <>
                       {r.note ? <Body>“{r.note}”</Body> : null}
@@ -473,6 +480,55 @@ function TeamsTab({ t, regs, organizer }: { t: Tournament; regs: Registration[];
         );
       })}
     </>
+  );
+}
+
+/** A team's roster on the Teams tab: the organizer and the team always see it; everyone else once results are public (never for high school). */
+function TeamRoster({ t, r, programId, organizer, mine, canEdit }: { t: Tournament; r: Registration; programId?: string; organizer: boolean; mine: boolean; canEdit: boolean }) {
+  const { data } = useStore();
+  const [open, setOpen] = useState(false);
+  if (!data) return null;
+  const publicRoster = t.resultsPublished && t.level !== 'high_school';
+  if (!organizer && !mine && !publicRoster) return null;
+  const entries = data.rosterEntries.filter((e) => e.registrationId === r.id);
+  const students = entries.filter((e) => e.role === 'student').length;
+  const editable = canEdit && !isLocked(t, todayLocal()) && r.status !== 'declined' && r.status !== 'withdrawn';
+  return (
+    <View style={{ gap: space.sm }}>
+      <Pressable onPress={() => setOpen(!open)} accessibilityRole="button" accessibilityState={{ expanded: open }}>
+        <Body muted>{`${open ? 'Hide' : 'Show'} roster · ${students} student${students === 1 ? '' : 's'}`}</Body>
+      </Pressable>
+      {open && <RosterList entries={entries} programId={programId} linked={t.resultsPublished} kind={data.cases.find((c) => c.id === t.caseId)?.kind} />}
+      {open && editable && <Button small kind="secondary" title="Edit roster" onPress={() => router.push(`/tournament/roster?reg=${r.id}`)} />}
+    </View>
+  );
+}
+
+/** Individual awards. The organizer adds and edits them; everyone sees them with the results. */
+function AwardsCard({ t, organizer, locked }: { t: Tournament; organizer: boolean; locked: boolean }) {
+  const { data } = useStore();
+  const c = useTheme();
+  if (!data) return null;
+  const awards = data.awards
+    .filter((a) => a.tournamentId === t.id)
+    .sort((a, b) => a.kind.localeCompare(b.kind) || (a.place ?? 99) - (b.place ?? 99));
+  if (!organizer && (!t.resultsPublished || awards.length === 0)) return null;
+  const canEdit = organizer && !locked;
+  return (
+    <Card>
+      <Label>Individual awards</Label>
+      {awards.length === 0 && <Body muted>Add best advocate, best witness and any other awards. They count toward each school's and student's stats once you publish results.</Body>}
+      {awards.map((a) => (
+        <Pressable key={a.id} disabled={!canEdit} onPress={() => router.push(`/tournament/award?t=${t.id}&id=${a.id}`)} accessibilityRole={canEdit ? 'button' : undefined}>
+          <Body>
+            <Text style={{ fontWeight: '700', color: c.ink }}>{awardTitle(a)}</Text>
+            {` · ${a.recipient}, ${teamName(data.teams, a.teamId)}`}
+          </Body>
+        </Pressable>
+      ))}
+      {canEdit && <Button small kind="secondary" title="Give an award" onPress={() => router.push(`/tournament/award?t=${t.id}`)} />}
+      {organizer && !t.resultsPublished && awards.length > 0 && <Body muted>Only you see these until you publish results.</Body>}
+    </Card>
   );
 }
 

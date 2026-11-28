@@ -30,7 +30,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [data, setData] = useState<AppData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [me, setMe] = useState<Profile | null>(null);
-  const [level, setLevel] = useState<Level>('law_school');
+  const [picked, setLevel] = useState<Level>('law_school');
+  // A signed-in account sees only its own circuit; visitors who aren't signed in can look around.
+  const level = me?.level ?? picked;
 
   const refresh = useCallback(async () => {
     try {
@@ -123,6 +125,8 @@ export function useLevelData() {
       matches: data.matches.filter((m) => tIds.has(m.tournamentId)),
       judgeSignups: data.judgeSignups.filter((j) => tIds.has(j.tournamentId)),
       messages: data.messages.filter((m) => tIds.has(m.tournamentId)),
+      rosterEntries: data.rosterEntries.filter((r) => tIds.has(r.tournamentId)),
+      awards: data.awards.filter((a) => tIds.has(a.tournamentId)),
     };
   }, [data, level]);
 }

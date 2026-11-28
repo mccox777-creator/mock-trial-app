@@ -1,3 +1,4 @@
+import { LEVELS } from '../../lib/types';
 import { useState } from 'react';
 import { router } from 'expo-router';
 import { Body, Button, Card, Field, H1, H2, Label, Loading, Pill, Row, Screen, Segmented } from '../../components/ui';
@@ -49,6 +50,7 @@ export default function AccountScreen() {
         <>
           <H1>{me.name}</H1>
           <Body muted>{me.email}</Body>
+          {me.level && <Body muted>{`${LEVELS.find((l) => l.id === me.level)?.label} circuit. Ask a site admin if this needs to change.`}</Body>}
           <Card onPress={() => router.push('/notifications')}>
             <H2>Notifications</H2>
             <Body muted>Your inbox, which circuits you follow, phone alerts and email, and whether you're willing to judge.</Body>

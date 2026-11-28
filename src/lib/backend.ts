@@ -99,6 +99,8 @@ export interface Backend {
   resetDemo?(): Promise<void>;
   /** Ask a platform admin to approve this account to run competitions. */
   requestOrganizer(r: { name: string; school: string; role: string; note: string }): Promise<void>;
+  /** Choose this account's circuit. Allowed once; after that only a site admin can change it. */
+  setMyLevel(level: Level): Promise<void>;
   /** Flag something to the platform admins. */
   report(kind: ReportKind, targetId: string, reason: ReportReason, details: string): Promise<void>;
   /** Platform admins only; the database refuses everyone else. */
@@ -114,12 +116,12 @@ export interface Backend {
 
 const EMPTY: AppData = {
   programs: [], teams: [], tournaments: [], registrations: [], judgeSignups: [], matches: [], ballots: [],
-  cases: [], caseFiles: [], bulletins: [], recordings: [], messages: [],
+  cases: [], caseFiles: [], bulletins: [], recordings: [], messages: [], rosterEntries: [], awards: [],
 };
 
 // ---------- Demo backend: sample season, saved on the device ----------
 
-const DEMO_KEY = 'mocktrial.demo.v5';
+const DEMO_KEY = 'mocktrial.demo.v6';
 const DEMO_USER_KEY = 'mocktrial.demo.user';
 const DEMO_PREFS_KEY = 'mocktrial.demo.prefs';
 const DEMO_INBOX: Notice[] = [
@@ -237,6 +239,7 @@ function demoBackend(): Backend {
       await save();
     },
     async requestOrganizer() {},
+    async setMyLevel() {},
     async report() {},
     admin: DEMO_ADMIN,
   };
@@ -248,6 +251,7 @@ const TABLES: Record<TableName, string> = {
   programs: 'programs', teams: 'teams', tournaments: 'tournaments', registrations: 'registrations', judgeSignups: 'judge_signups',
   matches: 'matches', ballots: 'ballots', cases: 'cases', caseFiles: 'case_files',
   bulletins: 'bulletins', recordings: 'recordings', messages: 'messages',
+  rosterEntries: 'roster_entries', awards: 'awards',
 };
 
 const toSnake = (s: string) => s.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
@@ -328,6 +332,7 @@ function supabaseBackend(url: string, anonKey: string): Backend {
         coachOf: (mine ?? []).filter((m) => m.role === 'coach').map((m) => m.team_id as string),
         isAdmin: admin === true,
         organizer: (req?.status as Profile['organizer']) ?? 'none',
+        level: (prof?.level as Level | null) ?? null,
       };
     },
     async signIn(email) {
@@ -387,6 +392,12 @@ function supabaseBackend(url: string, anonKey: string): Backend {
       const { error } = await sb.storage.from('case-files').upload(path, body, { contentType: mimeType });
       if (error) throw error;
       return `storage:case-files/${path}`;
+    },
+    async setMyLevel(level) {
+      const { data } = await sb.auth.getUser();
+      if (!data.user) throw new Error('Sign in first.');
+      const { error } = await sb.from('profiles').update({ level }).eq('id', data.user.id);
+      if (error) throw error;
     },
     async requestOrganizer(r) {
       const { data: u } = await sb.auth.getUser();

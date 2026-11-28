@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StoreProvider } from '../lib/store';
 import { useTheme } from '../lib/theme';
 import { PrivacyBanner } from '../components/PrivacyBanner';
+import { LevelGate } from '../components/LevelGate';
 import { BackButton, HomeButton } from '../components/NavButtons';
 
 function Nav() {
@@ -27,6 +28,10 @@ function Nav() {
       <Stack.Screen name="admin" options={{ title: 'Admin' }} />
       <Stack.Screen name="tournament/judge" options={{ title: 'Volunteer to judge', presentation: 'modal' }} />
       <Stack.Screen name="tournament/pair" options={{ title: 'Pair a round' }} />
+      <Stack.Screen name="tournament/roster" options={{ title: 'Team roster', presentation: 'modal' }} />
+      <Stack.Screen name="tournament/award" options={{ title: 'Give an award', presentation: 'modal' }} />
+      <Stack.Screen name="stats/index" options={{ title: 'Awards and stats' }} />
+      <Stack.Screen name="stats/person" options={{ title: 'Stats' }} />
       <Stack.Screen name="tournament/[id]" options={{ title: '' }} />
       <Stack.Screen name="team/[id]" options={{ title: 'Team' }} />
       <Stack.Screen name="match/[id]" options={{ title: 'Trial' }} />
@@ -48,7 +53,9 @@ export default function RootLayout() {
     <StoreProvider>
       <StatusBar style="auto" />
       <PrivacyBanner />
-      <Nav />
+      <LevelGate>
+        <Nav />
+      </LevelGate>
     </StoreProvider>
   );
 }

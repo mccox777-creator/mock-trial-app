@@ -40,6 +40,12 @@ export default function ResultsScreen() {
     <Screen>
       <LevelSwitcher />
       <Segmented value={view} onChange={setView} options={[{ id: 'rankings', label: 'Rankings' }, { id: 'archive', label: 'In the app' }, { id: 'history', label: 'Circuit history' }]} />
+      {view !== 'history' && (
+        <Card onPress={() => router.push('/stats')}>
+          <H2>Individual awards and stats</H2>
+          <Body muted>Which schools win best advocate and best witness most, plus records for every student and coach.</Body>
+        </Card>
+      )}
 
       {view === 'history' ? (
         <CircuitHistory />

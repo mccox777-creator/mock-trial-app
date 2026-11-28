@@ -20,10 +20,12 @@ export default function NewCaseScreen() {
 
   return (
     <Screen>
-      <View style={{ gap: 6 }}>
-        <Label>Circuit</Label>
-        <Segmented<Level> value={level} onChange={setLevel} options={LEVELS.map((l) => ({ id: l.id, label: l.label }))} />
-      </View>
+      {!me.level && (
+        <View style={{ gap: 6 }}>
+          <Label>Circuit</Label>
+          <Segmented<Level> value={level} onChange={setLevel} options={LEVELS.map((l) => ({ id: l.id, label: l.label }))} />
+        </View>
+      )}
       <Field label="Case caption" value={title} onChangeText={setTitle} placeholder="Harmon Logistics, Inc. v. Pryce" />
       <Field label="Docket number" value={docket} onChangeText={setDocket} placeholder="No. 2026-CV-1187" />
       <Segmented<CaseKind> value={kind} onChange={setKind} options={[{ id: 'civil', label: 'Civil' }, { id: 'criminal', label: 'Criminal' }]} />

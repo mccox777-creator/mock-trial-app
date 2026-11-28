@@ -1,9 +1,9 @@
 import os, subprocess, sys, uuid
 # Attack tests for the database rules. Needs a scratch Postgres 15+ (never a real project):
-#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0004_notifications.sql -f supabase/migrations/0005_pairing_options.sql -f supabase/migrations/0006_past_results.sql -f supabase/migrations/0007_entry_controls_and_moderation.sql -f supabase/migrations/0008_account_deletion.sql
+#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0004_notifications.sql -f supabase/migrations/0005_pairing_options.sql -f supabase/migrations/0006_past_results.sql -f supabase/migrations/0007_entry_controls_and_moderation.sql -f supabase/migrations/0008_account_deletion.sql -f supabase/migrations/0009_rosters_and_awards.sql
 #   PGARGS='-h localhost -U postgres -d t' python3 supabase/tests/security_test.py
 PG = os.environ.get('PGARGS', '-d t').split()
-U = {n: str(uuid.uuid5(uuid.NAMESPACE_DNS, n)) for n in ['org','org2','judge','judge2','coachA','coachB','compA','evil','admin','newbie']}
+U = {n: str(uuid.uuid5(uuid.NAMESPACE_DNS, n)) for n in ['org','org2','judge','judge2','coachA','coachB','compA','evil','admin','newbie','fresh']}
 LIMITED = ['tournaments', 'registrations', 'teams', 'cases', 'bulletins', 'messages', 'reports']
 FRESH = True  # most tests are not about rate limits: age every earlier row past the limit windows first
 def psql(sql, who=None, superuser=False):
@@ -28,6 +28,8 @@ def blocked(name, sql, who=None, rows_if_ok=None):
     fails += not passed
 
 for n,u in U.items(): psql(f"insert into auth.users values ('{u}', '{n}@x.test')", superuser=True)
+# Everyone in the older tests chose law school (0009: one circuit per account), except 'fresh', who hasn't chosen yet.
+psql("update profiles set level='law_school' where id in (" + ','.join(f"'{u}'" for n,u in U.items() if n != 'fresh') + ")", superuser=True)
 # The two organizers in the older tests are approved organizers; 'admin' is a platform admin (both set in the dashboard).
 for n in ('org', 'org2'): psql(f"insert into organizer_requests (user_id, name, school, role, status) values ('{U[n]}', '{n}', 'Harbor', 'Director', 'approved')", superuser=True)
 psql(f"insert into platform_admins (user_id) values ('{U['admin']}')", superuser=True)
@@ -103,14 +105,57 @@ blocked('file link that is not https', "insert into case_files (id, case_id, lab
 psql("update cases set release_at = now() - interval '1 minute' where id = 'c1'", superuser=True)
 ok('team downloads after release', "select count(*) from storage.objects", 'coachA', 1)
 
+print('--- rosters and awards ---')
+ok('coach A lists a 2L student', "insert into roster_entries (id, registration_id, tournament_id, team_id, name, role, class_year) values ('ro1','rA','T1','tA','Pat Lee','student','2L')", 'coachA')
+ok('coach A lists a coach', "insert into roster_entries (id, registration_id, tournament_id, team_id, name, role, class_year) values ('ro2','rA','T1','tA','Coach A','coach',null)", 'coachA')
+ok('competition and team always come from the registration', "insert into roster_entries (id, registration_id, tournament_id, team_id, name, role, class_year) values ('ro3','rA','T2','tB','Sam Roe','student','3L') returning tournament_id||team_id", 'coachA', 'T1tA')
+blocked('coach B edits team A roster', "update roster_entries set name='x' where id='ro1' returning id", 'coachB', '')
+blocked('coach B deletes from team A roster', "delete from roster_entries where id='ro1' returning id", 'coachB', '')
+blocked('stranger adds to team A roster', "insert into roster_entries (id, registration_id, tournament_id, team_id, name, role, class_year) values ('ro4','rA','T1','tA','Fake','student','3L')", 'evil')
+blocked('a coach with a class year', "insert into roster_entries (id, registration_id, tournament_id, team_id, name, role, class_year) values ('ro5','rA','T1','tA','C2','coach','3L')", 'coachA')
+ok('student plays plaintiff attorney and defense witness', "update roster_entries set roles='{p_attorney,d_witness}' where id='ro1' returning array_length(roles,1)", 'coachA', 2)
+blocked('a made-up role', "update roster_entries set roles='{judge}' where id='ro1'", 'coachA')
+blocked('a coach with a trial role', "update roster_entries set roles='{p_attorney}' where id='ro2'", 'coachA')
+blocked('a made-up class year', "insert into roster_entries (id, registration_id, tournament_id, team_id, name, role, class_year) values ('ro6','rA','T1','tA','Kid','student','1L')", 'coachA')
+blocked('roster entry moved to another team', "update roster_entries set registration_id='rB' where id='ro1'", 'org')
+blocked('stranger reads an unpublished roster', "select count(*) from roster_entries", 'evil', 0)
+blocked('signed-out visitor reads an unpublished roster', "select count(*) from roster_entries", None, 0)
+blocked('coach B reads team A roster before publishing', "select count(*) from roster_entries where team_id='tA'", 'coachB', 0)
+ok('competitor sees own team roster', "select count(*) from roster_entries", 'compA', 3)
+ok('organizer sees every roster', "select count(*) from roster_entries", 'org', 3)
+ok('organizer gives an award from the roster; name comes from it', "insert into awards (id, tournament_id, kind, label, place, team_id, recipient, roster_entry_id) values ('aw1','T1','best_advocate','',1,'tA','typed','ro1') returning recipient", 'org', 'Pat Lee')
+ok('organizer gives a named award', "insert into awards (id, tournament_id, kind, label, place, team_id, recipient, roster_entry_id) values ('aw2','T1','other','Spirit of AMTA',null,'tB','Jo Park',null)", 'org')
+blocked('coach gives own team an award', "insert into awards (id, tournament_id, kind, label, place, team_id, recipient, roster_entry_id) values ('aw3','T1','best_witness','',1,'tA','Pat Lee',null)", 'coachA')
+blocked('other organizer gives an award here', "insert into awards (id, tournament_id, kind, label, place, team_id, recipient, roster_entry_id) values ('aw4','T1','best_witness','',1,'tA','Pat Lee',null)", 'org2')
+blocked('award to a team not in the competition', "insert into awards (id, tournament_id, kind, label, place, team_id, recipient, roster_entry_id) values ('aw5','T1','best_witness','',1,'tC','X',null)", 'org')
+blocked('award to another team pointing at team A roster', "insert into awards (id, tournament_id, kind, label, place, team_id, recipient, roster_entry_id) values ('aw6','T1','best_witness','',1,'tB','X','ro1')", 'org')
+blocked('other award with no name', "insert into awards (id, tournament_id, kind, label, place, team_id, recipient, roster_entry_id) values ('aw7','T1','other','',null,'tA','Pat',null)", 'org')
+blocked('stranger reads unpublished awards', "select count(*) from awards", 'evil', 0)
+blocked('coach B sees team A award before publishing', "select count(*) from awards where team_id='tA'", 'coachB', 0)
+
+print('--- one circuit per account ---')
+blocked('law school organizer creates a high school competition', T('LV1','org').replace("'law_school'", "'high_school'"), 'org')
+blocked('law school coach makes a high school team', "insert into programs (id, name, level) values ('pH','HS','high_school')", 'coachA')
+blocked('account with no circuit creates a program', "insert into programs (id, name, level) values ('pF','F','law_school')", 'fresh')
+blocked('someone sets another person\'s circuit', "update profiles set level='high_school' where id='" + U['fresh'] + "' returning id", 'evil', '')
+ok('new account chooses its circuit once', "update profiles set level='collegiate' where id='" + U['fresh'] + "' returning level", 'fresh', 'collegiate')
+blocked('then switches circuits', "update profiles set level='law_school' where id='" + U['fresh'] + "'", 'fresh')
+blocked('collegiate account registers for a law school competition', "insert into registrations (id, tournament_id, team_id, contact_name, contact_email, submitted_by, created_at) values ('rF','T1','tA','F','f@x','" + U['fresh'] + "','now')", 'fresh')
+blocked('collegiate account volunteers to judge law school', "insert into judge_signups (id, tournament_id, user_id, name, email, background, rounds, created_at) values ('jF','T1','" + U['fresh'] + "','F','f@x','attorney','{1}','now')", 'fresh')
+
 print('--- publishing and locking ---')
 ok('organizer publishes and returns ballots', "update tournaments set results_published=true, ballots_returned=true where id='T1'", 'org')
+ok('anyone sees rosters after publishing', "select count(*) from roster_entries", None, 3)
+ok('anyone sees awards after publishing', "select count(*) from awards", None, 2)
 ok('competitor sees own team ballots', "select count(*) from ballots", 'compA', 2)
 blocked('stranger sees ballots after publishing', "select count(*) from ballots", 'evil', 0)
 blocked('judge edits ballot after publishing', "update ballots set sheet='{\"p\":[10,10,10],\"d\":[1,1,1]}' where id='b1' returning id", 'judge', '')
 blocked('organizer pushes dates back after publishing', "update tournaments set end_date = end_date + 30 where id='T1'", 'org')
 ok('organizer finalizes', "update tournaments set finalized_at='2026-11-27T15:00' where id='T1'", 'org')
 blocked('organizer changes a ballot after finalizing', "update ballots set p_score=1 where id='b2'", 'org')
+blocked('roster changed after finalizing', "update roster_entries set class_year='3L' where id='ro1'", 'coachA')
+blocked('award added after finalizing', "insert into awards (id, tournament_id, kind, label, place, team_id, recipient, roster_entry_id) values ('aw8','T1','best_cross','',1,'tA','Pat Lee',null)", 'org')
+blocked('award removed after finalizing', "delete from awards where id='aw1'", 'org')
 blocked('organizer unfinalizes', "update tournaments set finalized_at=null where id='T1'", 'org')
 blocked('organizer deletes a ballot after finalizing', "delete from ballots where id='b2'", 'org')
 blocked('organizer re-pairs after finalizing', "update matches set courtroom='Z' where id='m1'", 'org')
@@ -140,6 +185,11 @@ psql("update tournaments set level='high_school' where id='T3'", superuser=True)
 blocked('high school student posts', "insert into messages (id, tournament_id, channel, body) values ('c7','T3','all','hey')", 'compA')
 ok('high school student still reads', "select count(*) from messages", 'compA', 4)
 ok('high school coach still posts', "insert into messages (id, tournament_id, channel, body) values ('c8','T3','all','On our way')", 'coachA')
+ok('high school coach lists a student', "insert into roster_entries (id, registration_id, tournament_id, team_id, name, role) values ('roH','r3a','T3','tA','Minor Student','student')", 'coachA')
+psql("update tournaments set results_published=true where id='T3'", superuser=True)
+blocked('high school roster stays private after publishing', "select count(*) from roster_entries where tournament_id='T3'", None, 0)
+ok('high school team still sees its roster', "select count(*) from roster_entries where tournament_id='T3'", 'coachA', 1)
+psql("update tournaments set results_published=false where id='T3'", superuser=True)
 ok('organizer turns chat to announcements only', "update tournaments set chat_replies=false where id='T3'", 'org')
 blocked('coach posts in announcements-only chat', "insert into messages (id, tournament_id, channel, body) values ('c9','T3','all','x')", 'coachA')
 ok('organizer still announces', "insert into messages (id, tournament_id, channel, body) values ('c10','T3','all','Round 2 at 1pm')", 'org')
@@ -157,7 +207,9 @@ ok('judge volunteers for law school calls', "insert into notification_prefs (wil
 ok('law school director follows only law school', "insert into notification_prefs (levels) values ('{law_school}')", 'org2')
 ok('new law school competition', T('T5','org'), 'org')
 ok('law school follower hears about it', "select count(*) from notifications where kind='new_competition'", 'org2', 1)
+psql(f"update profiles set level='high_school' where id='{U['org']}'", superuser=True)  # a high school organizer, for this test only
 ok('new high school competition', T('T6','org').replace("'law_school'", "'high_school'"), 'org')
+psql(f"update profiles set level='law_school' where id='{U['org']}'", superuser=True)
 ok('law school follower does not hear about high school', "select count(*) from notifications where kind='new_competition'", 'org2', 1)
 blocked('people who never chose a circuit get no circuit notices', "select count(*) from notifications where kind='new_competition'", 'coachB', 0)
 ok('organizer asks for judges', "insert into bulletins (id, level, tournament_id, kind, title, body, posted_at, posted_by) values ('bj1','law_school','T5','judges_needed','Judges needed','Rounds 1-4','now','" + U['org'] + "')", 'org')
