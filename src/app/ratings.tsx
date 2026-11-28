@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Linking, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { Body, Button, Card, H1, H2, Label, Loading, Screen } from '../components/ui';
-import { CLASSES, chronological, eloFor, GAMES_PER_EVENT, PROVISIONAL_UNDER, SCALE_SHIFT, START } from '../lib/elo';
+import { chronological, eloFor, GAMES_PER_EVENT, PROVISIONAL_UNDER, SCALE_SHIFT, START } from '../lib/elo';
 import { useHistory } from '../lib/store';
 
 /** Where the site publishes the rating data (public/ratings-data in the repository). */
@@ -16,7 +16,7 @@ const STEPS: { title: string; body: string[] }[] = [
     title: `1. Everyone starts at ${START}`,
     body: [
       `A school gets a rating of ${START} at its first competition in the record (Spring 2023 onward).`,
-      `Chess starts players at 1500; this scale sits ${SCALE_SHIFT} higher, so numbers look like chess ratings for strong players. Ratings only depend on the gaps between schools, so the starting number changes no result and no order. The K cutoff and class lines below are moved up by the same ${SCALE_SHIFT}.`,
+      `Chess starts players at 1500; this scale sits ${SCALE_SHIFT} higher, so numbers look like chess ratings for strong players. Ratings only depend on the gaps between schools, so the starting number changes no result and no order. The K cutoff below is moved up by the same ${SCALE_SHIFT}.`,
     ],
   },
   {
@@ -52,9 +52,7 @@ const STEPS: { title: string; body: string[] }[] = [
   {
     title: '6. Classes',
     body: [
-      `Under ${PROVISIONAL_UNDER} competitions a rating is provisional, marked *. Class names follow US Chess, with each line moved up ${SCALE_SHIFT}: ${CLASSES.filter((c) => c.min > 0)
-        .map((c) => `${c.name} ${c.min}+`)
-        .join(', ')}, Class E below.`,
+      `Under ${PROVISIONAL_UNDER} competitions a rating is provisional, marked *. Each school is listed by its place among all schools, with its peer group and tier underneath. Peer groups: the three size divisions (total JD enrollment under 500, 500–799, 800+), each split at a median LSAT of 160, from the ABA Standard 509 reports. Within its group a school is Tier 1 (top 5%), Tier 2 (to 13%), Tier 3 (to 25%), Tier 4 (to 50%) or Tier 5 (the rest). Provisional schools get a tier like any other.`,
     ],
   },
 ];

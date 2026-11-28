@@ -46,8 +46,8 @@ they are out of date.
 6. **Order.** Competitions are applied oldest first by start date. One with no date in the record takes the date of the one
    listed just before it in the same term. Competitions run in the app count once they close (finalized by the organizer,
    or 7 days after the last day) and their results are published.
-7. **Labels.** Fewer than 5 competitions is provisional (`*`). Class names follow US Chess, with each line moved up 800: Senior Master 3200+, Master 3000+,
-   Expert 2800+, Class A 2600+, Class B 2400+, Class C 2200+, Class D 2000+, Class E below.
+7. **Labels.** Fewer than 5 competitions is provisional (`*`). Each school with ABA data gets a peer group (its size division,
+   split at a median LSAT of 160) and a Tier 1–5 by its place in that group (see Peer groups and tiers, below).
 
 The code is in [`src/lib/elo.ts`](../src/lib/elo.ts).
 
@@ -155,18 +155,18 @@ go out early (UCLA 2093 to 2021, San Diego 7th to 10th, Maryland 12th to 17th) a
 
 The top 10 now (28 November 2026, after the fixes below):
 
-| # | School | Rating | Class | Competitions |
-| --- | --- | --- | --- | --- |
-| 1 | UCLA | 2033 | Expert | 83 |
-| 2 | Drexel | 1871 | Class A | 54 |
-| 3 | Stetson | 1804 | Class A | 87 |
-| 4 | Harvard | 1787 | Class B | 43 |
-| 5 | Boston College | 1776 | Class B | 12 |
-| 6 | American | 1769 | Class B | 33 |
-| 7 | Texas | 1768 | Class B | 44 |
-| 8 | Mercer | 1759 | Class B | 67 |
-| 9 | Georgetown | 1749 | Class B | 42 |
-| 10 | Florida International | 1738 | Class B | 24 |
+| # | School | Rating (1500 scale) | Competitions |
+| --- | --- | --- | --- |
+| 1 | UCLA | 2033 | 83 |
+| 2 | Drexel | 1871 | 54 |
+| 3 | Stetson | 1804 | 87 |
+| 4 | Harvard | 1787 | 43 |
+| 5 | Boston College | 1776 | 12 |
+| 6 | American | 1769 | 33 |
+| 7 | Texas | 1768 | 44 |
+| 8 | Mercer | 1759 | 67 |
+| 9 | Georgetown | 1749 | 42 |
+| 10 | Florida International | 1738 | 24 |
 
 ## Second audit, 28 November 2026
 
@@ -181,7 +181,15 @@ problems:
 
 ## Change, 28 November 2026: a chess-like scale (start 2300)
 
-Chris chose bigger, chess-like numbers. Every school now starts at 2300 instead of 1500, and the two rules that use an absolute rating move up by the same 800: K drops to 10 at 3200 (was 2400), and the class lines move up 800 (Class B is 2400+, Expert 2800+). Elo only depends on the gaps between ratings, so this is a pure relabel: every rating, peak and before/after value is exactly 800 higher than before, and no order, gap, class or rating change moved. Checked against the previous published files: 196 schools and 4,041 rating changes, all exactly +800 (to floating-point rounding). Ratings quoted in the audit sections above are on the old 1500 scale.
+Chris chose bigger, chess-like numbers. Every school now starts at 2300 instead of 1500, and the two rules that use an absolute rating move up by the same 800: K drops to 10 at 3200 (was 2400). (Class lines moved too at the time; classes were then replaced by rank tiers, below.) Elo only depends on the gaps between ratings, so this is a pure relabel: every rating, peak and before/after value is exactly 800 higher than before, and no order, gap or rating change moved. Checked against the previous published files: 196 schools and 4,041 rating changes, all exactly +800 (to floating-point rounding). Ratings quoted in the audit sections above are on the old 1500 scale.
 
 Moving only the start, and leaving the K=10 line at 2400, would not have been a relabel: almost every established school would have crossed 2400 at once and moved half as fast from then on, which reorders the list (Mercer would pass Harvard) for no reason that happened in a courtroom.
 
+## Change, 28 November 2026: peer groups and tiers instead of chess classes
+
+Chris replaced the US Chess class names (Expert, Class A and so on) with tiers, and asked that the overall list stay a plain ranked list with one line under each school. He chose to set tiers inside peer groups, so that a large school with a low median LSAT (UIC: 1,015 JD students, median 153) is not tiered against Harvard.
+
+- **Peer group:** the size division (Large 800+, Mid-size 500–799, Small under 500 JD students) split at a median LSAT of 160, for six groups: Large · 160+, Large · under 160, Mid-size · 160+, Mid-size · under 160, Small · 160+, Small · under 160 (`peerGroupOf` in divisions.ts).
+- **Tier:** a school's place among the rated schools in its peer group, by shares because the groups differ in size: top 5% Tier 1, through 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5 (each cutoff rounded up; `tierInGroup` in elo.ts). For a group of 80 that is places 1–4, 5–11, 12–20, 21–40 and 41–80.
+- Schools without ABA data (for example Purdue Global and West LA) have no peer group and no tier; they still appear in the overall list.
+- Labels only: ratings are unchanged. `ratings.csv` drops the `class` column. `/api/ratings` sends `group` (`{id, label}`) and `groupTier` per row; the size and LSAT tab fields are unchanged.

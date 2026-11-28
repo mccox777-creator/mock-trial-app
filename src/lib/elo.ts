@@ -15,7 +15,7 @@ const schoolOfTeam = (team: string) => team.replace(/\s+(\d|I{1,3}|[AB])$/, '');
 
 export const START = 2300;
 /** How far this scale sits above the old 1500 start and the US Chess numbers below. Ratings only depend on
- * differences, so moving the start, the K cutoff and the class lines by the same amount changes nothing else. */
+ * differences, so moving the start, and the K cutoff by the same amount changes nothing else. */
 export const SCALE_SHIFT = 800;
 export const GAMES_PER_EVENT = 8;
 /** Like FIDE: new schools move fast, established ones slower, the very top slowest. */
@@ -26,18 +26,14 @@ export function kFactor(rating: number, eventsPlayed: number) {
 /** Under this many competitions a rating is provisional, as in chess. */
 export const PROVISIONAL_UNDER = 5;
 
-/** US Chess class names, with their lines moved up by SCALE_SHIFT to match this scale. */
-export const CLASSES: { min: number; name: string }[] = [
-  { min: 2400 + SCALE_SHIFT, name: 'Senior Master' },
-  { min: 2200 + SCALE_SHIFT, name: 'Master' },
-  { min: 2000 + SCALE_SHIFT, name: 'Expert' },
-  { min: 1800 + SCALE_SHIFT, name: 'Class A' },
-  { min: 1600 + SCALE_SHIFT, name: 'Class B' },
-  { min: 1400 + SCALE_SHIFT, name: 'Class C' },
-  { min: 1200 + SCALE_SHIFT, name: 'Class D' },
-  { min: -Infinity, name: 'Class E' },
-];
-export const classOf = (r: number) => CLASSES.find((c) => r >= c.min)!.name;
+/** Tiers inside a peer group (Chris, 2026-11-28): groups differ in size, so each tier covers a share of the group:
+ * top 5% Tier 1, through 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5 (cutoffs rounded up). */
+export const GROUP_TIER_SHARES = [0.05, 0.13, 0.25, 0.5];
+/** Tier number for a place within a group of groupSize schools. */
+export const tierInGroup = (place: number, groupSize: number) => {
+  const i = GROUP_TIER_SHARES.findIndex((s) => place <= Math.ceil(s * groupSize));
+  return i < 0 ? GROUP_TIER_SHARES.length + 1 : i + 1;
+};
 
 /**
  * Lower is better: 0 won (or qualified out of a regional), 1 final, 2 semifinal, 3 quarterfinal, 4 octofinal, 5 took part.

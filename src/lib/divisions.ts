@@ -139,3 +139,48 @@ export function inTier<T extends { school: string }>(rows: T[], id: TierId): T[]
 export function inDivision<T extends { school: string }>(rows: T[], id: DivisionId): T[] {
   return inTier(rows, id);
 }
+
+/** Median LSAT that splits each size division into two peer groups. */
+export const PEER_LSAT_SPLIT = 160;
+
+export interface PeerGroup {
+  id: string;
+  /** e.g. "Large · 160+" */
+  label: string;
+}
+
+/** A school's peer group (Chris, 2026-11-28): its size division split at median LSAT 160, so a large school with
+ * a 153 median isn't grouped with Harvard. Six groups; null when the ABA has no data for the school. */
+export function peerGroupOf(school: string): PeerGroup | null {
+  const d = divisionOf(school);
+  const l = lsatOf(school);
+  if (!d || l == null) return null;
+  const hi = l >= PEER_LSAT_SPLIT;
+  return { id: `${d.id}-${hi ? 'hi' : 'lo'}`, label: `${d.short} · ${hi ? `${PEER_LSAT_SPLIT}+` : `under ${PEER_LSAT_SPLIT}`}` };
+}
+
+/** All six peer groups, largest and most selective first. */
+export const PEER_GROUPS: PeerGroup[] = DIVISIONS.flatMap((d) => [
+  { id: `${d.id}-hi`, label: `${d.short} · ${PEER_LSAT_SPLIT}+` },
+  { id: `${d.id}-lo`, label: `${d.short} · under ${PEER_LSAT_SPLIT}` },
+]);
+
+/** Each ranked school's peer group, place in it and tier, from a list sorted best first. */
+export function peerTiers<T extends { school: string }>(ranked: T[], tierInGroup: (place: number, size: number) => number) {
+  const size = new Map<string, number>();
+  for (const r of ranked) {
+    const g = peerGroupOf(r.school);
+    if (g) size.set(g.id, (size.get(g.id) ?? 0) + 1);
+  }
+  const seen = new Map<string, number>();
+  const out = new Map<string, { group: PeerGroup; place: number; of: number; tier: number }>();
+  for (const r of ranked) {
+    const g = peerGroupOf(r.school);
+    if (!g) continue;
+    const place = (seen.get(g.id) ?? 0) + 1;
+    seen.set(g.id, place);
+    out.set(r.school, { group: g, place, of: size.get(g.id)!, tier: tierInGroup(place, size.get(g.id)!) });
+  }
+  return out;
+}
+
