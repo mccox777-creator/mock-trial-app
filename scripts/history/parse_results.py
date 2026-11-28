@@ -54,7 +54,21 @@ FLORIDA = {'Barry', 'Florida International', 'Nova Southeastern', 'Stetson', 'Fl
 
 # Events where the record says only "St. Thomas" and outside sources settle which school it was.
 # Gold Cup 2024: St. Thomas (FL)'s law school posted its national semifinal finish there (Oct 29, 2024), and TCPR agrees.
-ST_THOMAS_AT = {('2024-25', 'Fall', 'Gold Cup Trial Competition'): 'St. Thomas (FL)'}
+ST_THOMAS_AT = {
+    ('2024-25', 'Fall', 'Gold Cup Trial Competition'): 'St. Thomas (FL)',
+    # TCPR (Chris's spreadsheet): only St. Thomas (FL) entered the 2025-26 All Star Bracket Challenge.
+    ('2025-26', 'Fall', 'All Star Bracket Challenge'): 'St. Thomas (FL)',
+    # AAJ Region 9 is the upper Midwest/West (Mitchell Hamline, Marquette, Creighton); TCPR has St. Thomas (MN) entering STAC that year.
+    ('2023-24', 'Spring', 'AAJ Region 9'): 'St. Thomas (MN)',
+    # STU (Miami) trial team Instagram: its team reached the First Chair final at Drexel (Sept 2026).
+    ('2026-27', 'Fall', 'First Chair National Trial Competition'): 'St. Thomas (FL)',
+}
+# Unlabeled "Loyola" pinned where the event shows which one.
+LOYOLA_AT = {
+    # Results name Loyola LA a semifinalist; the field is "10 teams, 10 schools", so the participant "Loyola" is Loyola LA
+    # (the 2025 field was the same ten schools with Loyola LA).
+    ('2026-27', 'Fall', 'Battle of the Experts'): 'Loyola LA',
+}
 
 # Events the record lists twice. The St. John's Peter James Johnson Civil Rights competition is held each October;
 # the Spring 2025 entry repeats the Fall 2024 one (same final four: NYU, Georgetown, Drexel, Fordham).
@@ -85,9 +99,12 @@ def resolve_schools(ev):
         schools.add('St. Thomas (MN)')  # Region 12 is the upper Midwest; the 2026 record names St. Thomas (MN) there.
     florida = bool(schools & FLORIDA) or re.search(r'florida|zehmer|bedell', ' '.join(ev['source'] + [ev['name'] or '']), re.I)
     pinned = ST_THOMAS_AT.get((ev['season'], ev['term'], re.sub(r'\(\s*\)', '', ev['name'] or '').strip()))
+    loyola = LOYOLA_AT.get((ev['season'], ev['term'], re.sub(r'\(\s*\)', '', ev['name'] or '').strip()))
     def fix(school):
         if school == 'St. Thomas' and pinned:
             return pinned
+        if school == 'Loyola' and loyola:
+            return loyola
         if school == 'St. Thomas':
             if 'St. Thomas (FL)' in schools or (florida and 'St. Thomas (MN)' not in schools):
                 return 'St. Thomas (FL)'

@@ -193,3 +193,14 @@ Chris replaced the US Chess class names (Expert, Class A and so on) with tiers, 
 - **Tier:** a school's place among the rated schools in its peer group, by shares because the groups differ in size: top 5% Tier 1, through 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5 (each cutoff rounded up; `tierInGroup` in elo.ts). For a group of 80 that is places 1–4, 5–11, 12–20, 21–40 and 41–80.
 - Schools without ABA data (for example Purdue Global and West LA) have no peer group and no tier; they still appear in the overall list.
 - Labels only: ratings are unchanged. `ratings.csv` drops the `class` column. `/api/ratings` sends `group` (`{id, label}`) and `groupTier` per row; the size and LSAT tab fields are unchanged.
+
+## Fix, 28 November 2026: unlabeled "St. Thomas" and "Loyola" entries identified
+
+- **2025-26 All Star Bracket Challenge, Region C: St. Thomas (FL).** In Chris's TCPR spreadsheet, St. Thomas (FL) is the only St. Thomas entered in that year's All Star.
+- **2023-24 AAJ Region 9: St. Thomas (MN).** The field (Mitchell Hamline, Marquette, Creighton) is upper Midwest and West, and TCPR has St. Thomas (MN) entering AAJ that year.
+- **2026-27 First Chair, Philadelphia: St. Thomas (FL).** The STU trial team's own post (screenshot from Chris) says its team reached the First Chair final at Drexel. With this, no unlabeled "St. Thomas" is left, so 195 schools are rated.
+- **2026-27 Battle of the Experts: Loyola LA.** The participant list said "Loyola", but the results name Loyola LA as a semifinalist. The event had "10 teams, 10 schools", so the record was counting one Loyola LA team as two competitors.
+
+The St. Thomas entries are pinned in `ST_THOMAS_AT` and the Loyola entry in `LOYOLA_AT`, both in parse_results.py. Effect: St. Thomas (FL) goes from 2536 (11th) to 2561 (8th), St. Thomas (MN) from 2143 to 2124, and no other named school moves more than 5 points.
+
+Still unidentified: "Loyola" at the Cumberland/Mercer All Star site (Region C, Fall 2026). Elsewhere in the record, "Loyola LA" means Loyola Marymount (it hosts events in Los Angeles, and Loyola New Orleans is listed under its own name), so that label does not settle it. It is that entry's only competition.

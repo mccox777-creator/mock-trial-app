@@ -18,8 +18,8 @@
     "place": 1
    },
    {
-    "school": "St. Thomas",
-    "team": "St. Thomas",
+    "school": "St. Thomas (FL)",
+    "team": "St. Thomas (FL)",
     "finish": "finalist",
     "place": 2
    },
@@ -44,7 +44,7 @@
    "Hofstra",
    "Seton Hall",
    "St. John's",
-   "St. Thomas",
+   "St. Thomas (FL)",
    "Suffolk",
    "Villanova"
   ],
@@ -249,7 +249,7 @@
    "Cumberland",
    "Fordham",
    "Hofstra",
-   "Loyola",
+   "Loyola LA",
    "St. Mary's",
    "Stetson",
    "Temple",
@@ -6091,7 +6091,7 @@
    "Santa Clara",
    "South Carolina",
    "Southern",
-   "St. Thomas",
+   "St. Thomas (FL)",
    "Western State"
   ],
   "needsReview": false,
@@ -14870,7 +14870,7 @@
    "Marquette 1",
    "Marquette 2",
    "Mitchell Hamline",
-   "St. Thomas",
+   "St. Thomas (MN)",
    "Tulsa",
    "UC Law SF",
    "UC Berkeley",
