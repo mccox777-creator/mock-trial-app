@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { Body, Button, Card, H1, H2, Label, Loading, Screen } from '../components/ui';
 import { chronological, eloFor, GAMES_PER_EVENT, PROVISIONAL_UNDER, SCALE_SHIFT, START } from '../lib/elo';
 import { useHistory, useStore } from '../lib/store';
+import { isAdminFor } from '../lib/types';
 
 /** Where the site publishes the rating data (public/ratings-data in the repository). */
 const DATA = 'https://app.mocktrialcentral.com/ratings-data';
@@ -75,8 +76,8 @@ const SUMMARY = [
 ];
 
 export default function RatingsMethod() {
-  const { me } = useStore();
-  if (!me?.isAdmin) return <RatingsSummary />;
+  const { me, level } = useStore();
+  if (!isAdminFor(me, level)) return <RatingsSummary />;
   return <RatingsMath />;
 }
 

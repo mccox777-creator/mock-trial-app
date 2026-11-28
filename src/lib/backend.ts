@@ -111,7 +111,7 @@ export interface Backend {
     removePost(kind: 'bulletin' | 'message', id: string): Promise<void>;
     /** Everyone with the admin or owner role. */
     admins(): Promise<AdminMember[]>;
-    /** Owner only: make the person who signs in with this email an admin. */
+    /** Owner only: make the person who signs in with this email an admin for the level they signed up for. */
     addAdmin(email: string): Promise<void>;
     /** Owner only. The owner can't be removed. */
     removeAdmin(userId: string): Promise<void>;
@@ -141,7 +141,7 @@ const DEMO_ADMIN: Backend['admin'] = {
   resolveReport: async () => {},
   setListing: async () => {},
   removePost: async () => {},
-  admins: async () => [{ userId: 'demo-director', name: 'Demo Director', email: 'director@example.edu', role: 'owner', addedAt: '2026-11-01T09:00:00' }],
+  admins: async () => [{ userId: 'demo-director', name: 'Demo Director', email: 'director@example.edu', role: 'owner', level: null, addedAt: '2026-11-01T09:00:00' }],
   addAdmin: async () => {
     throw new Error('In the demo, admins can\'t be added. This works once you sign in on the live app.');
   },
@@ -331,7 +331,7 @@ function supabaseBackend(url: string, anonKey: string): Backend {
         sb.from('organizer_requests').select('status').eq('user_id', u.id).maybeSingle(),
         sb.rpc('is_admin'),
       ]);
-      const { data: owner } = admin === true ? await sb.rpc('is_owner') : { data: false };
+      const { data: adminLevel } = admin === true ? await sb.rpc('my_admin_level') : { data: null };
       return {
         id: u.id,
         email: u.email ?? '',
@@ -339,7 +339,8 @@ function supabaseBackend(url: string, anonKey: string): Backend {
         teamIds: (prof?.team_ids as string[]) ?? [],
         coachOf: (mine ?? []).filter((m) => m.role === 'coach').map((m) => m.team_id as string),
         isAdmin: admin === true,
-        isOwner: owner === true,
+        isOwner: adminLevel === 'all',
+        adminLevel: (adminLevel as Profile['adminLevel']) ?? undefined,
         organizer: (req?.status as Profile['organizer']) ?? 'none',
       };
     },

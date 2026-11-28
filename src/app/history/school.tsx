@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { Body, Card, Empty, H1, Label, Loading, Row, Screen } from '../../components/ui';
 import { PastEventCard } from '../../components/CircuitHistory';
 import { useHistory, useStore } from '../../lib/store';
+import { isAdminFor } from '../../lib/types';
 import { circuitPoints, finishText, schoolHistory, seasonsOf } from '../../lib/history';
 import { START, eloFor, fmtChange, tierInGroup } from '../../lib/elo';
 import { ENROLLMENT_SOURCE, enrollmentOf, lsatOf, peerTiers } from '../../lib/divisions';
@@ -12,9 +13,9 @@ import { space } from '../../lib/theme';
 export default function SchoolHistoryScreen() {
   const { name } = useLocalSearchParams<{ name: string }>();
   const { events } = useHistory();
-  const { me } = useStore();
-  // Per-competition rating changes are part of the rating math: admins only.
-  const showMath = !!me?.isAdmin;
+  const { me, level } = useStore();
+  // Per-competition rating changes are part of the rating math: admins for this level only.
+  const showMath = isAdminFor(me, level);
   const rows = useMemo(() => (events && name ? schoolHistory(events, name) : []), [events, name]);
   const bySeason = useMemo(() => {
     if (!events || !name) return [];

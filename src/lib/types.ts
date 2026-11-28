@@ -22,8 +22,10 @@ export interface Profile {
   coachOf?: string[];
   /** Platform admin: approves organizers and handles reports. */
   isAdmin?: boolean;
-  /** Site owner: an admin who can also make and remove admins. */
+  /** Site owner: admin for every level, and the only one who makes and removes admins. */
   isOwner?: boolean;
+  /** Which level this person is an admin for: 'all' for the owner. */
+  adminLevel?: Level | 'all';
   /** Where their request to run competitions stands. 'approved' organizers' competitions are listed at once. */
   organizer?: OrganizerStatus;
 }
@@ -35,6 +37,8 @@ export interface AdminMember {
   name: string;
   email: string;
   role: 'owner' | 'admin';
+  /** null for the owner (every level). */
+  level: Level | null;
   addedAt: string;
 }
 
@@ -363,4 +367,11 @@ export interface PastEvent {
   tournamentId?: string;
   /** 'TCPR': the whole competition is missing from the circuit record and comes from the TCPR spreadsheet. */
   source?: 'TCPR';
+}
+
+/** Admin for this level: the owner covers every level, an admin only their own. */
+export function isAdminFor(me: Profile | null | undefined, level: Level): boolean {
+  if (!me?.isAdmin) return false;
+  // No level known (the database is older than migration 0010): only the owner was an admin then.
+  return !me.adminLevel || me.adminLevel === 'all' || me.adminLevel === level;
 }
