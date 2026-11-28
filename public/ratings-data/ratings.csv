@@ -1,13 +1,13 @@
 rank,school,rating,class,competitions,provisional,peak
-1,UCLA,2021.58,Expert,82,no,2036.94
+1,UCLA,2034.08,Expert,83,no,2036.94
 2,Drexel,1871.11,Class A,54,no,1926.37
-3,Stetson,1820.58,Class A,86,no,1917.83
+3,Stetson,1807.7,Class A,87,no,1917.83
 4,Harvard,1790.63,Class B,43,no,1792.05
-5,American,1773.09,Class B,33,no,1775.07
-6,Texas,1768.96,Class B,44,no,1864.84
-7,Boston College,1764.17,Class B,11,no,1831.11
+5,Boston College,1775.26,Class B,12,no,1831.11
+6,American,1773.09,Class B,33,no,1775.07
+7,Texas,1768.96,Class B,44,no,1864.84
 8,Mercer,1759.22,Class B,67,no,1887.22
-9,Georgetown,1759.18,Class B,41,no,1797.28
+9,Georgetown,1748.18,Class B,42,no,1797.28
 10,Ohio State,1737.86,Class B,20,no,1823.99
 11,San Diego,1734.87,Class B,30,no,1734.87
 12,Florida International,1730.18,Class B,24,no,1810.65
@@ -18,16 +18,16 @@ rank,school,rating,class,competitions,provisional,peak
 17,UC Berkeley,1704.5,Class B,49,no,1807.68
 18,Regent,1698.64,Class B,30,no,1745.65
 19,Georgia,1697.97,Class B,40,no,1836.2
-20,NYU,1695.16,Class B,30,no,1778.54
-21,Cumberland,1691.71,Class B,62,no,1819.3
-22,Texas Southern,1688.07,Class B,32,no,1725.82
-23,Chapman,1678.21,Class B,27,no,1736.36
-24,Chicago-Kent,1674.78,Class B,51,no,1754.73
-25,UC Law SF,1671.92,Class B,36,no,1846.43
-26,Santa Clara,1671.03,Class B,14,no,1671.03
-27,Washington University,1668.86,Class B,19,no,1755.85
-28,Northwestern,1665.85,Class B,40,no,1732.82
-29,Campbell,1665.42,Class B,55,no,1781.72
+20,Cumberland,1691.71,Class B,62,no,1819.3
+21,Texas Southern,1688.07,Class B,32,no,1725.82
+22,NYU,1686.09,Class B,31,no,1778.54
+23,Campbell,1681.66,Class B,56,no,1781.72
+24,Chapman,1678.21,Class B,27,no,1736.36
+25,Chicago-Kent,1674.78,Class B,51,no,1754.73
+26,UC Law SF,1671.92,Class B,36,no,1846.43
+27,Santa Clara,1671.03,Class B,14,no,1671.03
+28,Washington University,1668.86,Class B,19,no,1755.85
+29,Northwestern,1665.85,Class B,40,no,1732.82
 30,Michigan,1659.42,Class B,18,no,1733.93
 31,UNLV,1652.98,Class B,27,no,1683.81
 32,Minnesota,1642.76,Class B,5,no,1713.04
@@ -50,10 +50,10 @@ rank,school,rating,class,competitions,provisional,peak
 49,Catholic,1594.93,Class C,16,no,1594.93
 50,Alabama,1594.06,Class C,27,no,1620.14
 51,Belmont,1590,Class C,10,no,1683.14
-52,Pace,1588.05,Class C,53,no,1703.36
-53,Temple,1585.9,Class C,45,no,1738.66
-54,Pacific McGeorge,1585.85,Class C,55,no,1653.24
-55,Denver,1583.67,Class C,42,no,1759.26
+52,Temple,1585.9,Class C,45,no,1738.66
+53,Pacific McGeorge,1585.85,Class C,55,no,1653.24
+54,Denver,1583.67,Class C,42,no,1759.26
+55,Pace,1581.88,Class C,54,no,1703.36
 56,Kentucky,1580.8,Class C,5,no,1580.8
 57,UMKC,1576,Class C,33,no,1714.46
 58,Duke,1574.22,Class C,6,no,1574.22
@@ -76,8 +76,8 @@ rank,school,rating,class,competitions,provisional,peak
 75,University of Chicago,1524.07,Class C,4,yes,1524.07
 76,New England,1523.14,Class C,4,yes,1615.66
 77,Illinois,1513.91,Class C,46,no,1729.87
-78,Case Western,1504.92,Class C,24,no,1760.18
-79,Illinois Chicago,1501.81,Class C,49,no,1617.08
+78,Illinois Chicago,1501.81,Class C,49,no,1617.08
+79,Case Western,1500.57,Class C,25,no,1760.18
 80,North Carolina,1499.79,Class C,14,no,1502.22
 81,Miami,1496.45,Class C,25,no,1573.48
 82,Cleveland State,1496.19,Class C,10,no,1638.21
@@ -114,18 +114,18 @@ rank,school,rating,class,competitions,provisional,peak
 113,Arkansas,1420.9,Class C,7,no,1644.75
 114,Emory,1420.64,Class C,38,no,1658.9
 115,Jacksonville,1416.68,Class C,3,yes,1500
-116,Brooklyn,1414.27,Class C,43,no,1668.62
-117,Yale,1414.11,Class C,5,no,1647.46
-118,Cornell,1413.35,Class C,8,no,1617.76
-119,Syracuse,1411.75,Class C,50,no,1707.33
+116,Yale,1414.11,Class C,5,no,1647.46
+117,Cornell,1413.35,Class C,8,no,1617.76
+118,Syracuse,1411.75,Class C,50,no,1707.33
+119,Brooklyn,1411.27,Class C,44,no,1668.62
 120,George Washington,1410.21,Class C,23,no,1538.64
 121,Columbia,1407.46,Class C,1,yes,1500
 122,Stanford,1404.58,Class C,1,yes,1500
 123,Capital,1402.67,Class C,3,yes,1500
 124,Northern Kentucky,1402.27,Class C,15,no,1500
 125,CUNY,1400.9,Class C,3,yes,1500
-126,Roger Williams,1400.6,Class C,8,no,1500
-127,Lewis & Clark,1398.18,Class D,25,no,1697.02
+126,Lewis & Clark,1398.18,Class D,25,no,1697.02
+127,Roger Williams,1397.94,Class D,9,no,1500
 128,USC,1396.98,Class D,14,no,1500
 129,Touro,1394.07,Class D,7,no,1585.78
 130,Wisconsin,1390.63,Class D,18,no,1500
@@ -134,12 +134,12 @@ rank,school,rating,class,competitions,provisional,peak
 133,Northeastern,1387.21,Class D,2,yes,1500
 134,Northern Illinois,1383.64,Class D,1,yes,1500
 135,Louisville,1379.96,Class D,7,no,1524.02
-136,Connecticut,1379.41,Class D,15,no,1550.14
-137,Indiana,1379.19,Class D,3,yes,1500
-138,North Carolina Central,1377.08,Class D,5,no,1500
+136,Indiana,1379.19,Class D,3,yes,1500
+137,North Carolina Central,1377.08,Class D,5,no,1500
+138,Connecticut,1377.02,Class D,16,no,1550.14
 139,Tulane,1377,Class D,20,no,1640.7
 140,Arkansas Little Rock,1374.87,Class D,8,no,1500
-141,Boston University,1363.3,Class D,9,no,1500
+141,Boston University,1361.09,Class D,10,no,1500
 142,Richmond,1361.09,Class D,11,no,1580.84
 143,George Mason,1360.51,Class D,16,no,1532.62
 144,Mississippi College,1360.11,Class D,12,no,1500
@@ -156,22 +156,22 @@ rank,school,rating,class,competitions,provisional,peak
 155,Cooley,1326.55,Class D,5,no,1500
 156,Utah,1324.48,Class D,4,yes,1500
 157,UC Irvine,1323.89,Class D,5,no,1580
-158,Penn,1318.71,Class D,15,no,1500
-159,Montana,1317.77,Class D,4,yes,1500
+158,Montana,1317.77,Class D,4,yes,1500
+159,Penn,1316.96,Class D,16,no,1500
 160,Ave Maria,1316.91,Class D,4,yes,1500
 161,BYU,1311.99,Class D,10,no,1500
 162,Birmingham,1310.38,Class D,6,no,1500
 163,South Dakota,1307.75,Class D,28,no,1500
-164,Albany,1307.62,Class D,8,no,1500
-165,Mississippi,1307.34,Class D,17,no,1500
-166,Wayne State,1306.27,Class D,10,no,1526.67
+164,Mississippi,1307.34,Class D,17,no,1500
+165,Wayne State,1306.27,Class D,10,no,1526.67
+166,Albany,1305.88,Class D,9,no,1500
 167,Texas A&M,1302.97,Class D,25,no,1500
 168,Penn State Dickinson,1302.55,Class D,3,yes,1500
 169,Maine,1300.55,Class D,4,yes,1500
 170,Vermont,1300.55,Class D,4,yes,1500
 171,Massachusetts,1299.31,Class D,5,no,1500
-172,Cardozo,1296.39,Class D,21,no,1500
-173,Widener,1295.74,Class D,7,no,1500
+172,Widener,1295.74,Class D,7,no,1500
+173,Cardozo,1294.82,Class D,22,no,1500
 174,Loyola New Orleans,1294.47,Class D,18,no,1500
 175,LSU,1291.55,Class D,27,no,1500
 176,Hawaii,1290.94,Class D,4,yes,1500
@@ -184,7 +184,7 @@ rank,school,rating,class,competitions,provisional,peak
 183,Golden Gate,1263.51,Class D,7,no,1500
 184,Tennessee,1262.15,Class D,7,no,1500
 185,Oregon,1254.68,Class D,4,yes,1500
-186,New York Law School,1254.59,Class D,12,no,1500
+186,New York Law School,1253.34,Class D,13,no,1500
 187,Mitchell Hamline,1250.5,Class D,9,no,1500
 188,West Virginia,1249.91,Class D,6,no,1500
 189,North Texas,1248.18,Class D,14,no,1500

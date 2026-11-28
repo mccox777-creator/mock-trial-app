@@ -348,6 +348,24 @@ def apply_tcpr(evs, path):
     return evs
 
 
+def apply_updates(evs, path):
+    """Fill in results reported after the record was exported (see record_updates.json). Only for events with no results yet."""
+    ups = json.load(open(path, encoding='utf-8'))
+    for u in ups['fill']:
+        name = lambda e: re.sub(r'\(\s*\)', '', e['name'] or '').strip()
+        hits = [e for e in evs if e['season'] == u['season'] and e['term'] == u['term'] and name(e) == u['name']]
+        if len(hits) != 1:
+            raise SystemExit(f"record_updates.json: {len(hits)} events match {u['name']}")
+        ev = hits[0]
+        if ev['results'] or ev['participants']:
+            raise SystemExit(f"record_updates.json: {u['name']} already has results in the record; remove it from the updates file")
+        ev['teams'], ev['schools'] = u.get('teams'), u.get('schools')
+        ev['results'] = [dict(zip(('school', 'team'), split_team(r['team'])), finish=r['finish'], place=r.get('place')) for r in u['results']]
+        ev['participants'] = [dict(zip(('school', 'team'), split_team(t))) for t in u['participants']]
+        resolve_schools(ev)
+    return evs
+
+
 def for_app(evs, level='law_school'):
     """Slim rows for the app and the past_events table."""
     out, used = [], set()
@@ -377,7 +395,8 @@ def for_app(evs, level='law_school'):
 if __name__ == '__main__':
     lines = open(sys.argv[1], encoding='utf-8').read().split('\n')
     evs = [e for e in parse(lines) if (e['season'], e['term'], re.sub(r'\(\s*\)', '', e['name'] or '').strip()) not in DUPLICATES]
-    evs = apply_tcpr(evs, __file__.rsplit('/', 1)[0] + '/tcpr_gaps.json')
+    here = __file__.rsplit('/', 1)[0]
+    evs = apply_updates(apply_tcpr(evs, here + '/tcpr_gaps.json'), here + '/record_updates.json')
     json.dump(evs, open(sys.argv[2], 'w'), indent=1, ensure_ascii=False)
     if len(sys.argv) > 3:
         json.dump(for_app(evs), open(sys.argv[3], 'w'), ensure_ascii=False, separators=(',', ':'))

@@ -1,0 +1,17 @@
+{
+  "_about": "Results reported after the circuit record was last exported, for competitions the record lists with no results yet. Applied by parse_results.py apply_updates(); an event that already has results in the record is never changed.",
+  "fill": [
+    {
+      "season": "2026-27", "term": "Fall", "name": "Cambridge Clash Invitational",
+      "teams": 20, "schools": 16,
+      "results": [
+        {"team": "UCLA", "finish": "winner", "place": 1},
+        {"team": "Boston College 1", "finish": "finalist", "place": 2},
+        {"team": "Campbell 2", "finish": "place", "place": 3}
+      ],
+      "participants": ["Albany 1", "Albany 2", "Boston College 1", "Boston College 2", "Boston University", "Brooklyn 1", "Brooklyn 2",
+        "Campbell 1", "Campbell 2", "Cardozo", "Case Western", "Connecticut", "Georgetown", "New York Law School", "NYU", "Pace",
+        "Penn", "Roger Williams", "Stetson", "UCLA"]
+    }
+  ]
+}
