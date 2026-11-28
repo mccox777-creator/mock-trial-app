@@ -1,6 +1,7 @@
 // Chess-style Elo ratings for schools, from competition finishes.
 //
-// Same rules as chess: everyone starts at 1500, the expected score against an opponent is
+// Same rules as chess: everyone starts at 2300 (Chris chose a chess-like scale on 2026-11-28; until then
+// the start was 1500, and every rating is exactly 800 higher than it was), the expected score against an opponent is
 // 1 / (1 + 10^((their rating - yours) / 400)), and after each event a rating moves by K x (actual - expected).
 // A competition counts like a short chess tournament: finishing above a school is a win against it,
 // finishing below is a loss, and schools that finish in the same round (two semifinalists, or two teams
@@ -12,25 +13,28 @@ import type { PastEvent } from './types';
 /** "UCLA 2" -> "UCLA" (kept here so this file runs without the app bundler). */
 const schoolOfTeam = (team: string) => team.replace(/\s+(\d|I{1,3}|[AB])$/, '');
 
-export const START = 1500;
+export const START = 2300;
+/** How far this scale sits above the old 1500 start and the US Chess numbers below. Ratings only depend on
+ * differences, so moving the start, the K cutoff and the class lines by the same amount changes nothing else. */
+export const SCALE_SHIFT = 800;
 export const GAMES_PER_EVENT = 8;
 /** Like FIDE: new schools move fast, established ones slower, the very top slowest. */
 export function kFactor(rating: number, eventsPlayed: number) {
   if (eventsPlayed < 5) return 40;
-  return rating >= 2400 ? 10 : 20;
+  return rating >= 2400 + SCALE_SHIFT ? 10 : 20;
 }
 /** Under this many competitions a rating is provisional, as in chess. */
 export const PROVISIONAL_UNDER = 5;
 
-/** US Chess class names. */
+/** US Chess class names, with their lines moved up by SCALE_SHIFT to match this scale. */
 export const CLASSES: { min: number; name: string }[] = [
-  { min: 2400, name: 'Senior Master' },
-  { min: 2200, name: 'Master' },
-  { min: 2000, name: 'Expert' },
-  { min: 1800, name: 'Class A' },
-  { min: 1600, name: 'Class B' },
-  { min: 1400, name: 'Class C' },
-  { min: 1200, name: 'Class D' },
+  { min: 2400 + SCALE_SHIFT, name: 'Senior Master' },
+  { min: 2200 + SCALE_SHIFT, name: 'Master' },
+  { min: 2000 + SCALE_SHIFT, name: 'Expert' },
+  { min: 1800 + SCALE_SHIFT, name: 'Class A' },
+  { min: 1600 + SCALE_SHIFT, name: 'Class B' },
+  { min: 1400 + SCALE_SHIFT, name: 'Class C' },
+  { min: 1200 + SCALE_SHIFT, name: 'Class D' },
   { min: -Infinity, name: 'Class E' },
 ];
 export const classOf = (r: number) => CLASSES.find((c) => r >= c.min)!.name;

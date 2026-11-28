@@ -10,7 +10,8 @@ The rules are in https://app.mocktrialcentral.com/ratings (the "How ratings are 
 """
 import csv, json, re, sys
 
-START, GAMES, PROVISIONAL = 1500, 8, 5
+START, GAMES, PROVISIONAL = 2300, 8, 5
+K_TOP = 3200  # K drops to 10 at this rating (FIDE's 2400, on this scale, which starts 800 above chess's 1500)
 MONTHS = {m: i + 1 for i, m in enumerate('jan feb mar apr may jun jul aug sep oct nov dec'.split())}
 TIER = {'winner': 0, 'advanced': 0, 'finalist': 1, 'semifinalist': 2, 'quarterfinalist': 3, 'octofinalist': 4}
 
@@ -63,7 +64,7 @@ def in_order(events):
 
 
 def k_factor(rating, played):
-    return 40 if played < 5 else (10 if rating >= 2400 else 20)
+    return 40 if played < 5 else (10 if rating >= K_TOP else 20)
 
 
 def compute(events):
