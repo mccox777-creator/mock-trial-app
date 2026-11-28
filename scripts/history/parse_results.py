@@ -68,6 +68,9 @@ LOYOLA_AT = {
     # Results name Loyola LA a semifinalist; the field is "10 teams, 10 schools", so the participant "Loyola" is Loyola LA
     # (the 2025 field was the same ten schools with Loyola LA).
     ('2026-27', 'Fall', 'Battle of the Experts'): 'Loyola LA',
+    # Cumberland/Mercer site (Region C). Chris (2026-11-28): the All Star listing used "Loyola LA" for New Orleans (Louisiana),
+    # so the plain "Loyola" is Loyola Marymount in California.
+    ('2026-27', 'Fall', 'All Star Bracket Challenge'): 'Loyola LA',
 }
 
 # Events the record lists twice. The St. John's Peter James Johnson Civil Rights competition is held each October;

@@ -203,4 +203,6 @@ Chris replaced the US Chess class names (Expert, Class A and so on) with tiers, 
 
 The St. Thomas entries are pinned in `ST_THOMAS_AT` and the Loyola entry in `LOYOLA_AT`, both in parse_results.py. Effect: St. Thomas (FL) goes from 2536 (11th) to 2561 (8th), St. Thomas (MN) from 2143 to 2124, and no other named school moves more than 5 points.
 
-Still unidentified: "Loyola" at the Cumberland/Mercer All Star site (Fall 2026). It is that entry's only competition.
+- **2026-27 All Star Bracket Challenge, Cumberland/Mercer site (Region C): Loyola LA (Loyola Marymount).** Chris pointed out that the All Star listing used "Loyola LA" for New Orleans (Louisiana), so the plain "Loyola" is the California school.
+
+No unlabeled "St. Thomas" or "Loyola" remains. 194 schools are rated. Loyola LA goes from 2484 to 2472 (#46 to #49).
