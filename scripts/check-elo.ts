@@ -1,7 +1,7 @@
 // Sanity checks for school Elo ratings. Run with: npm run check:elo
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { computeElo, expectedScore, classOf, chronological, startDay } from '../src/lib/elo.ts';
+import { computeElo, expectedScore, classOf, chronological, startDay, START, SCALE_SHIFT } from '../src/lib/elo.ts';
 import type { PastEvent } from '../src/lib/types.ts';
 
 const ev = (id: string, ord: number, results: PastEvent['results'], participants: string[]): PastEvent => ({
@@ -10,19 +10,20 @@ const ev = (id: string, ord: number, results: PastEvent['results'], participants
 const W = (s: string) => ({ school: s, team: s, finish: 'winner' as const, place: 1 });
 const F = (s: string) => ({ school: s, team: s, finish: 'finalist' as const, place: 2 });
 
-// Everyone starts at 1500; ratings are zero-sum within an event.
+// Everyone starts at START (2300); ratings are zero-sum within an event.
 const r1 = computeElo([ev('a', 0, [W('A'), F('B')], ['A', 'B', 'C', 'D'])]);
-assert.equal([...r1.values()].reduce((s, r) => s + r.rating, 0), 6000);
+assert.equal([...r1.values()].reduce((s, r) => s + r.rating, 0), 4 * START);
 assert.ok(r1.get('A')!.rating > r1.get('B')!.rating && r1.get('B')!.rating > r1.get('C')!.rating);
 assert.equal(r1.get('C')!.rating, r1.get('D')!.rating, 'same round, no change between them');
 
 // Beating a higher-rated school is worth more than beating an equal one.
 const seq = computeElo([{ ...ev('late', 0, [W('C'), F('A')], ['A', 'C']), dates: 'November 7-9' }, { ...ev('early', 1, [W('A'), F('B')], ['A', 'B']), dates: 'September 12' }]);
-const gainVsStrong = seq.get('C')!.rating - 1500;
+const gainVsStrong = seq.get('C')!.rating - START;
 assert.ok(gainVsStrong > 20, `upset gain ${gainVsStrong}`);
 
 assert.ok(Math.abs(expectedScore(1700, 1500) - 0.76) < 0.01);
-assert.equal(classOf(2050), 'Expert');
+assert.equal(classOf(2050 + SCALE_SHIFT), 'Expert');
+assert.equal(START, 1500 + SCALE_SHIFT);
 
 // A closed in-app competition has full standings: 1st beats 2nd beats 3rd beats 4th.
 const P = (s: string, place: number) => ({ school: s, team: s, finish: 'place' as const, place });
@@ -53,7 +54,7 @@ assert.ok(two.get('A')!.rating < one.get('A')!.rating, 'a weak second team costs
 assert.equal(two.get('A')!.history[0].teams, 2);
 // ...and two teams from one school never count against each other.
 const final = computeElo([ev('f', 0, [{ school: 'A', team: 'A', finish: 'winner', place: 1 }, { school: 'A', team: 'A 2', finish: 'finalist', place: 2 }], ['A', 'A 2', 'B'])]);
-assert.ok(final.get('A')!.rating > 1500 && final.get('B')!.rating < 1500);
+assert.ok(final.get('A')!.rating > START && final.get('B')!.rating < START);
 
 // Real data: UCLA first, Drexel second.
 const real = JSON.parse(readFileSync(new URL('../src/data/history-law-school.json', import.meta.url), 'utf8')) as PastEvent[];

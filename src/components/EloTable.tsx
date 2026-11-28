@@ -71,7 +71,7 @@ export function EloTable({ ranked, filter = '', title = 'Mock Trial ELO Ratings,
         </Body>
       ) : (
         <Body muted>
-          Chess rules: every school starts at 1500 and gains or loses points for each of its teams finishing ahead of or behind other schools' teams, more for beating a higher-rated school. A 200-point gap means the higher school finishes ahead about 3 times in 4. * means provisional (under 5 competitions). Classes follow US Chess: Expert 2000+, Class A 1800+, Class B 1600+. Competitions run in the app count as soon as they close with published results.
+          Chess rules: every school starts at 2300 and gains or loses points for each of its teams finishing ahead of or behind other schools' teams, more for beating a higher-rated school. A 200-point gap means the higher school finishes ahead about 3 times in 4. * means provisional (under 5 competitions). Class names follow US Chess, on this scale: Expert 2800+, Class A 2600+, Class B 2400+. Competitions run in the app count as soon as they close with published results.
         </Body>
       )}
       <Button small kind="secondary" title="How the Mock Trial ELO Ratings are calculated" onPress={() => router.push('/ratings')} />

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Linking, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { Body, Button, Card, H1, H2, Label, Loading, Screen } from '../components/ui';
-import { CLASSES, chronological, eloFor, GAMES_PER_EVENT, PROVISIONAL_UNDER, START } from '../lib/elo';
+import { CLASSES, chronological, eloFor, GAMES_PER_EVENT, PROVISIONAL_UNDER, SCALE_SHIFT, START } from '../lib/elo';
 import { useHistory } from '../lib/store';
 
 /** Where the site publishes the rating data (public/ratings-data in the repository). */
@@ -13,8 +13,11 @@ const open = (url: string) => (Platform.OS === 'web' ? window.open(url, '_blank'
 
 const STEPS: { title: string; body: string[] }[] = [
   {
-    title: '1. Everyone starts at 1500',
-    body: ['A school gets a rating of 1500 at its first competition in the record (Spring 2023 onward).'],
+    title: `1. Everyone starts at ${START}`,
+    body: [
+      `A school gets a rating of ${START} at its first competition in the record (Spring 2023 onward).`,
+      `Chess starts players at 1500; this scale sits ${SCALE_SHIFT} higher, so numbers look like chess ratings for strong players. Ratings only depend on the gaps between schools, so the starting number changes no result and no order. The K cutoff and class lines below are moved up by the same ${SCALE_SHIFT}.`,
+    ],
   },
   {
     title: '2. Each competition is a set of games',
@@ -36,7 +39,7 @@ const STEPS: { title: string; body: string[] }[] = [
     body: [
       'New rating = old rating + K × weight × (wins − expected) ÷ teams, where wins counts every team (from another school) that the school’s teams finished ahead of, expected is the sum of the expected scores for those same games, and teams is how many teams the school entered.',
       `Weight = min(${GAMES_PER_EVENT}, n) / n, where n is the number of teams from other schools. Each team’s competition is worth at most ${GAMES_PER_EVENT} games however big it is, so a 24-team event can’t move a rating three times as much as an 8-team one.`,
-      'K is 40 for a school’s first 5 competitions, then 20, and 10 once a school reaches 2400, as in international chess.',
+      `K is 40 for a school’s first 5 competitions, then 20, and 10 once a school reaches ${2400 + SCALE_SHIFT} (international chess uses 2400 on its 1500-start scale).`,
       'A competition counts for a school only if one of its teams finished in a different round from a team of another school. A competition with no results recorded changes nothing.',
     ],
   },
@@ -49,7 +52,7 @@ const STEPS: { title: string; body: string[] }[] = [
   {
     title: '6. Classes',
     body: [
-      `Under ${PROVISIONAL_UNDER} competitions a rating is provisional, marked *. Classes follow US Chess: ${CLASSES.filter((c) => c.min > 0)
+      `Under ${PROVISIONAL_UNDER} competitions a rating is provisional, marked *. Class names follow US Chess, with each line moved up ${SCALE_SHIFT}: ${CLASSES.filter((c) => c.min > 0)
         .map((c) => `${c.name} ${c.min}+`)
         .join(', ')}, Class E below.`,
     ],

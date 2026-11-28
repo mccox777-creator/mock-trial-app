@@ -25,7 +25,7 @@ they are out of date.
 
 ## The rules
 
-1. **Start.** A school's rating starts at 1500 at its first competition in the record (Spring 2023 onward).
+1. **Start.** A school's rating starts at 2300 at its first competition in the record (Spring 2023 onward). (Chess starts at 1500; see "Change, 28 November 2026" below.)
 2. **Teams.** Every team is its own competitor. A team's finish, from best to worst: won or qualified out of a regional
    (0), final (1), semifinal (2), quarterfinal (3), octofinal (4), took part (5). A numbered place counts as one less than
    the place (3rd = 2), capped at 4.5, so 4th beats 5th and every placed team beats those who only took part. A
@@ -40,14 +40,14 @@ they are out of date.
    average of its teams' results, so a strong team lifts it and a team that goes out early pulls it down.
    - `weight = min(8, n) / n`, where n is the number of teams from other schools, so each team's competition is worth at
      most 8 games however large it is.
-   - `K` is 40 for a school's first 5 competitions, then 20, and 10 at 2400 or above (as in FIDE chess).
+   - `K` is 40 for a school's first 5 competitions, then 20, and 10 at 3200 or above (FIDE's 2400, moved up 800 with the scale).
    - A competition counts for a school only if one of its teams finished in a different round from a team of another
      school. A competition with no results changes nothing and doesn't count toward a school's total.
 6. **Order.** Competitions are applied oldest first by start date. One with no date in the record takes the date of the one
    listed just before it in the same term. Competitions run in the app count once they close (finalized by the organizer,
    or 7 days after the last day) and their results are published.
-7. **Labels.** Fewer than 5 competitions is provisional (`*`). Classes follow US Chess: Senior Master 2400+, Master 2200+,
-   Expert 2000+, Class A 1800+, Class B 1600+, Class C 1400+, Class D 1200+, Class E below.
+7. **Labels.** Fewer than 5 competitions is provisional (`*`). Class names follow US Chess, with each line moved up 800: Senior Master 3200+, Master 3000+,
+   Expert 2800+, Class A 2600+, Class B 2400+, Class C 2200+, Class D 2000+, Class E below.
 
 The code is in [`src/lib/elo.ts`](../src/lib/elo.ts).
 
@@ -178,3 +178,10 @@ problems:
 | --- | --- | --- |
 | In "Charleston 2 was 5th", the team number was read as the place, so the team was credited with 2nd. Same for "Baylor 2 was 5th", "San Diego 2 and St. Mary's were 3rd" and "Drexel 2 was 3rd" (all Fall 2026 Premiere sites); "Illinois Chicago was 2nd and 3rd" lost the 3rd-place team | Illinois Chicago 1502 to 1542, Houston and Baylor swap 14th/15th, San Diego and Florida International swap 11th/12th, Charleston down 8 | A place now needs its ordinal ("5th"), and "2nd and 3rd" credits both teams |
 | The AAJ regionals (Spring 2025 and Spring 2026) and AAJ Nationals (Spring 2025) had no dates, so they took the date of the competition listed before them. The 2026 regionals were rated after the 2026 national finals | Up to 16 points for schools that competed there (Syracuse, Colorado, NYU, UMKC) | Dates from AAJ: 2025 regionals March 6-9, finals April 3-6 (Atlanta); 2026 regionals March 5-8. Kept in `DATES` in parse_results.py |
+
+## Change, 28 November 2026: a chess-like scale (start 2300)
+
+Chris chose bigger, chess-like numbers. Every school now starts at 2300 instead of 1500, and the two rules that use an absolute rating move up by the same 800: K drops to 10 at 3200 (was 2400), and the class lines move up 800 (Class B is 2400+, Expert 2800+). Elo only depends on the gaps between ratings, so this is a pure relabel: every rating, peak and before/after value is exactly 800 higher than before, and no order, gap, class or rating change moved. Checked against the previous published files: 196 schools and 4,041 rating changes, all exactly +800 (to floating-point rounding). Ratings quoted in the audit sections above are on the old 1500 scale.
+
+Moving only the start, and leaving the K=10 line at 2400, would not have been a relabel: almost every established school would have crossed 2400 at once and moved half as fast from then on, which reorders the list (Mercer would pass Harvard) for no reason that happened in a courtroom.
+
