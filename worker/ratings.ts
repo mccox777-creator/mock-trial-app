@@ -4,7 +4,7 @@ import type { Ballot, Level, Match, PastEvent, Program, Team, Tournament } from 
 import { eloFor, classOf, chronological } from '../src/lib/elo';
 import { closedCompetitionEvents } from '../src/lib/closedCompetitions';
 import { schoolOfTeam } from '../src/lib/history';
-import { DIVISIONS, ENROLLMENT_SOURCE, divisionOf, enrollmentOf, type DivisionId } from '../src/lib/divisions';
+import { DIVISIONS, ENROLLMENT_SOURCE, SELECTIVITY, divisionOf, enrollmentOf, gpaOf, lsatOf, selectivityOf, type DivisionId, type SelectivityId, type TierId } from '../src/lib/divisions';
 
 export interface LiveData {
   pastEvents: PastEvent[];
@@ -35,18 +35,25 @@ export interface RatingRow {
   division: DivisionId | null;
   /** Place within its division, or null. */
   divisionRank: number | null;
+  /** Median LSAT and undergraduate GPA of the entering class (ABA Standard 509), or null. */
+  lsat: number | null;
+  gpa: number | null;
+  /** Selectivity tier by median LSAT, or null when unknown. */
+  selectivity: SelectivityId | null;
+  /** Place within its selectivity tier, or null. */
+  selectivityRank: number | null;
 }
 
-export interface DivisionBoard {
-  id: DivisionId;
+export interface DivisionBoard<T extends TierId = DivisionId> {
+  id: T;
   label: string;
   short: string;
-  /** Total JD enrollment range: min inclusive, max exclusive (null = no limit). */
+  /** Range of the measure (total JD enrollment, or median LSAT): min inclusive, max exclusive (null = no limit). */
   min: number;
   max: number | null;
   /** Schools rated in this division. */
   schools: number;
-  /** Top schools in the division, best first; rank is the overall rank, divisionRank the place in the division. */
+  /** Top schools in the group, best first; rank is the overall rank, divisionRank / selectivityRank the place in the group. */
   ratings: RatingRow[];
 }
 
@@ -63,7 +70,9 @@ export interface Leaderboard {
   ratings: RatingRow[];
   /** The same ratings grouped by school size (football style), each with its own top list. */
   divisions: DivisionBoard[];
-  /** Where school sizes come from. */
+  /** The same ratings grouped by median LSAT ("the elites compared to the elites"), each with its own top list. */
+  selectivity: DivisionBoard<SelectivityId>[];
+  /** Where school sizes and LSAT medians come from. */
   enrollmentSource: { source: string; url: string; year: number };
 }
 
@@ -96,12 +105,17 @@ export function leaderboard(level: Level, events: PastEvent[], limit: number, li
   const byId = new Map(events.map((e) => [e.id, e]));
   const counted = new Set(ranked.flatMap((r) => r.history.map((h) => h.eventId)));
   const latest = chronological(events).filter((e) => counted.has(e.id)).at(-1) ?? null;
-  const place = new Map<DivisionId, number>();
+  const place = new Map<TierId, number>();
+  const next = (id: TierId | null) => {
+    if (!id) return null;
+    const n = (place.get(id) ?? 0) + 1;
+    place.set(id, n);
+    return n;
+  };
   const rows: RatingRow[] = ranked.map((r, i) => {
     const h = r.history[r.history.length - 1];
     const division = divisionOf(r.school)?.id ?? null;
-    const divisionRank = division ? (place.get(division) ?? 0) + 1 : null;
-    if (division) place.set(division, divisionRank!);
+    const selectivity = selectivityOf(r.school)?.id ?? null;
     return {
       rank: i + 1,
       school: r.school,
@@ -114,7 +128,11 @@ export function leaderboard(level: Level, events: PastEvent[], limit: number, li
       lastEvent: h ? byId.get(h.eventId)?.name ?? null : null,
       enrollment: enrollmentOf(r.school),
       division,
-      divisionRank,
+      divisionRank: next(division),
+      lsat: lsatOf(r.school),
+      gpa: gpaOf(r.school),
+      selectivity,
+      selectivityRank: next(selectivity),
     };
   });
   return {
@@ -126,6 +144,10 @@ export function leaderboard(level: Level, events: PastEvent[], limit: number, li
     ratings: rows.slice(0, limit),
     divisions: DIVISIONS.map((d) => {
       const mine = rows.filter((r) => r.division === d.id);
+      return { id: d.id, label: d.label, short: d.short, min: d.min, max: d.max, schools: mine.length, ratings: mine.slice(0, limit) };
+    }),
+    selectivity: SELECTIVITY.map((d) => {
+      const mine = rows.filter((r) => r.selectivity === d.id);
       return { id: d.id, label: d.label, short: d.short, min: d.min, max: d.max, schools: mine.length, ratings: mine.slice(0, limit) };
     }),
     enrollmentSource: ENROLLMENT_SOURCE,

@@ -65,6 +65,18 @@ Size is total JD enrollment (all class years, full and part time) from the ABA's
 
 Schools with no ABA figure appear only in the overall list: Purdue Global, West LA and Birmingham (not ABA-approved), Golden Gate and Thomas Jefferson (no 2025 report), and the record's unlabeled "Loyola" and "St. Thomas". Matching notes: Penn State and Penn State Dickinson use the merged school's 2025 figure; "Widener" is taken as Widener Delaware.
 
+### Selectivity tiers (by median LSAT)
+
+A second way to carve the same ratings, so "the elites are compared to the elites": schools grouped by the median LSAT of their entering class, from the ABA's 2025 Standard 509 "First Year Class" compilation (All50thPercentileLSAT; median GPA is shown too). As with size, the rating math does not change.
+
+| Tier | Median LSAT |
+| --- | --- |
+| Elite | 168 and up |
+| Selective | 160 to 167 |
+| Others | under 160 |
+
+The same 7 schools without ABA data appear only in the overall list. Cutoffs are `SELECTIVITY` in `src/lib/divisions.ts`.
+
 **Merged names (Chris, 28 November 2026):** the record named two schools two ways, so each was rated twice. "Yeshiva" is now Cardozo (Yeshiva University's law school) and "North Texas" is now UNT Dallas (the only University of North Texas law school), via `ALIASES` in parse_results.py. At the Spring 2026 AAJ New York regional this also fixes a team that was counted twice: the participant list said Yeshiva and the results said Cardozo (semifinalist). 196 schools are rated after the merge.
 
 The cutoffs are in `src/lib/divisions.ts`. Update the enrollment file once a year when the ABA publishes new 509 data (each December).
