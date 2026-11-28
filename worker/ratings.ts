@@ -4,6 +4,7 @@ import type { Ballot, Level, Match, PastEvent, Program, Team, Tournament } from 
 import { eloFor, classOf, chronological } from '../src/lib/elo';
 import { closedCompetitionEvents } from '../src/lib/closedCompetitions';
 import { schoolOfTeam } from '../src/lib/history';
+import { DIVISIONS, ENROLLMENT_SOURCE, divisionOf, enrollmentOf, type DivisionId } from '../src/lib/divisions';
 
 export interface LiveData {
   pastEvents: PastEvent[];
@@ -28,6 +29,25 @@ export interface RatingRow {
   /** Points gained or lost at the school's most recent competition. */
   lastChange: number;
   lastEvent: string | null;
+  /** Total JD enrollment (ABA Standard 509), or null when the ABA has no figure for the school. */
+  enrollment: number | null;
+  /** Size division, or null when enrollment is unknown (the school is then only in the overall list). */
+  division: DivisionId | null;
+  /** Place within its division, or null. */
+  divisionRank: number | null;
+}
+
+export interface DivisionBoard {
+  id: DivisionId;
+  label: string;
+  short: string;
+  /** Total JD enrollment range: min inclusive, max exclusive (null = no limit). */
+  min: number;
+  max: number | null;
+  /** Schools rated in this division. */
+  schools: number;
+  /** Top schools in the division, best first; rank is the overall rank, divisionRank the place in the division. */
+  ratings: RatingRow[];
 }
 
 export interface Leaderboard {
@@ -39,7 +59,12 @@ export interface Leaderboard {
   latest: { name: string; season: string; term: string } | null;
   /** False when the live database could not be reached and only the shipped record was used. */
   live: boolean;
+  /** Overall top schools, best first. */
   ratings: RatingRow[];
+  /** The same ratings grouped by school size (football style), each with its own top list. */
+  divisions: DivisionBoard[];
+  /** Where school sizes come from. */
+  enrollmentSource: { source: string; url: string; year: number };
 }
 
 /** Mirrors useHistory in src/lib/store.tsx: shipped record, replaced by database rows with the same id, plus closed competitions. */
@@ -71,25 +96,38 @@ export function leaderboard(level: Level, events: PastEvent[], limit: number, li
   const byId = new Map(events.map((e) => [e.id, e]));
   const counted = new Set(ranked.flatMap((r) => r.history.map((h) => h.eventId)));
   const latest = chronological(events).filter((e) => counted.has(e.id)).at(-1) ?? null;
+  const place = new Map<DivisionId, number>();
+  const rows: RatingRow[] = ranked.map((r, i) => {
+    const h = r.history[r.history.length - 1];
+    const division = divisionOf(r.school)?.id ?? null;
+    const divisionRank = division ? (place.get(division) ?? 0) + 1 : null;
+    if (division) place.set(division, divisionRank!);
+    return {
+      rank: i + 1,
+      school: r.school,
+      rating: Math.round(r.rating),
+      peak: Math.round(r.peak),
+      events: r.events,
+      provisional: r.provisional,
+      class: classOf(r.rating),
+      lastChange: h ? Math.round(h.after - h.before) : 0,
+      lastEvent: h ? byId.get(h.eventId)?.name ?? null : null,
+      enrollment: enrollmentOf(r.school),
+      division,
+      divisionRank,
+    };
+  });
   return {
     level,
     updatedAt: now.toISOString(),
     competitions: counted.size,
     latest: latest ? { name: latest.name, season: latest.season, term: latest.term } : null,
     live,
-    ratings: ranked.slice(0, limit).map((r, i) => {
-      const h = r.history[r.history.length - 1];
-      return {
-        rank: i + 1,
-        school: r.school,
-        rating: Math.round(r.rating),
-        peak: Math.round(r.peak),
-        events: r.events,
-        provisional: r.provisional,
-        class: classOf(r.rating),
-        lastChange: h ? Math.round(h.after - h.before) : 0,
-        lastEvent: h ? byId.get(h.eventId)?.name ?? null : null,
-      };
+    ratings: rows.slice(0, limit),
+    divisions: DIVISIONS.map((d) => {
+      const mine = rows.filter((r) => r.division === d.id);
+      return { id: d.id, label: d.label, short: d.short, min: d.min, max: d.max, schools: mine.length, ratings: mine.slice(0, limit) };
     }),
+    enrollmentSource: ENROLLMENT_SOURCE,
   };
 }

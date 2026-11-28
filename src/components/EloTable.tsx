@@ -1,34 +1,72 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { Pressable, Text } from 'react-native';
+import { Pressable, ScrollView, Text } from 'react-native';
 import { Body, Button, Card, Label } from './ui';
 import { classOf, type EloRow } from '../lib/elo';
-import { space, useTheme } from '../lib/theme';
+import { DIVISIONS, ENROLLMENT_SOURCE, inDivision, type DivisionId } from '../lib/divisions';
+import { radius, space, useTheme } from '../lib/theme';
 
 const W = [32, undefined, 52, 104, 52];
 
-/** School Elo ratings, top 25 with a button for the rest, and a link to how they're calculated. */
+/** School Elo ratings: overall top 25 with a button for the rest, plus a top 20 for each size division, and a link to how they're calculated. */
 export function EloTable({ ranked, filter = '', title = 'Mock Trial ELO Ratings, as of the latest results' }: { ranked: EloRow[]; filter?: string; title?: string }) {
+  const c = useTheme();
   const [showAll, setShowAll] = useState(false);
-  const shown = filter ? ranked.filter((r) => r.school.toLowerCase().includes(filter)) : showAll ? ranked : ranked.slice(0, 25);
+  const [division, setDivision] = useState<DivisionId | 'all'>('all');
+  const div = DIVISIONS.find((d) => d.id === division) ?? null;
+  const list = div ? inDivision(ranked, div.id) : ranked;
+  const top = div ? 20 : 25;
+  const shown = filter ? list.filter((r) => r.school.toLowerCase().includes(filter)) : showAll ? list : list.slice(0, top);
+  const chips: { id: DivisionId | 'all'; label: string }[] = [{ id: 'all', label: 'All schools' }, ...DIVISIONS.map((d) => ({ id: d.id, label: d.short }))];
   return (
     <>
-      <Label>{title}</Label>
+      <Label>{div ? `${title} · ${div.label}` : title}</Label>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: space.sm }}>
+        {chips.map((ch) => {
+          const on = ch.id === division;
+          return (
+            <Pressable
+              key={ch.id}
+              onPress={() => {
+                setDivision(ch.id);
+                setShowAll(false);
+              }}
+              accessibilityRole="button"
+              accessibilityState={{ selected: on }}
+              style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: radius.md, backgroundColor: on ? c.accent : c.surfaceAlt }}
+            >
+              <Text style={{ color: on ? c.accentInk : c.ink, fontWeight: '600' }}>{ch.label}</Text>
+            </Pressable>
+          );
+        })}
+      </ScrollView>
       <Card style={{ padding: 0, overflow: 'hidden' }}>
-        <PointsRow head cells={['#', 'School', 'ELO', 'Class', 'Comps']} widths={W} />
+        <PointsRow head cells={['#', 'School', 'ELO', div ? 'Overall' : 'Class', 'Comps']} widths={W} />
         {shown.map((r) => (
           <PointsRow
             key={r.school}
             widths={W}
-            cells={[String(ranked.indexOf(r) + 1), r.school, `${Math.round(r.rating)}${r.provisional ? '*' : ''}`, classOf(r.rating), String(r.events)]}
+            cells={[
+              String(list.indexOf(r) + 1),
+              r.school,
+              `${Math.round(r.rating)}${r.provisional ? '*' : ''}`,
+              div ? `#${ranked.indexOf(r) + 1}` : classOf(r.rating),
+              String(r.events),
+            ]}
             onPress={() => router.push({ pathname: '/history/school', params: { name: r.school } })}
           />
         ))}
       </Card>
-      {!filter && ranked.length > 25 && <Button small kind="ghost" title={showAll ? 'Show top 25' : `Show all ${ranked.length} schools`} onPress={() => setShowAll(!showAll)} />}
-      <Body muted>
-        Chess rules: every school starts at 1500 and gains or loses points for each of its teams finishing ahead of or behind other schools' teams, more for beating a higher-rated school. A 200-point gap means the higher school finishes ahead about 3 times in 4. * means provisional (under 5 competitions). Classes follow US Chess: Expert 2000+, Class A 1800+, Class B 1600+. Competitions run in the app count as soon as they close with published results.
-      </Body>
+      {!filter && list.length > top && <Button small kind="ghost" title={showAll ? `Show top ${top}` : `Show all ${list.length} schools`} onPress={() => setShowAll(!showAll)} />}
+      {div ? (
+        <Body muted>
+          {`Divisions group schools by size, the way college football does. Size is total JD enrollment from the ABA's ${ENROLLMENT_SOURCE.year} Standard 509 reports. Every school keeps one rating from all its competitions, so wins over bigger or smaller schools still count. Overall is the school's place among all schools.`}
+        </Body>
+      ) : (
+        <Body muted>
+          Chess rules: every school starts at 1500 and gains or loses points for each of its teams finishing ahead of or behind other schools' teams, more for beating a higher-rated school. A 200-point gap means the higher school finishes ahead about 3 times in 4. * means provisional (under 5 competitions). Classes follow US Chess: Expert 2000+, Class A 1800+, Class B 1600+. Competitions run in the app count as soon as they close with published results.
+        </Body>
+      )}
       <Button small kind="secondary" title="How the Mock Trial ELO Ratings are calculated" onPress={() => router.push('/ratings')} />
     </>
   );

@@ -299,7 +299,7 @@
   "participants": [
    "Baylor",
    "Houston",
-   "North Texas",
+   "UNT Dallas",
    "SMU",
    "South Texas",
    "St. Mary's",
@@ -804,7 +804,7 @@
    "Houston",
    "Houston 2",
    "Lewis & Clark",
-   "North Texas",
+   "UNT Dallas",
    "Northwestern",
    "Pittsburgh",
    "Seton Hall",
@@ -2420,8 +2420,8 @@
    "St. John's 2",
    "Syracuse 1",
    "Syracuse 2",
-   "Yeshiva 1",
-   "Yeshiva 2"
+   "Cardozo 1",
+   "Cardozo 2"
   ],
   "needsReview": false,
   "ord": 40
@@ -3190,8 +3190,8 @@
    "UMKC 2",
    "New Mexico 1",
    "New Mexico 2",
-   "North Texas 1",
-   "North Texas 2",
+   "UNT Dallas 1",
+   "UNT Dallas 2",
    "Oklahoma 1",
    "Oklahoma 2",
    "Oklahoma City 1",
@@ -4012,7 +4012,7 @@
    "St. John's",
    "Syracuse",
    "Touro",
-   "Yeshiva"
+   "Cardozo"
   ],
   "needsReview": false,
   "ord": 58
@@ -4421,7 +4421,7 @@
    "Baylor 2",
    "Houston 1",
    "Houston 2",
-   "North Texas",
+   "UNT Dallas",
    "South Texas 1",
    "South Texas 2",
    "SMU",
@@ -5465,7 +5465,7 @@
    "Georgia",
    "Houston",
    "Mercer",
-   "North Texas",
+   "UNT Dallas",
    "Oklahoma",
    "South Carolina",
    "South Texas",
@@ -5781,8 +5781,8 @@
     "place": null
    },
    {
-    "school": "North Texas",
-    "team": "North Texas",
+    "school": "UNT Dallas",
+    "team": "UNT Dallas",
     "finish": "semifinalist",
     "place": null
    }
@@ -5790,7 +5790,7 @@
   "participants": [
    "Baylor",
    "Houston",
-   "North Texas",
+   "UNT Dallas",
    "SMU",
    "South Texas"
   ],
@@ -8715,8 +8715,8 @@
    "Kansas 2",
    "New Mexico 1",
    "New Mexico 2",
-   "North Texas 1",
-   "North Texas 2",
+   "UNT Dallas 1",
+   "UNT Dallas 2",
    "Oklahoma 1",
    "Oklahoma 2",
    "Oklahoma City 1",
@@ -9805,7 +9805,7 @@
    "Houston 2",
    "Indiana",
    "Loyola New Orleans",
-   "North Texas",
+   "UNT Dallas",
    "SMU",
    "St. Mary's",
    "Texas",
@@ -10926,7 +10926,7 @@
   "participants": [
    "Baylor",
    "Houston",
-   "North Texas",
+   "UNT Dallas",
    "SMU",
    "St. Mary's",
    "South Texas",
@@ -13042,7 +13042,7 @@
    "Pace",
    "Syracuse",
    "Yale",
-   "Yeshiva"
+   "Cardozo"
   ],
   "needsReview": false,
   "ord": 194
@@ -13737,7 +13737,7 @@
    "Kansas",
    "Missouri",
    "UMKC",
-   "North Texas",
+   "UNT Dallas",
    "Oklahoma"
   ],
   "needsReview": false,
@@ -15260,7 +15260,7 @@
    "Loyola New Orleans",
    "Mercer",
    "North Carolina",
-   "North Texas",
+   "UNT Dallas",
    "Nova Southeastern",
    "Oklahoma",
    "Ohio Northern",
@@ -15809,7 +15809,7 @@
    "Texas Southern",
    "Texas Tech",
    "Houston",
-   "North Texas"
+   "UNT Dallas"
   ],
   "needsReview": false,
   "ord": 230
@@ -17801,7 +17801,7 @@
    "Maryland",
    "Michigan",
    "Mississippi",
-   "North Texas",
+   "UNT Dallas",
    "North Carolina",
    "Penn",
    "South Carolina",
@@ -18297,7 +18297,7 @@
    "St. John's",
    "Syracuse",
    "Yale",
-   "Yeshiva"
+   "Cardozo"
   ],
   "needsReview": false,
   "ord": 267
@@ -18960,8 +18960,8 @@
     "place": null
    },
    {
-    "school": "North Texas",
-    "team": "North Texas",
+    "school": "UNT Dallas",
+    "team": "UNT Dallas",
     "finish": "semifinalist",
     "place": null
    },
@@ -18980,7 +18980,7 @@
   ],
   "participants": [
    "Arkansas",
-   "North Texas",
+   "UNT Dallas",
    "Kansas",
    "Missouri",
    "UMKC",

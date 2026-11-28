@@ -1,0 +1,795 @@
+{
+ "source": "ABA Standard 509 Information Report compilation, \"JD Enrollment and Ethnicity\", total JD enrollment (all years, full and part time)",
+ "sourceUrl": "https://www.abarequireddisclosures.org/requiredDisclosure/",
+ "year": 2025,
+ "schools": {
+  "Akron": {
+   "enrollment": 473,
+   "aba": "Akron, The University of"
+  },
+  "Alabama": {
+   "enrollment": 388,
+   "aba": "Alabama, The University of"
+  },
+  "Albany": {
+   "enrollment": 615,
+   "aba": "Albany Law School"
+  },
+  "American": {
+   "enrollment": 1199,
+   "aba": "American University"
+  },
+  "Appalachian": {
+   "enrollment": 182,
+   "aba": "Appalachian School of Law"
+  },
+  "Arizona": {
+   "enrollment": 338,
+   "aba": "Arizona, The University of"
+  },
+  "Arizona State": {
+   "enrollment": 744,
+   "aba": "Arizona State University"
+  },
+  "Arkansas": {
+   "enrollment": 375,
+   "aba": "Arkansas, University of"
+  },
+  "Arkansas Little Rock": {
+   "enrollment": 429,
+   "aba": "Arkansas at Little Rock, University of"
+  },
+  "Ave Maria": {
+   "enrollment": 334,
+   "aba": "Ave Maria School of Law"
+  },
+  "BYU": {
+   "enrollment": 348,
+   "aba": "Brigham Young University"
+  },
+  "Baltimore": {
+   "enrollment": 726,
+   "aba": "Baltimore, University of"
+  },
+  "Barry": {
+   "enrollment": 723,
+   "aba": "Barry University"
+  },
+  "Baylor": {
+   "enrollment": 439,
+   "aba": "Baylor University"
+  },
+  "Belmont": {
+   "enrollment": 372,
+   "aba": "Belmont University"
+  },
+  "Birmingham": {
+   "enrollment": null,
+   "note": "Birmingham School of Law is Alabama-accredited, not ABA-approved; no 509 report."
+  },
+  "Boston College": {
+   "enrollment": 634,
+   "aba": "Boston College"
+  },
+  "Boston University": {
+   "enrollment": 691,
+   "aba": "Boston University"
+  },
+  "Brooklyn": {
+   "enrollment": 1126,
+   "aba": "Brooklyn Law School"
+  },
+  "Buffalo": {
+   "enrollment": 430,
+   "aba": "Buffalo, University at"
+  },
+  "CUNY": {
+   "enrollment": 695,
+   "aba": "City University of New York, University of"
+  },
+  "Cal Western": {
+   "enrollment": 669,
+   "aba": "California Western School of Law"
+  },
+  "Campbell": {
+   "enrollment": 553,
+   "aba": "Campbell University"
+  },
+  "Capital": {
+   "enrollment": 483,
+   "aba": "Capital University Law School"
+  },
+  "Cardozo": {
+   "enrollment": 946,
+   "aba": "Cardozo, Yeshiva University"
+  },
+  "Case Western": {
+   "enrollment": 531,
+   "aba": "Case Western Reserve University"
+  },
+  "Catholic": {
+   "enrollment": 432,
+   "aba": "Catholic University of America, The"
+  },
+  "Chapman": {
+   "enrollment": 420,
+   "aba": "Chapman University"
+  },
+  "Charleston": {
+   "enrollment": 707,
+   "aba": "Charleston School of Law"
+  },
+  "Chicago-Kent": {
+   "enrollment": 720,
+   "aba": "Chicago-Kent, Illinois Institute of Technology"
+  },
+  "Cincinnati": {
+   "enrollment": 398,
+   "aba": "Cincinnati, University of"
+  },
+  "Cleveland State": {
+   "enrollment": 495,
+   "aba": "Cleveland State University"
+  },
+  "Colorado": {
+   "enrollment": 547,
+   "aba": "Colorado, University of"
+  },
+  "Columbia": {
+   "enrollment": 1377,
+   "aba": "Columbia University"
+  },
+  "Connecticut": {
+   "enrollment": 479,
+   "aba": "Connecticut, University of"
+  },
+  "Cooley": {
+   "enrollment": 476,
+   "aba": "Cooley Law School"
+  },
+  "Cornell": {
+   "enrollment": 611,
+   "aba": "Cornell University"
+  },
+  "Creighton": {
+   "enrollment": 427,
+   "aba": "Creighton University"
+  },
+  "Cumberland": {
+   "enrollment": 471,
+   "aba": "Samford University"
+  },
+  "Dayton": {
+   "enrollment": 442,
+   "aba": "Dayton, University of"
+  },
+  "DePaul": {
+   "enrollment": 510,
+   "aba": "DePaul University"
+  },
+  "Denver": {
+   "enrollment": 851,
+   "aba": "Denver, University of"
+  },
+  "Drake": {
+   "enrollment": 369,
+   "aba": "Drake University"
+  },
+  "Drexel": {
+   "enrollment": 461,
+   "aba": "Drexel University"
+  },
+  "Duke": {
+   "enrollment": 723,
+   "aba": "Duke University"
+  },
+  "Duquesne": {
+   "enrollment": 528,
+   "aba": "Duquesne University"
+  },
+  "Elon": {
+   "enrollment": 540,
+   "aba": "Elon University"
+  },
+  "Emory": {
+   "enrollment": 913,
+   "aba": "Emory University"
+  },
+  "Faulkner": {
+   "enrollment": 411,
+   "aba": "Faulkner University"
+  },
+  "Florida": {
+   "enrollment": 658,
+   "aba": "Florida, University of"
+  },
+  "Florida International": {
+   "enrollment": 581,
+   "aba": "Florida International University"
+  },
+  "Florida State": {
+   "enrollment": 455,
+   "aba": "Florida State University"
+  },
+  "Fordham": {
+   "enrollment": 1352,
+   "aba": "Fordham University"
+  },
+  "George Mason": {
+   "enrollment": 438,
+   "aba": "George Mason University"
+  },
+  "George Washington": {
+   "enrollment": 1728,
+   "aba": "George Washington University, The"
+  },
+  "Georgetown": {
+   "enrollment": 2266,
+   "aba": "Georgetown University"
+  },
+  "Georgia": {
+   "enrollment": 540,
+   "aba": "Georgia, University of"
+  },
+  "Georgia State": {
+   "enrollment": 682,
+   "aba": "Georgia State University"
+  },
+  "Golden Gate": {
+   "enrollment": null,
+   "note": "Closed its JD program (no 2025 509 report)."
+  },
+  "Gonzaga": {
+   "enrollment": 551,
+   "aba": "Gonzaga University"
+  },
+  "Harvard": {
+   "enrollment": 1784,
+   "aba": "Harvard University"
+  },
+  "Hawaii": {
+   "enrollment": 375,
+   "aba": "Hawaii, University of"
+  },
+  "Hofstra": {
+   "enrollment": 800,
+   "aba": "Hofstra University"
+  },
+  "Houston": {
+   "enrollment": 838,
+   "aba": "Houston, University of"
+  },
+  "Howard": {
+   "enrollment": 555,
+   "aba": "Howard University"
+  },
+  "Illinois": {
+   "enrollment": 500,
+   "aba": "Illinois, University of"
+  },
+  "Illinois Chicago": {
+   "enrollment": 1015,
+   "aba": "Illinois-Chicago, University of"
+  },
+  "Indiana": {
+   "enrollment": 502,
+   "aba": "Indiana University-Bloomington"
+  },
+  "InterAmerican Puerto Rico": {
+   "enrollment": 611,
+   "aba": "Inter American University of Puerto Rico"
+  },
+  "Iowa": {
+   "enrollment": 500,
+   "aba": "Iowa, University of"
+  },
+  "Jacksonville": {
+   "enrollment": 135,
+   "aba": "Jacksonville University"
+  },
+  "John Marshall Atlanta": {
+   "enrollment": 379,
+   "aba": "Atlanta's John Marshall Law School"
+  },
+  "Kansas": {
+   "enrollment": 356,
+   "aba": "Kansas, The University of"
+  },
+  "Kentucky": {
+   "enrollment": 419,
+   "aba": "Kentucky, University of"
+  },
+  "LSU": {
+   "enrollment": 635,
+   "aba": "Louisiana State University"
+  },
+  "Lewis & Clark": {
+   "enrollment": 519,
+   "aba": "Lewis & Clark Law School"
+  },
+  "Liberty": {
+   "enrollment": 326,
+   "aba": "Liberty University"
+  },
+  "Lincoln Memorial": {
+   "enrollment": 429,
+   "aba": "Lincoln Memorial University"
+  },
+  "Louisville": {
+   "enrollment": 377,
+   "aba": "Louisville, University of"
+  },
+  "Loyola": {
+   "enrollment": null,
+   "note": "Record does not say which Loyola (LA, Chicago or New Orleans)."
+  },
+  "Loyola Chicago": {
+   "enrollment": 848,
+   "aba": "Loyola University-Chicago"
+  },
+  "Loyola LA": {
+   "enrollment": 1000,
+   "aba": "Loyola Marymount University-Los Angeles"
+  },
+  "Loyola New Orleans": {
+   "enrollment": 649,
+   "aba": "Loyola University-New Orleans"
+  },
+  "Maine": {
+   "enrollment": 286,
+   "aba": "Maine, University of"
+  },
+  "Marquette": {
+   "enrollment": 614,
+   "aba": "Marquette University"
+  },
+  "Maryland": {
+   "enrollment": 650,
+   "aba": "Maryland, University of"
+  },
+  "Massachusetts": {
+   "enrollment": 389,
+   "aba": "Massachusetts/Dartmouth, University of"
+  },
+  "Memphis": {
+   "enrollment": 239,
+   "aba": "Memphis, The University of"
+  },
+  "Mercer": {
+   "enrollment": 425,
+   "aba": "Mercer University"
+  },
+  "Miami": {
+   "enrollment": 993,
+   "aba": "Miami, University of"
+  },
+  "Michigan": {
+   "enrollment": 991,
+   "aba": "Michigan, University of"
+  },
+  "Michigan State": {
+   "enrollment": 500,
+   "aba": "Michigan State University"
+  },
+  "Minnesota": {
+   "enrollment": 655,
+   "aba": "Minnesota, University of"
+  },
+  "Mississippi": {
+   "enrollment": 468,
+   "aba": "Mississippi, The University of"
+  },
+  "Mississippi College": {
+   "enrollment": 401,
+   "aba": "Mississippi Christian University",
+   "note": "Renamed Mississippi Christian University."
+  },
+  "Missouri": {
+   "enrollment": 373,
+   "aba": "Missouri, University of"
+  },
+  "Mitchell Hamline": {
+   "enrollment": 1144,
+   "aba": "Mitchell/Hamline School of Law"
+  },
+  "Montana": {
+   "enrollment": 280,
+   "aba": "Montana, University of"
+  },
+  "NYU": {
+   "enrollment": 1405,
+   "aba": "New York University"
+  },
+  "Nebraska": {
+   "enrollment": 447,
+   "aba": "Nebraska, University of"
+  },
+  "New England": {
+   "enrollment": 1189,
+   "aba": "New England Law/Boston"
+  },
+  "New Hampshire": {
+   "enrollment": 685,
+   "aba": "New Hampshire, University of"
+  },
+  "New Mexico": {
+   "enrollment": 296,
+   "aba": "New Mexico, The University of"
+  },
+  "New York Law School": {
+   "enrollment": 1107,
+   "aba": "New York Law School"
+  },
+  "North Carolina": {
+   "enrollment": 543,
+   "aba": "North Carolina, University of"
+  },
+  "North Carolina Central": {
+   "enrollment": 361,
+   "aba": "North Carolina Central University"
+  },
+  "North Dakota": {
+   "enrollment": 246,
+   "aba": "North Dakota, University of"
+  },
+  "Northeastern": {
+   "enrollment": 786,
+   "aba": "Northeastern University"
+  },
+  "Northern Illinois": {
+   "enrollment": 352,
+   "aba": "Northern Illinois University"
+  },
+  "Northern Kentucky": {
+   "enrollment": 412,
+   "aba": "Northern Kentucky University"
+  },
+  "Northwestern": {
+   "enrollment": 776,
+   "aba": "Northwestern University"
+  },
+  "Notre Dame": {
+   "enrollment": 572,
+   "aba": "Notre Dame, University of"
+  },
+  "Nova Southeastern": {
+   "enrollment": 634,
+   "aba": "Nova Southeastern University"
+  },
+  "Ohio Northern": {
+   "enrollment": 319,
+   "aba": "Ohio Northern University"
+  },
+  "Ohio State": {
+   "enrollment": 486,
+   "aba": "The Ohio State University"
+  },
+  "Oklahoma": {
+   "enrollment": 539,
+   "aba": "Oklahoma, University of"
+  },
+  "Oklahoma City": {
+   "enrollment": 433,
+   "aba": "Oklahoma City University"
+  },
+  "Oregon": {
+   "enrollment": 481,
+   "aba": "Oregon, University of"
+  },
+  "Pace": {
+   "enrollment": 873,
+   "aba": "Pace University"
+  },
+  "Pacific McGeorge": {
+   "enrollment": 615,
+   "aba": "Pacific, University of the"
+  },
+  "Penn": {
+   "enrollment": 764,
+   "aba": "Pennsylvania, University of"
+  },
+  "Penn State": {
+   "enrollment": 665,
+   "aba": "Penn State Dickinson Law",
+   "note": "Penn State Law (University Park) and Dickinson Law merged in 2025; enrollment is the merged school."
+  },
+  "Penn State Dickinson": {
+   "enrollment": 665,
+   "aba": "Penn State Dickinson Law",
+   "note": "Merged with Penn State Law (University Park) in 2025; enrollment is the merged school."
+  },
+  "Pepperdine": {
+   "enrollment": 553,
+   "aba": "Pepperdine University"
+  },
+  "Pittsburgh": {
+   "enrollment": 389,
+   "aba": "Pittsburgh, University of"
+  },
+  "Purdue Global": {
+   "enrollment": null,
+   "note": "Not ABA-approved (online, California-accredited); no 509 report."
+  },
+  "Quinnipiac": {
+   "enrollment": 392,
+   "aba": "Quinnipiac University"
+  },
+  "Regent": {
+   "enrollment": 341,
+   "aba": "Regent University"
+  },
+  "Richmond": {
+   "enrollment": 413,
+   "aba": "Richmond, University of"
+  },
+  "Roger Williams": {
+   "enrollment": 486,
+   "aba": "Roger Williams University"
+  },
+  "Rutgers": {
+   "enrollment": 1339,
+   "aba": "Rutgers University"
+  },
+  "SMU": {
+   "enrollment": 672,
+   "aba": "Southern Methodist University"
+  },
+  "San Diego": {
+   "enrollment": 725,
+   "aba": "San Diego, University of"
+  },
+  "San Francisco": {
+   "enrollment": 510,
+   "aba": "San Francisco, University of"
+  },
+  "Santa Clara": {
+   "enrollment": 746,
+   "aba": "Santa Clara University"
+  },
+  "Seattle": {
+   "enrollment": 646,
+   "aba": "Seattle University"
+  },
+  "Seton Hall": {
+   "enrollment": 822,
+   "aba": "Seton Hall University"
+  },
+  "South Carolina": {
+   "enrollment": 649,
+   "aba": "South Carolina, University of"
+  },
+  "South Dakota": {
+   "enrollment": 252,
+   "aba": "South Dakota, University of"
+  },
+  "South Texas": {
+   "enrollment": 1144,
+   "aba": "South Texas College of Law Houston"
+  },
+  "Southern": {
+   "enrollment": 809,
+   "aba": "Southern University"
+  },
+  "Southern Illinois": {
+   "enrollment": 313,
+   "aba": "Southern Illinois University"
+  },
+  "Southwestern": {
+   "enrollment": 1108,
+   "aba": "Southwestern Law School"
+  },
+  "St. John's": {
+   "enrollment": 758,
+   "aba": "St. John's University"
+  },
+  "St. Louis": {
+   "enrollment": 594,
+   "aba": "Saint Louis University"
+  },
+  "St. Mary's": {
+   "enrollment": 800,
+   "aba": "St. Mary's University"
+  },
+  "St. Thomas": {
+   "enrollment": null,
+   "note": "Record does not say which St. Thomas (Miami or Minnesota)."
+  },
+  "St. Thomas (FL)": {
+   "enrollment": 998,
+   "aba": "St. Thomas University (Miami)"
+  },
+  "St. Thomas (MN)": {
+   "enrollment": 486,
+   "aba": "St. Thomas, (Minneapolis) University of"
+  },
+  "Stanford": {
+   "enrollment": 570,
+   "aba": "Stanford University"
+  },
+  "Stetson": {
+   "enrollment": 1009,
+   "aba": "Stetson University"
+  },
+  "Suffolk": {
+   "enrollment": 1337,
+   "aba": "Suffolk University"
+  },
+  "Syracuse": {
+   "enrollment": 750,
+   "aba": "Syracuse University"
+  },
+  "Temple": {
+   "enrollment": 685,
+   "aba": "Temple University"
+  },
+  "Tennessee": {
+   "enrollment": 419,
+   "aba": "Tennessee, University of"
+  },
+  "Texas": {
+   "enrollment": 928,
+   "aba": "Texas, University of"
+  },
+  "Texas A&M": {
+   "enrollment": 396,
+   "aba": "Texas A&M University"
+  },
+  "Texas Southern": {
+   "enrollment": 556,
+   "aba": "Texas Southern University"
+  },
+  "Texas Tech": {
+   "enrollment": 459,
+   "aba": "Texas Tech University"
+  },
+  "Thomas Jefferson": {
+   "enrollment": null,
+   "note": "No longer ABA-approved; no 2025 509 report."
+  },
+  "Touro": {
+   "enrollment": 604,
+   "aba": "Touro University"
+  },
+  "Tulane": {
+   "enrollment": 628,
+   "aba": "Tulane University"
+  },
+  "Tulsa": {
+   "enrollment": 282,
+   "aba": "Tulsa, The University of"
+  },
+  "UC Berkeley": {
+   "enrollment": 1128,
+   "aba": "California-Berkeley, University of"
+  },
+  "UC Davis": {
+   "enrollment": 606,
+   "aba": "California-Davis, University of"
+  },
+  "UC Irvine": {
+   "enrollment": 493,
+   "aba": "California-Irvine, University of"
+  },
+  "UC Law SF": {
+   "enrollment": 1048,
+   "aba": "California-San Francisco, University of"
+  },
+  "UCLA": {
+   "enrollment": 1020,
+   "aba": "California-Los Angeles, University of"
+  },
+  "UDC": {
+   "enrollment": 236,
+   "aba": "District of Columbia, University of"
+  },
+  "UMKC": {
+   "enrollment": 405,
+   "aba": "Missouri-Kansas City, University of"
+  },
+  "UNLV": {
+   "enrollment": 457,
+   "aba": "Nevada-Las Vegas, University of"
+  },
+  "UNT Dallas": {
+   "enrollment": 431,
+   "aba": "North Texas at Dallas, University of"
+  },
+  "USC": {
+   "enrollment": 650,
+   "aba": "Southern California, University of"
+  },
+  "University of Chicago": {
+   "enrollment": 615,
+   "aba": "Chicago, The University of"
+  },
+  "University of Puerto Rico": {
+   "enrollment": 444,
+   "aba": "Puerto Rico, University of"
+  },
+  "Utah": {
+   "enrollment": 313,
+   "aba": "Utah, The University of"
+  },
+  "Vanderbilt": {
+   "enrollment": 525,
+   "aba": "Vanderbilt University"
+  },
+  "Vermont": {
+   "enrollment": 704,
+   "aba": "Vermont Law School"
+  },
+  "Villanova": {
+   "enrollment": 597,
+   "aba": "Villanova University"
+  },
+  "Virginia": {
+   "enrollment": 919,
+   "aba": "Virginia, University of"
+  },
+  "Wake Forest": {
+   "enrollment": 563,
+   "aba": "Wake Forest University"
+  },
+  "Washburn": {
+   "enrollment": 347,
+   "aba": "Washburn University"
+  },
+  "Washington": {
+   "enrollment": 568,
+   "aba": "Washington, University of"
+  },
+  "Washington University": {
+   "enrollment": 787,
+   "aba": "Washington University (St. Louis)"
+  },
+  "Washington and Lee": {
+   "enrollment": 369,
+   "aba": "Washington and Lee University"
+  },
+  "Wayne State": {
+   "enrollment": 394,
+   "aba": "Wayne State University"
+  },
+  "West LA": {
+   "enrollment": null,
+   "note": "University of West Los Angeles is California-accredited, not ABA-approved; no 509 report."
+  },
+  "West Virginia": {
+   "enrollment": 310,
+   "aba": "West Virginia University"
+  },
+  "Western New England": {
+   "enrollment": 324,
+   "aba": "Western New England University"
+  },
+  "Western State": {
+   "enrollment": 355,
+   "aba": "Western State, Westcliff University"
+  },
+  "Widener": {
+   "enrollment": 807,
+   "aba": "Widener University Delaware Law School",
+   "note": "Assumed Widener Delaware (NTC Region 3, Philadelphia); Widener Commonwealth has 411."
+  },
+  "Willamette": {
+   "enrollment": 365,
+   "aba": "Willamette University"
+  },
+  "William & Mary": {
+   "enrollment": 496,
+   "aba": "William & Mary"
+  },
+  "Wilmington": {
+   "enrollment": 119,
+   "aba": "Wilmington University School of Law"
+  },
+  "Wisconsin": {
+   "enrollment": 642,
+   "aba": "Wisconsin, University of"
+  },
+  "Yale": {
+   "enrollment": 626,
+   "aba": "Yale University"
+  }
+ }
+}
