@@ -46,8 +46,8 @@ they are out of date.
 6. **Order.** Competitions are applied oldest first by start date. One with no date in the record takes the date of the one
    listed just before it in the same term. Competitions run in the app count once they close (finalized by the organizer,
    or 7 days after the last day) and their results are published.
-7. **Labels.** Fewer than 5 competitions is provisional (`*`). Class names follow US Chess, with each line moved up 800: Senior Master 3200+, Master 3000+,
-   Expert 2800+, Class A 2600+, Class B 2400+, Class C 2200+, Class D 2000+, Class E below.
+7. **Labels.** Fewer than 5 competitions is provisional (`*`). Schools are grouped into tiers by overall rank: Tier 1 ranks 1–10,
+   Tier 2 11–25, Tier 3 26–50, Tier 4 51–100, Tier 5 the rest (`TIERS` in elo.ts). Provisional schools get a tier like any other.
 
 The code is in [`src/lib/elo.ts`](../src/lib/elo.ts).
 
@@ -155,18 +155,18 @@ go out early (UCLA 2093 to 2021, San Diego 7th to 10th, Maryland 12th to 17th) a
 
 The top 10 now (28 November 2026, after the fixes below):
 
-| # | School | Rating | Class | Competitions |
-| --- | --- | --- | --- | --- |
-| 1 | UCLA | 2033 | Expert | 83 |
-| 2 | Drexel | 1871 | Class A | 54 |
-| 3 | Stetson | 1804 | Class A | 87 |
-| 4 | Harvard | 1787 | Class B | 43 |
-| 5 | Boston College | 1776 | Class B | 12 |
-| 6 | American | 1769 | Class B | 33 |
-| 7 | Texas | 1768 | Class B | 44 |
-| 8 | Mercer | 1759 | Class B | 67 |
-| 9 | Georgetown | 1749 | Class B | 42 |
-| 10 | Florida International | 1738 | Class B | 24 |
+| # | School | Rating (1500 scale) | Competitions |
+| --- | --- | --- | --- |
+| 1 | UCLA | 2033 | 83 |
+| 2 | Drexel | 1871 | 54 |
+| 3 | Stetson | 1804 | 87 |
+| 4 | Harvard | 1787 | 43 |
+| 5 | Boston College | 1776 | 12 |
+| 6 | American | 1769 | 33 |
+| 7 | Texas | 1768 | 44 |
+| 8 | Mercer | 1759 | 67 |
+| 9 | Georgetown | 1749 | 42 |
+| 10 | Florida International | 1738 | 24 |
 
 ## Second audit, 28 November 2026
 
@@ -181,7 +181,11 @@ problems:
 
 ## Change, 28 November 2026: a chess-like scale (start 2300)
 
-Chris chose bigger, chess-like numbers. Every school now starts at 2300 instead of 1500, and the two rules that use an absolute rating move up by the same 800: K drops to 10 at 3200 (was 2400), and the class lines move up 800 (Class B is 2400+, Expert 2800+). Elo only depends on the gaps between ratings, so this is a pure relabel: every rating, peak and before/after value is exactly 800 higher than before, and no order, gap, class or rating change moved. Checked against the previous published files: 196 schools and 4,041 rating changes, all exactly +800 (to floating-point rounding). Ratings quoted in the audit sections above are on the old 1500 scale.
+Chris chose bigger, chess-like numbers. Every school now starts at 2300 instead of 1500, and the two rules that use an absolute rating move up by the same 800: K drops to 10 at 3200 (was 2400). (Class lines moved too at the time; classes were then replaced by rank tiers, below.) Elo only depends on the gaps between ratings, so this is a pure relabel: every rating, peak and before/after value is exactly 800 higher than before, and no order, gap or rating change moved. Checked against the previous published files: 196 schools and 4,041 rating changes, all exactly +800 (to floating-point rounding). Ratings quoted in the audit sections above are on the old 1500 scale.
 
 Moving only the start, and leaving the K=10 line at 2400, would not have been a relabel: almost every established school would have crossed 2400 at once and moved half as fast from then on, which reorders the list (Mercer would pass Harvard) for no reason that happened in a courtroom.
+
+## Change, 28 November 2026: tiers instead of chess classes
+
+Chris replaced the US Chess class names (Expert, Class A and so on) with plain tiers by overall rank: Tier 1 is ranks 1–10, Tier 2 is 11–25, Tier 3 is 26–50, Tier 4 is 51–100, and Tier 5 is the rest. Provisional schools get a tier like any other and keep their `*`. Tiers are labels only; ratings are unchanged. The published `ratings.csv` has a `tier` column (1–5) in place of `class`, and `/api/ratings` sends `tier` in place of `class`.
 

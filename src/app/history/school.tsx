@@ -5,7 +5,7 @@ import { Body, Card, Empty, H1, Label, Loading, Row, Screen } from '../../compon
 import { PastEventCard } from '../../components/CircuitHistory';
 import { useHistory } from '../../lib/store';
 import { circuitPoints, finishText, schoolHistory, seasonsOf } from '../../lib/history';
-import { START, classOf, eloFor, fmtChange } from '../../lib/elo';
+import { START, eloFor, fmtChange, tierLabel } from '../../lib/elo';
 import { ENROLLMENT_SOURCE, GROUPINGS, inTier } from '../../lib/divisions';
 import { space } from '../../lib/theme';
 
@@ -42,7 +42,7 @@ export default function SchoolHistoryScreen() {
           <Label>Mock Trial ELO Rating</Label>
           <Row style={{ alignItems: 'baseline' }}>
             <H1>{String(Math.round(mine.rating))}</H1>
-            <Body muted>{`${classOf(mine.rating)} · #${rank} of ${elo!.ranked.length}${mine.provisional ? ' · provisional' : ''}`}</Body>
+            <Body muted>{`${tierLabel(rank)} · #${rank} of ${elo!.ranked.length}${mine.provisional ? ' · provisional' : ''}`}</Body>
           </Row>
           <Body muted>{`Peak ${Math.round(mine.peak)} · started at ${START} · ${mine.events} competitions rated`}</Body>
           {tiers.map(({ g, t, of, place }) =>

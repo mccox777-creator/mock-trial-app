@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, Text } from 'react-native';
 import { Body, Button, Card, Label } from './ui';
-import { classOf, type EloRow } from '../lib/elo';
+import { tierLabel, tierRanges, type EloRow } from '../lib/elo';
 import { ENROLLMENT_SOURCE, GROUPINGS, groupingOfTier, inTier, type TierId } from '../lib/divisions';
 import { radius, space, useTheme } from '../lib/theme';
 
@@ -46,7 +46,7 @@ export function EloTable({ ranked, filter = '', title = 'Mock Trial ELO Ratings,
         </ScrollView>
       ))}
       <Card style={{ padding: 0, overflow: 'hidden' }}>
-        <PointsRow head cells={['#', 'School', 'ELO', div ? 'Overall' : 'Class', 'Comps']} widths={W} />
+        <PointsRow head cells={['#', 'School', 'ELO', div ? 'Overall' : 'Tier', 'Comps']} widths={W} />
         {shown.map((r) => (
           <PointsRow
             key={r.school}
@@ -55,7 +55,7 @@ export function EloTable({ ranked, filter = '', title = 'Mock Trial ELO Ratings,
               String(list.indexOf(r) + 1),
               r.school,
               `${Math.round(r.rating)}${r.provisional ? '*' : ''}`,
-              div ? `#${ranked.indexOf(r) + 1}` : classOf(r.rating),
+              div ? `#${ranked.indexOf(r) + 1}` : tierLabel(ranked.indexOf(r) + 1),
               String(r.events),
             ]}
             onPress={() => router.push({ pathname: '/history/school', params: { name: r.school } })}
@@ -66,12 +66,12 @@ export function EloTable({ ranked, filter = '', title = 'Mock Trial ELO Ratings,
       {div ? (
         <Body muted>
           {grouping?.id === 'lsat'
-            ? `LSAT tiers compare schools that admit similar students, using the entering class's median LSAT from the ABA's ${ENROLLMENT_SOURCE.year} Standard 509 reports. Every school keeps one rating from all its competitions, so wins over schools in other tiers still count. Overall is the school's place among all schools.`
+            ? `LSAT groups compare schools that admit similar students, using the entering class's median LSAT from the ABA's ${ENROLLMENT_SOURCE.year} Standard 509 reports. Every school keeps one rating from all its competitions, so wins over schools in other groups still count. Overall is the school's place among all schools.`
             : `Divisions group schools by size, the way college football does. Size is total JD enrollment from the ABA's ${ENROLLMENT_SOURCE.year} Standard 509 reports. Every school keeps one rating from all its competitions, so wins over bigger or smaller schools still count. Overall is the school's place among all schools.`}
         </Body>
       ) : (
         <Body muted>
-          Chess rules: every school starts at 2300 and gains or loses points for each of its teams finishing ahead of or behind other schools' teams, more for beating a higher-rated school. A 200-point gap means the higher school finishes ahead about 3 times in 4. * means provisional (under 5 competitions). Class names follow US Chess, on this scale: Expert 2800+, Class A 2600+, Class B 2400+. Competitions run in the app count as soon as they close with published results.
+          {`Every school starts at 2300 and gains or loses points for each of its teams finishing ahead of or behind other schools' teams, more for beating a higher-rated school. A 200-point gap means the higher school finishes ahead about 3 times in 4. * means provisional (under 5 competitions). Tiers go by overall rank: ${tierRanges().join(', ')}. Competitions run in the app count as soon as they close with published results.`}
         </Body>
       )}
       <Button small kind="secondary" title="How the Mock Trial ELO Ratings are calculated" onPress={() => router.push('/ratings')} />

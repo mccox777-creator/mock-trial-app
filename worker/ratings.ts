@@ -1,7 +1,7 @@
 // The public school Elo leaderboard, built with the same code the app uses (src/lib/elo.ts and
 // src/lib/closedCompetitions.ts), so a site that shows it always matches the app.
 import type { Ballot, Level, Match, PastEvent, Program, Team, Tournament } from '../src/lib/types';
-import { eloFor, classOf, chronological } from '../src/lib/elo';
+import { eloFor, tierOfRank, chronological } from '../src/lib/elo';
 import { closedCompetitionEvents } from '../src/lib/closedCompetitions';
 import { schoolOfTeam } from '../src/lib/history';
 import { DIVISIONS, ENROLLMENT_SOURCE, SELECTIVITY, divisionOf, enrollmentOf, gpaOf, lsatOf, selectivityOf, type DivisionId, type SelectivityId, type TierId } from '../src/lib/divisions';
@@ -24,8 +24,8 @@ export interface RatingRow {
   events: number;
   /** Under 5 competitions, as in chess. */
   provisional: boolean;
-  /** US Chess class name, e.g. "Expert". */
-  class: string;
+  /** Tier by overall rank: 1 (ranks 1–10), 2 (11–25), 3 (26–50), 4 (51–100), 5 (the rest). */
+  tier: number;
   /** Points gained or lost at the school's most recent competition. */
   lastChange: number;
   lastEvent: string | null;
@@ -123,7 +123,7 @@ export function leaderboard(level: Level, events: PastEvent[], limit: number, li
       peak: Math.round(r.peak),
       events: r.events,
       provisional: r.provisional,
-      class: classOf(r.rating),
+      tier: tierOfRank(i + 1),
       lastChange: h ? Math.round(h.after - h.before) : 0,
       lastEvent: h ? byId.get(h.eventId)?.name ?? null : null,
       enrollment: enrollmentOf(r.school),

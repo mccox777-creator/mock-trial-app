@@ -26,18 +26,25 @@ export function kFactor(rating: number, eventsPlayed: number) {
 /** Under this many competitions a rating is provisional, as in chess. */
 export const PROVISIONAL_UNDER = 5;
 
-/** US Chess class names, with their lines moved up by SCALE_SHIFT to match this scale. */
-export const CLASSES: { min: number; name: string }[] = [
-  { min: 2400 + SCALE_SHIFT, name: 'Senior Master' },
-  { min: 2200 + SCALE_SHIFT, name: 'Master' },
-  { min: 2000 + SCALE_SHIFT, name: 'Expert' },
-  { min: 1800 + SCALE_SHIFT, name: 'Class A' },
-  { min: 1600 + SCALE_SHIFT, name: 'Class B' },
-  { min: 1400 + SCALE_SHIFT, name: 'Class C' },
-  { min: 1200 + SCALE_SHIFT, name: 'Class D' },
-  { min: -Infinity, name: 'Class E' },
+/** Tiers by overall rank (Chris, 2026-11-28; replaced the chess class names). Each tier runs up to and including
+ * maxRank. Provisional schools get a tier like any other school (and keep their *). */
+export const TIERS: { tier: number; maxRank: number }[] = [
+  { tier: 1, maxRank: 10 },
+  { tier: 2, maxRank: 25 },
+  { tier: 3, maxRank: 50 },
+  { tier: 4, maxRank: 100 },
+  { tier: 5, maxRank: Infinity },
 ];
-export const classOf = (r: number) => CLASSES.find((c) => r >= c.min)!.name;
+/** Tier number for an overall rank (1 = best). */
+export const tierOfRank = (rank: number) => TIERS.find((t) => rank <= t.maxRank)!.tier;
+/** "Tier 1" etc. */
+export const tierLabel = (rank: number) => `Tier ${tierOfRank(rank)}`;
+/** Human-readable tier ranges, e.g. "Tier 1: ranks 1–10". */
+export const tierRanges = () =>
+  TIERS.map((t, i) => {
+    const from = i === 0 ? 1 : TIERS[i - 1].maxRank + 1;
+    return `Tier ${t.tier}: ${t.maxRank === Infinity ? `rank ${from} and below` : `ranks ${from}–${t.maxRank}`}`;
+  });
 
 /**
  * Lower is better: 0 won (or qualified out of a regional), 1 final, 2 semifinal, 3 quarterfinal, 4 octofinal, 5 took part.
