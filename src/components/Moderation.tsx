@@ -68,17 +68,26 @@ export function OrganizerCard() {
   const [form, setForm] = useState({ name: me?.name ?? '', school: '', role: '', note: '' });
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  if (!me || backend.kind === 'demo') return null;
+  if (!me) return null;
   const status = me.organizer ?? 'none';
+  const adminCard = me.isAdmin ? (
+    <Card onPress={() => router.push('/admin')}>
+      <Row>
+        <H2>Admin</H2>
+        <Pill text={me.isOwner ? 'Owner' : 'Admin'} tone="good" />
+      </Row>
+      <Body muted>
+        {me.isOwner
+          ? 'Approve organizers, review listings, handle reports, and choose who the admins are.'
+          : 'Approve organizers, review competitions waiting to be listed, and handle reports.'}
+      </Body>
+    </Card>
+  ) : null;
+  if (backend.kind === 'demo') return adminCard;
 
   return (
     <>
-      {me.isAdmin && (
-        <Card onPress={() => router.push('/admin')}>
-          <H2>Admin</H2>
-          <Body muted>Approve organizers, review competitions waiting to be listed, and handle reports.</Body>
-        </Card>
-      )}
+      {adminCard}
       {status === 'approved' ? null : status === 'pending' ? (
         <Card>
           <Row>

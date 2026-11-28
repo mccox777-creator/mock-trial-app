@@ -24,11 +24,21 @@ export interface Profile {
   isAdmin?: boolean;
   /** The circuit they chose when they made their account. They see and act only in it. Null until chosen. */
   level?: Level | null;
+  /** Site owner: an admin who can also make and remove admins. */
+  isOwner?: boolean;
   /** Where their request to run competitions stands. 'approved' organizers' competitions are listed at once. */
   organizer?: OrganizerStatus;
 }
 
 export type OrganizerStatus = 'none' | 'pending' | 'approved' | 'rejected' | 'suspended';
+
+export interface AdminMember {
+  userId: string;
+  name: string;
+  email: string;
+  role: 'owner' | 'admin';
+  addedAt: string;
+}
 
 export interface OrganizerRequest {
   userId: string;

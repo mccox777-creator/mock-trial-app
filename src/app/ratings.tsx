@@ -3,7 +3,7 @@ import { Linking, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { Body, Button, Card, H1, H2, Label, Loading, Screen } from '../components/ui';
 import { chronological, eloFor, GAMES_PER_EVENT, PROVISIONAL_UNDER, SCALE_SHIFT, START } from '../lib/elo';
-import { useHistory } from '../lib/store';
+import { useHistory, useStore } from '../lib/store';
 
 /** Where the site publishes the rating data (public/ratings-data in the repository). */
 const DATA = 'https://app.mocktrialcentral.com/ratings-data';
@@ -64,7 +64,41 @@ const DATA_NOTES = [
   'Known gaps: a few results name "St. Thomas" or "Loyola" without saying which school, so they are rated separately until confirmed. Online competitions split into divisions are rated as one competition. Some participant lists in the record are shorter than the team count, so a few schools that took part may be missing from those events.',
 ];
 
+/** What everyone sees. The formulas, K values, worked example and data downloads are for admins only (read only). */
+const SUMMARY = [
+  `Every school starts at ${START} at its first competition in the record (Spring 2023 onward).`,
+  'At each competition, every team is compared with every team from another school. Finishing ahead raises a school’s rating and finishing behind lowers it. Beating a higher-rated school counts for more, and losing to a lower-rated one costs more.',
+  'Teams from the same school never count against each other. A school with several teams moves by the average of their results.',
+  'Big competitions can’t count for much more than small ones, and a school’s rating moves less once it has a long record.',
+  'The same rules apply to every school. Competitions are applied in date order, and competitions run in this app count as soon as they close with published results.',
+  `Under ${PROVISIONAL_UNDER} competitions a rating is provisional, marked *. Each school also has a peer group (its size, split at a median LSAT of 160, from the ABA Standard 509 reports) and a tier within that group: top 5% Tier 1, then 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5.`,
+];
+
 export default function RatingsMethod() {
+  const { me } = useStore();
+  if (!me?.isAdmin) return <RatingsSummary />;
+  return <RatingsMath />;
+}
+
+function RatingsSummary() {
+  return (
+    <Screen>
+      <H1>Mock Trial ELO Ratings: how they work</H1>
+      {SUMMARY.map((t) => (
+        <Body key={t}>{t}</Body>
+      ))}
+      <Label>The data</Label>
+      {DATA_NOTES.map((t) => (
+        <Body key={t} muted>
+          {t}
+        </Body>
+      ))}
+      <Body muted>Spot an error in a result? Tell the competition&apos;s organizer; once the record is corrected, every rating after it is recomputed.</Body>
+    </Screen>
+  );
+}
+
+function RatingsMath() {
   const { events } = useHistory();
   const example = useMemo(() => {
     if (!events?.length) return null;
@@ -82,8 +116,12 @@ export default function RatingsMethod() {
   return (
     <Screen>
       <H1>Mock Trial ELO Ratings: how they are calculated</H1>
+      <Card>
+        <H2>Admins only</H2>
+        <Body muted>Only admins see this page. Everyone else sees a short plain-language summary. Nobody can change these rules in the app.</Body>
+      </Card>
       <Body muted>
-        The Mock Trial ELO Ratings use the Elo system from chess. Every rule is below, with the full data and a script that recomputes every rating from scratch, so anyone can check them.
+        The Mock Trial ELO Ratings use the Elo system from chess. Every rule is below, with the full data and a script that recomputes every rating from scratch.
       </Body>
 
       {STEPS.map((s) => (

@@ -1,6 +1,6 @@
 import os, subprocess, sys, uuid
 # Attack tests for the database rules. Needs a scratch Postgres 15+ (never a real project):
-#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0004_notifications.sql -f supabase/migrations/0005_pairing_options.sql -f supabase/migrations/0006_past_results.sql -f supabase/migrations/0007_entry_controls_and_moderation.sql -f supabase/migrations/0008_account_deletion.sql -f supabase/migrations/0009_rosters_and_awards.sql
+#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0004_notifications.sql -f supabase/migrations/0005_pairing_options.sql -f supabase/migrations/0006_past_results.sql -f supabase/migrations/0007_entry_controls_and_moderation.sql -f supabase/migrations/0008_account_deletion.sql -f supabase/migrations/0009_rosters_and_awards.sql -f supabase/migrations/0010_admin_roles.sql
 #   PGARGS='-h localhost -U postgres -d t' python3 supabase/tests/security_test.py
 PG = os.environ.get('PGARGS', '-d t').split()
 U = {n: str(uuid.uuid5(uuid.NAMESPACE_DNS, n)) for n in ['org','org2','judge','judge2','coachA','coachB','compA','evil','admin','newbie','fresh']}
@@ -32,7 +32,7 @@ for n,u in U.items(): psql(f"insert into auth.users values ('{u}', '{n}@x.test')
 psql("update profiles set level='law_school' where id in (" + ','.join(f"'{u}'" for n,u in U.items() if n != 'fresh') + ")", superuser=True)
 # The two organizers in the older tests are approved organizers; 'admin' is a platform admin (both set in the dashboard).
 for n in ('org', 'org2'): psql(f"insert into organizer_requests (user_id, name, school, role, status) values ('{U[n]}', '{n}', 'Harbor', 'Director', 'approved')", superuser=True)
-psql(f"insert into platform_admins (user_id) values ('{U['admin']}')", superuser=True)
+psql(f"insert into platform_admins (user_id, role) values ('{U['admin']}', 'owner')", superuser=True)
 F = "current_date + 30"
 T = lambda id, who, extra='': f"insert into tournaments (id, level, name, start_date, end_date, registration_deadline, team_cap, status, director_ids {',' + extra.split('|')[0] if extra else ''}) values ('{id}', 'law_school', '{id}', {F}, {F}+2, current_date+10, 2, 'registration_open', array['{U[who]}'::uuid] {',' + extra.split('|')[1] if extra else ''})"
 
@@ -303,6 +303,25 @@ ok('coach A deletes their account', "select delete_my_account()", 'coachA')
 su('registration kept, contact removed', "select coalesce(submitted_by::text,'none')||'|'||contact_name||'|'||contact_email from registrations where id='rA'", 'none|Deleted account|')
 su('team kept for its other members', "select count(*) from team_members where team_id='tA'", 1)
 su('coach no longer on the team', f"select count(*) from team_members where user_id='{U['coachA']}'", 0)
+
+print('--- owner and admin roles (0010) ---')
+blocked('signed-out visitor makes an admin', "select add_admin('evil@x.test')")
+blocked('stranger makes themselves admin', "select add_admin('evil@x.test')", 'evil')
+blocked('stranger inserts into platform_admins', "insert into platform_admins (user_id) values ('" + U['evil'] + "')", 'evil')
+blocked('stranger lists the admins', "select count(*) from list_admins()", 'evil')
+blocked('stranger reads platform_admins', "select count(*) from platform_admins", 'evil', 0)
+blocked('owner adds an email with no account', "select add_admin('nobody@x.test')", 'admin')
+ok('owner makes newbie an admin', "select add_admin('NEWBIE@x.test') is not null", 'admin', 't')
+ok('newbie is now an admin', "select is_admin()::text || is_owner()::text", 'newbie', 'truefalse')
+ok('newbie is told', "select count(*) from notifications where kind='admin' and title='You are now an admin'", 'newbie', 1)
+ok('admins see the admin list', "select string_agg(role, ',') from list_admins()", 'newbie', 'owner,admin')
+blocked('admin makes another admin', "select add_admin('evil@x.test')", 'newbie')
+blocked('admin removes the owner', "select remove_admin('" + U['admin'] + "')", 'newbie')
+blocked('admin promotes themselves to owner', "with x as (update platform_admins set role='owner' where user_id='" + U['newbie'] + "' returning 1) select count(*) from x", 'newbie', 0)
+blocked('admin deletes the owner row', "with x as (delete from platform_admins returning 1) select count(*) from x", 'newbie', 0)
+blocked('owner removes themselves', "select remove_admin('" + U['admin'] + "')", 'admin')
+ok('owner removes newbie', "select remove_admin('" + U['newbie'] + "')", 'admin')
+ok('newbie is no longer an admin', "select is_admin()", 'newbie', 'f')
 
 print('--- rate limits ---')
 FRESH = False
