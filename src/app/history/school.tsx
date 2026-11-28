@@ -3,7 +3,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 import { Body, Card, Empty, H1, Label, Loading, Row, Screen } from '../../components/ui';
 import { PastEventCard } from '../../components/CircuitHistory';
-import { useHistory } from '../../lib/store';
+import { useHistory, useStore } from '../../lib/store';
 import { circuitPoints, finishText, schoolHistory, seasonsOf } from '../../lib/history';
 import { START, eloFor, fmtChange, tierInGroup } from '../../lib/elo';
 import { ENROLLMENT_SOURCE, enrollmentOf, lsatOf, peerTiers } from '../../lib/divisions';
@@ -12,6 +12,9 @@ import { space } from '../../lib/theme';
 export default function SchoolHistoryScreen() {
   const { name } = useLocalSearchParams<{ name: string }>();
   const { events } = useHistory();
+  const { me } = useStore();
+  // Per-competition rating changes are part of the rating math: admins only.
+  const showMath = !!me?.isAdmin;
   const rows = useMemo(() => (events && name ? schoolHistory(events, name) : []), [events, name]);
   const bySeason = useMemo(() => {
     if (!events || !name) return [];
@@ -63,7 +66,7 @@ export default function SchoolHistoryScreen() {
               <PastEventCard
                 key={r.event.id}
                 e={r.event}
-                note={[r.best ? finishText(r.best) : 'Competed', elo?.byEvent.get(r.event.id)?.get(name) ? `ELO ${fmtChange(elo.byEvent.get(r.event.id)!.get(name)!)}` : null].filter(Boolean).join(' · ')}
+                note={[r.best ? finishText(r.best) : 'Competed', showMath && elo?.byEvent.get(r.event.id)?.get(name) ? `ELO ${fmtChange(elo.byEvent.get(r.event.id)!.get(name)!)}` : null].filter(Boolean).join(' · ')}
               />
             ))}
         </View>

@@ -22,11 +22,21 @@ export interface Profile {
   coachOf?: string[];
   /** Platform admin: approves organizers and handles reports. */
   isAdmin?: boolean;
+  /** Site owner: an admin who can also make and remove admins. */
+  isOwner?: boolean;
   /** Where their request to run competitions stands. 'approved' organizers' competitions are listed at once. */
   organizer?: OrganizerStatus;
 }
 
 export type OrganizerStatus = 'none' | 'pending' | 'approved' | 'rejected' | 'suspended';
+
+export interface AdminMember {
+  userId: string;
+  name: string;
+  email: string;
+  role: 'owner' | 'admin';
+  addedAt: string;
+}
 
 export interface OrganizerRequest {
   userId: string;

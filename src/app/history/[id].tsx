@@ -1,7 +1,7 @@
 import { useLocalSearchParams, router } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 import { Body, Card, Empty, H1, Label, Loading, Mono, Row, Screen } from '../../components/ui';
-import { useHistory } from '../../lib/store';
+import { useHistory, useStore } from '../../lib/store';
 import { finishText, schoolOfTeam } from '../../lib/history';
 import { eloFor, fmtChange } from '../../lib/elo';
 import { space, useTheme } from '../../lib/theme';
@@ -11,11 +11,13 @@ const ORDER = ['winner', 'advanced', 'finalist', 'place', 'semifinalist', 'quart
 export default function PastEventScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { events } = useHistory();
+  const { me } = useStore();
   const c = useTheme();
   if (!events) return <Loading />;
   const e = events.find((x) => x.id === id);
   if (!e) return <Screen><Empty title="Competition not found" body="It may belong to another circuit. Switch circuits on the Results tab." /></Screen>;
-  const changes = eloFor(events).byEvent.get(e.id);
+  // Per-competition rating changes are part of the rating math: admins only.
+  const changes = me?.isAdmin ? eloFor(events).byEvent.get(e.id) : undefined;
   const results = [...e.results].sort((a, b) => ORDER.indexOf(a.finish) - ORDER.indexOf(b.finish) || (a.place ?? 9) - (b.place ?? 9));
   const go = (team: string) => router.push({ pathname: '/history/school', params: { name: schoolOfTeam(team) } });
 

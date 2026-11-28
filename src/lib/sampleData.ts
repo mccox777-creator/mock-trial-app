@@ -231,7 +231,7 @@ export const sampleData: AppData = {
 };
 
 export const DEMO_USERS = {
-  director: { id: DEMO_DIRECTOR, name: 'Demo Director', email: 'director@example.edu', teamIds: [] },
+  director: { id: DEMO_DIRECTOR, name: 'Demo Director', email: 'director@example.edu', teamIds: [], isAdmin: true, isOwner: true },
   judge: { id: 'demo-judge', name: 'Demo Judge', email: 'judge@example.com', teamIds: [] },
   coach: { id: 'demo-coach', name: 'Demo Coach', email: 'coach@example.edu', teamIds: ['lakeshore-a', 'lakeshore-b'], coachOf: ['lakeshore-a', 'lakeshore-b'] },
   competitor: { id: 'demo-competitor', name: 'Demo Competitor', email: 'student@example.edu', teamIds: ['lakeshore-a'], coachOf: [] },
