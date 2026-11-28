@@ -3,11 +3,52 @@ import 'react-native-url-polyfill/auto';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { sessionStorage } from './secureStorage';
 import type { AppData, Level, Notice, NotificationPrefs, OrganizerRequest, PastEvent, Profile, Report, ReportKind, ReportReason } from './types';
+import { Platform } from 'react-native';
 import { sampleData, DEMO_USERS } from './sampleData';
 
 /** The circuit record that ships with the app: read only when someone opens the history. */
 function bundledHistory(level: Level): PastEvent[] {
   return level === 'law_school' ? (require('../data/history-law-school.json') as PastEvent[]) : [];
+}
+
+/** The latest circuit record, published with the website on every merge (public/ratings-data/events.json). */
+const LIVE_HISTORY_URL = 'https://app.mocktrialcentral.com/ratings-data/events.json';
+const LIVE_HISTORY_KEY = 'mocktrial.history.law_school.v1';
+
+const looksLikeHistory = (x: unknown): x is PastEvent[] =>
+  Array.isArray(x) && x.length > 0 && x.every((e) => e && typeof e.id === 'string' && Array.isArray(e.results) && Array.isArray(e.participants));
+
+/**
+ * The circuit record for the phone app. The website always ships the newest record, but an installed app only has the
+ * copy it was built with, so the app fetches the published one (new results show up without a new App Store build),
+ * keeps the last good copy for offline use, and falls back to the built-in copy.
+ */
+async function latestHistory(level: Level): Promise<PastEvent[]> {
+  const shipped = bundledHistory(level);
+  if (level !== 'law_school' || Platform.OS === 'web') return shipped;
+  try {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 8000);
+    const res = await fetch(LIVE_HISTORY_URL, { signal: ctl.signal, headers: { 'cache-control': 'no-cache' } });
+    clearTimeout(timer);
+    if (res.ok) {
+      const live: unknown = await res.json();
+      if (looksLikeHistory(live)) {
+        AsyncStorage.setItem(LIVE_HISTORY_KEY, JSON.stringify(live)).catch(() => {});
+        return live;
+      }
+    }
+  } catch {
+    // offline or slow: use the last copy we fetched
+  }
+  try {
+    const saved = await AsyncStorage.getItem(LIVE_HISTORY_KEY);
+    const parsed: unknown = saved ? JSON.parse(saved) : null;
+    if (looksLikeHistory(parsed) && parsed.length >= shipped.length) return parsed;
+  } catch {
+    // ignore a damaged saved copy
+  }
+  return shipped;
 }
 
 export type TableName = keyof AppData;
@@ -250,7 +291,7 @@ function supabaseBackend(url: string, anonKey: string): Backend {
       // The circuit record ships with the app, so nothing has to be imported. Rows in the database
       // (added later, or corrections) take the place of the shipped entry with the same id.
       const have = new Set(out.map((e) => e.id));
-      return [...bundledHistory(level).filter((e) => !have.has(e.id)), ...out];
+      return [...(await latestHistory(level)).filter((e) => !have.has(e.id)), ...out];
     },
     async upsert(table, row) {
       const { error } = await sb.from(TABLES[table]).upsert(mapKeys(row as unknown as Record<string, unknown>, toSnake));

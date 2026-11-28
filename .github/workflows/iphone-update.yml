@@ -1,0 +1,35 @@
+# Sends every change merged to main to installed iPhone apps as an over-the-air update (EAS Update), so most
+# fixes reach phones without a new App Store build. Needs a repository secret EXPO_TOKEN (an Expo access token);
+# without it this job does nothing. See docs/IPHONE.md.
+name: iPhone update
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+concurrency:
+  group: iphone-update
+  cancel-in-progress: true
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      # Public by design (they ship inside the app); the database rules decide what each person can do.
+      EXPO_PUBLIC_SUPABASE_URL: https://zneehljxwnwskcotnskb.supabase.co
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_2lvcs0CiEjvtqnUZSGf7Xg_xqjMK_KR
+    steps:
+      - name: Skip when no Expo token is set
+        if: env.EXPO_TOKEN == ''
+        run: echo "No EXPO_TOKEN secret; skipping the iPhone update."
+      - uses: actions/checkout@v4
+        if: env.EXPO_TOKEN != ''
+      - uses: actions/setup-node@v4
+        if: env.EXPO_TOKEN != ''
+        with:
+          node-version: 22
+          cache: npm
+      - if: env.EXPO_TOKEN != ''
+        run: npm ci
+      - name: Publish the update
+        if: env.EXPO_TOKEN != ''
+        run: npx eas-cli@latest update --channel production --platform ios --auto --non-interactive
