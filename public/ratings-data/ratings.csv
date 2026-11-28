@@ -1,25 +1,25 @@
 rank,school,rating,class,competitions,provisional,peak
 1,UCLA,2034.08,Expert,83,no,2036.94
-2,Drexel,1871.11,Class A,54,no,1926.37
+2,Drexel,1871.2,Class A,54,no,1926.37
 3,Stetson,1807.7,Class A,87,no,1917.83
 4,Harvard,1790.63,Class B,43,no,1792.05
 5,Boston College,1775.26,Class B,12,no,1831.11
 6,American,1773.09,Class B,33,no,1775.07
 7,Texas,1768.96,Class B,44,no,1864.84
-8,Mercer,1759.22,Class B,67,no,1887.22
+8,Mercer,1759.38,Class B,67,no,1887.22
 9,Georgetown,1748.18,Class B,42,no,1797.28
 10,Ohio State,1737.86,Class B,20,no,1823.99
-11,San Diego,1734.87,Class B,30,no,1734.87
-12,Florida International,1730.18,Class B,24,no,1810.65
+11,Florida International,1730.88,Class B,24,no,1810.65
+12,San Diego,1730.59,Class B,30,no,1730.59
 13,St. Thomas (FL),1728.74,Class B,33,no,1802.18
-14,Baylor,1728.19,Class B,67,no,1820.2
-15,Houston,1719.39,Class B,76,no,1807.18
+14,Houston,1728.28,Class B,76,no,1807.18
+15,Baylor,1718.78,Class B,67,no,1820.2
 16,Maryland,1708.86,Class B,60,no,1812.98
 17,UC Berkeley,1704.5,Class B,49,no,1807.68
 18,Regent,1698.64,Class B,30,no,1745.65
 19,Georgia,1697.97,Class B,40,no,1836.2
-20,Cumberland,1691.71,Class B,62,no,1819.3
-21,Texas Southern,1688.07,Class B,32,no,1725.82
+20,Cumberland,1691.88,Class B,62,no,1819.3
+21,Texas Southern,1687.99,Class B,32,no,1725.82
 22,NYU,1686.09,Class B,31,no,1778.54
 23,Campbell,1681.66,Class B,56,no,1781.72
 24,Chapman,1678.21,Class B,27,no,1736.36
@@ -29,8 +29,8 @@ rank,school,rating,class,competitions,provisional,peak
 28,Washington University,1668.86,Class B,19,no,1755.85
 29,Northwestern,1665.85,Class B,40,no,1732.82
 30,Michigan,1659.42,Class B,18,no,1733.93
-31,UNLV,1652.98,Class B,27,no,1683.81
-32,Minnesota,1642.76,Class B,5,no,1713.04
+31,Minnesota,1642.76,Class B,5,no,1713.04
+32,UNLV,1637.44,Class B,27,no,1683.72
 33,Barry,1636.89,Class B,21,no,1660.55
 34,Villanova,1629.28,Class B,31,no,1802.07
 35,South Carolina,1623.89,Class B,68,no,1762.25
@@ -41,13 +41,13 @@ rank,school,rating,class,competitions,provisional,peak
 40,Colorado,1618.42,Class B,20,no,1662.93
 41,Wake Forest,1611.95,Class B,21,no,1626.53
 42,Pepperdine,1611.71,Class B,21,no,1730.71
-43,Loyola LA,1609.27,Class B,36,no,1825.78
-44,Akron,1606.81,Class B,28,no,1796.78
-45,Memphis,1606.14,Class B,5,no,1663.68
-46,Cal Western,1604.51,Class B,24,no,1650.86
-47,Suffolk,1604.34,Class B,24,no,1639.6
+43,Suffolk,1611.3,Class B,24,no,1639.6
+44,Loyola LA,1609.27,Class B,36,no,1825.78
+45,Akron,1606.81,Class B,28,no,1796.78
+46,Memphis,1606.14,Class B,5,no,1663.68
+47,Cal Western,1604.51,Class B,24,no,1650.86
 48,Hofstra,1604.02,Class B,52,no,1766.33
-49,Catholic,1594.93,Class C,16,no,1594.93
+49,Catholic,1601.29,Class B,16,no,1601.29
 50,Alabama,1594.06,Class C,27,no,1620.14
 51,Belmont,1590,Class C,10,no,1683.14
 52,Temple,1585.9,Class C,45,no,1738.66
@@ -55,28 +55,28 @@ rank,school,rating,class,competitions,provisional,peak
 54,Denver,1583.67,Class C,42,no,1759.26
 55,Pace,1581.88,Class C,54,no,1703.36
 56,Kentucky,1580.8,Class C,5,no,1580.8
-57,UMKC,1576,Class C,33,no,1714.46
-58,Duke,1574.22,Class C,6,no,1574.22
+57,Duke,1574.22,Class C,6,no,1574.22
+58,Missouri,1573.67,Class C,13,no,1631.17
 59,Wilmington,1572.02,Class C,4,yes,1607.92
 60,Fordham,1569.61,Class C,76,no,1753.51
-61,Missouri,1568.96,Class C,13,no,1631.17
-62,Liberty,1568.3,Class C,5,no,1598.09
-63,Western State,1564.89,Class C,19,no,1586.15
+61,Liberty,1568.3,Class C,5,no,1598.09
+62,Western State,1564.89,Class C,19,no,1586.15
+63,UMKC,1562.38,Class C,33,no,1714.46
 64,South Texas,1558.04,Class C,56,no,1791.04
-65,DePaul,1550.4,Class C,19,no,1576.16
-66,William & Mary,1550.23,Class C,46,no,1628.01
-67,Ohio Northern,1545.2,Class C,28,no,1624.16
-68,Faulkner,1544.96,Class C,25,no,1660.19
-69,St. Louis,1542.52,Class C,8,no,1630.08
-70,Marquette,1541.54,Class C,5,no,1558.65
+65,William & Mary,1550.23,Class C,46,no,1628.01
+66,Ohio Northern,1545.2,Class C,28,no,1624.16
+67,St. Louis,1542.52,Class C,8,no,1630.08
+68,Illinois Chicago,1541.87,Class C,49,no,1617.08
+69,Marquette,1541.54,Class C,5,no,1558.65
+70,St. Mary's,1541.35,Class C,52,no,1594.52
 71,Rutgers,1539.96,Class C,23,no,1781.99
-72,St. Mary's,1539.67,Class C,52,no,1594.52
-73,Charleston,1533.34,Class C,21,no,1553.22
-74,Florida,1525.21,Class C,24,no,1665.16
-75,University of Chicago,1524.07,Class C,4,yes,1524.07
-76,New England,1523.14,Class C,4,yes,1615.66
-77,Illinois,1513.91,Class C,46,no,1729.87
-78,Illinois Chicago,1501.81,Class C,49,no,1617.08
+72,DePaul,1537.47,Class C,19,no,1576.16
+73,Faulkner,1532.18,Class C,25,no,1660.19
+74,Charleston,1525.66,Class C,21,no,1545.25
+75,Florida,1525.21,Class C,24,no,1665.16
+76,University of Chicago,1524.07,Class C,4,yes,1524.07
+77,New England,1523.14,Class C,4,yes,1615.66
+78,Illinois,1502.03,Class C,46,no,1729.87
 79,Case Western,1500.57,Class C,25,no,1760.18
 80,North Carolina,1499.79,Class C,14,no,1502.22
 81,Miami,1496.45,Class C,25,no,1573.48
@@ -104,15 +104,15 @@ rank,school,rating,class,competitions,provisional,peak
 103,San Francisco,1445.92,Class C,1,yes,1500
 104,Baltimore,1436.18,Class C,16,no,1507.81
 105,Washington and Lee,1436.16,Class C,1,yes,1500
-106,Quinnipiac,1433.17,Class C,31,no,1572.02
-107,Notre Dame,1432.37,Class C,10,no,1500
-108,UC Davis,1432.29,Class C,28,no,1526.03
+106,UC Davis,1435.69,Class C,28,no,1526.03
+107,Quinnipiac,1433.17,Class C,31,no,1572.02
+108,Notre Dame,1432.37,Class C,10,no,1500
 109,Willamette,1431.19,Class C,4,yes,1500
 110,Nova Southeastern,1427.83,Class C,42,no,1544.43
 111,Cincinnati,1427.04,Class C,9,no,1500
 112,SMU,1422.32,Class C,29,no,1500
 113,Arkansas,1420.9,Class C,7,no,1644.75
-114,Emory,1420.64,Class C,38,no,1658.9
+114,Emory,1420.81,Class C,38,no,1658.9
 115,Jacksonville,1416.68,Class C,3,yes,1500
 116,Yale,1414.11,Class C,5,no,1647.46
 117,Cornell,1413.35,Class C,8,no,1617.76
@@ -161,7 +161,7 @@ rank,school,rating,class,competitions,provisional,peak
 160,Ave Maria,1316.91,Class D,4,yes,1500
 161,BYU,1311.99,Class D,10,no,1500
 162,Birmingham,1310.38,Class D,6,no,1500
-163,South Dakota,1307.75,Class D,28,no,1500
+163,South Dakota,1307.71,Class D,28,no,1500
 164,Mississippi,1307.34,Class D,17,no,1500
 165,Wayne State,1306.27,Class D,10,no,1526.67
 166,Albany,1305.88,Class D,9,no,1500

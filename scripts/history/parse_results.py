@@ -274,14 +274,18 @@ def build(block, participants, term, year):
                 ok = add(mo.group(1), 'winner', 1)
                 add(mo.group(2), 'finalist', 2)
         if not ok and re.search(r'\d(?:st|nd|rd|th)\b|\b(second|third|fourth|fifth)\b', c, re.I):
-            for seg in re.split(r'\.\s+|,\s+(?=[^,]*\d(?:st|nd|rd|th)|[^,]*\b(?:second|third|fourth|fifth)\b)', c):
-                mm = re.match(r'^(.+?)\s+(?:(?:was|were|tied for|took)\s+)?(\d|second|third|fourth|fifth)(?:st|nd|rd|th)?\b', seg.strip(), re.I)
+            for seg in re.split(r'(?<!\bSt)(?<!\bMt)\.\s+|,\s+(?=[^,]*\d(?:st|nd|rd|th)|[^,]*\b(?:second|third|fourth|fifth)\b)', c):
+                # A place needs its ordinal ("5th"), so the team number in "Charleston 2 was 5th" isn't read as 2nd place.
+                mm = re.match(r'^(.+?)\s+(?:(?:was|were|tied for|took)\s+)?(\d(?:st|nd|rd|th)|second|third|fourth|fifth)\b(.*)$', seg.strip(), re.I)
                 if not mm:
                     continue
-                word = mm.group(2).lower()
+                word = re.sub(r'^(\d)(st|nd|rd|th)$', r'\1', mm.group(2).lower())
                 place = {'second': 2, 'third': 3, 'fourth': 4, 'fifth': 5}.get(word) or int(word)
-                for n in names(mm.group(1)):
-                    ok = add(n, 'winner' if place == 1 else 'finalist' if place == 2 else 'place', place) or ok
+                # "Illinois Chicago was 2nd and 3rd": the school's teams took both places.
+                more = [int(x) for x in re.findall(r'\band\s+(\d)(?:st|nd|rd|th)\b', mm.group(3), re.I)]
+                for pl in [place] + more:
+                    for n in names(mm.group(1)):
+                        ok = add(n, 'winner' if pl == 1 else 'finalist' if pl == 2 else 'place', pl) or ok
         if not ok and re.match(r'^(champions?|semi-?finalists?|finalists?|winner|division \w+|region \w+)$', c, re.I):
             ok = True  # empty headings in the document
         if not ok:

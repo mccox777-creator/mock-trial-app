@@ -3911,19 +3911,19 @@ step,event_id,event,term,season,dates,teams_in_field,school,teams,best_tier,befo
 3910,2026-27-fall-e-earle-zehmer-memorial-mock-trial-competition,E. Earle Zehmer Memorial Mock Trial Competition,Fall,2026-27,November 7-8,14,Barry,2,1,1650.3937,20,0.666667,11,4,9.477307,10.1513,1660.545
 3911,2026-27-fall-e-earle-zehmer-memorial-mock-trial-competition,E. Earle Zehmer Memorial Mock Trial Competition,Fall,2026-27,November 7-8,14,Jacksonville,2,5,1454.1115,40,0.666667,0,8,2.807517,-37.4336,1416.678
 3912,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,St. Thomas (FL),2,5,1793.4039,20,0.363636,0,12,9.663118,-35.1386,1758.2653
-3913,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Florida International,2,1,1731.5834,20,0.363636,19,6,19.385472,-1.4017,1730.1817
+3913,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Florida International,2,1,1731.5834,20,0.363636,20,6,20.193945,-0.7053,1730.8782
 3914,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Nova Southeastern,2,0,1386.3032,20,0.363636,22,5,9.030853,47.1605,1433.4637
 3915,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Miami,2,5,1517.8407,20,0.363636,0,12,5.883569,-21.3948,1496.4459
 3916,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Emory,1,5,1451.7697,20,0.347826,0,6,2.421691,-16.8465,1434.9232
 3917,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,George Washington,1,5,1425.6751,20,0.347826,0,6,2.222835,-15.4632,1410.2119
 3918,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,LSU,2,5,1313.0268,20,0.363636,0,12,2.906772,-10.5701,1302.4567
-3919,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Suffolk,1,3,1572.7446,20,0.347826,18,5,13.458032,31.5963,1604.3409
-3920,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Catholic,1,2,1511.7143,20,0.347826,19,4,11.70277,50.7633,1562.4776
+3919,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Suffolk,1,3,1572.7446,20,0.347826,19,4,13.458032,38.5528,1611.2974
+3920,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Catholic,1,2,1511.7143,20,0.347826,20,3,11.70277,57.7199,1569.4342
 3921,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Alabama,1,5,1620.0519,20,0.347826,0,6,3.736034,-25.9898,1594.0621
 3922,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Denver,1,5,1609.0934,20,0.347826,0,6,3.654062,-25.4196,1583.6738
 3923,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Buffalo,1,5,1418.2764,20,0.347826,0,6,2.167528,-15.0785,1403.1979
 3924,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Florida State,1,5,1467.7999,20,0.347826,0,6,2.546257,-17.7131,1450.0868
-3925,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Charleston,2,1,1481.4089,20,0.363636,40,2,20.253107,71.8069,1553.2158
+3925,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Charleston,2,1,1481.4089,20,0.363636,38,5,20.444634,63.8377,1545.2466
 3926,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Lincoln Memorial,1,5,1345.418,20,0.347826,0,6,1.656707,-11.5249,1333.893
 3927,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Regent,1,5,1729.9057,20,0.347826,0,6,4.480245,-31.1669,1698.7388
 3928,2026-27-fall-premiere-trial-competition,Premiere Trial Competition,Fall,2026-27,November 7-8,24,Cardozo,2,5,1306.6798,20,0.363636,0,12,2.830948,-10.2944,1296.3854
@@ -3965,49 +3965,49 @@ step,event_id,event,term,season,dates,teams_in_field,school,teams,best_tier,befo
 3964,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,Virginia,1,5,1370.6934,20,0.421053,0,4,1.571928,-13.2373,1357.4561
 3965,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,Lewis & Clark,1,5,1425.7069,20,0.421053,0,4,1.805479,-15.204,1410.5028
 3966,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,Arizona State,1,5,1469.5535,20,0.421053,0,4,1.995677,-16.8057,1452.7478
-3967,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,UNLV,1,0,1621.622,20,0.421053,19,0,11.615386,62.1862,1683.8082
+3967,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,UNLV,1,0,1621.622,20,0.421053,19,0,11.626371,62.0937,1683.7157
 3968,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,Fordham,1,5,1590.8475,20,0.421053,0,4,2.522273,-21.2402,1569.6074
 3969,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,Buffalo,1,5,1403.1979,20,0.421053,0,4,1.709052,-14.392,1388.8059
 3970,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,Pace,1,5,1628.4438,20,0.421053,0,4,2.679686,-22.5658,1605.878
 3971,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,Rutgers,1,5,1560.0925,20,0.421053,0,4,2.390439,-20.13,1539.9625
-3972,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,Illinois Chicago,1,1,1368.7952,20,0.421053,18,1,5.791343,102.8097,1471.605
-3973,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,Texas Southern,1,2,1677.692,20,0.421053,16,2,11.930071,34.2731,1711.9651
-3974,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,South Dakota,1,2,1195.7411,20,0.421053,16,2,2.698809,112.01,1307.7511
-3975,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,Charleston,1,5,1553.2158,20,0.421053,0,4,2.360694,-19.8795,1533.3363
-3976,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Stetson,1,0,1785.6931,20,0.444444,18,0,14.075426,34.8851,1820.5782
+3972,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,Illinois Chicago,1,1,1368.7952,20,0.421053,18,1,5.8002,102.7352,1471.5304
+3973,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,Texas Southern,1,2,1677.692,20,0.421053,16,2,11.940104,34.1886,1711.8806
+3974,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,South Dakota,1,2,1195.7411,20,0.421053,16,2,2.703499,111.9705,1307.7116
+3975,2026-27-fall-faulkner-georgia-gsu-howard-loyola-chicago-maryland-mercer-michigan-state-qui,"Faulkner, Georgia, GSU, Howard, Loyola-Chicago, Maryland, Mercer, Michigan State, Quinnipiac, South Carolina, South Texas, and Stetson Puerto Rico Trial Advocacy Competition",Fall,2026-27,November 13-15,20,Charleston,1,5,1545.2466,20,0.421053,0,4,2.326129,-19.5885,1525.6582
+3976,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Stetson,1,0,1785.6931,20,0.444444,18,0,14.075543,34.8841,1820.5772
 3977,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Texas,1,5,1797.9118,20,0.444444,0,5,3.257275,-28.9536,1768.9583
-3978,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Houston,1,3,1707.3042,20,0.444444,14,4,12.64027,12.0865,1719.3907
+3978,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Houston,1,3,1707.3042,20,0.444444,15,3,12.640392,20.9743,1728.2785
 3979,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Loyola New Orleans,1,5,1299.1615,20,0.444444,0,5,0.528074,-4.694,1294.4675
 3980,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Texas A&M,1,5,1307.8745,20,0.444444,0,5,0.551695,-4.904,1302.9705
 3981,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Cumberland,1,5,1737.4212,20,0.444444,0,5,2.86132,-25.434,1711.9872
-3982,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Baylor,2,1,1688.3091,20,0.470588,32,2,23.525406,39.8804,1728.1896
+3982,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Baylor,2,1,1688.3091,20,0.470588,30,4,23.525648,30.4675,1718.7767
 3983,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,St. Mary's,1,5,1486.1283,20,0.444444,0,5,1.255573,-11.1607,1474.9676
-3984,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Texas Southern,1,5,1711.9651,20,0.444444,0,5,2.688137,-23.8946,1688.0705
+3984,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Texas Southern,1,5,1711.8806,20,0.444444,0,5,2.687559,-23.8894,1687.9912
 3985,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Texas Tech,2,5,1506.3263,20,0.470588,0,10,2.726917,-12.8326,1493.4938
-3986,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Missouri,2,2,1549.6264,20,0.470588,14,7,9.890763,19.3376,1568.964
+3986,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Missouri,2,2,1549.6264,20,0.470588,15,6,9.890861,24.043,1573.6694
 3987,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Kansas,2,5,1343.0087,20,0.470588,0,10,1.312584,-6.1769,1336.8318
 3988,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,SMU,2,5,1431.6716,20,0.470588,0,10,1.986561,-9.3485,1422.3231
 3989,2026-27-fall-premiere-trial-competition-2,Premiere Trial Competition,Fall,2026-27,November 14-15,19,Tulsa,1,5,1356.3138,20,0.444444,0,5,0.699997,-6.2222,1350.0917
 3990,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,Pacific McGeorge,2,5,1608.3213,20,0.4,0,12,5.617103,-22.4684,1585.8529
 3991,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,William & Mary,1,5,1569.6227,20,0.380952,0,6,2.545588,-19.395,1550.2277
 3992,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,UCLA,2,0,2034.8792,20,0.4,19,5,22.324994,-13.3,2021.5792
-3993,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,San Diego,2,1,1694.1748,20,0.4,34,4,23.825199,40.6992,1734.874
+3993,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,San Diego,2,1,1694.1748,20,0.4,33,5,23.897372,36.4105,1730.5853
 3994,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,Pepperdine,2,5,1635.6637,20,0.4,0,12,5.988829,-23.9553,1611.7084
 3995,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,Cal Western,2,5,1628.0472,20,0.4,0,12,5.885464,-23.5419,1604.5053
 3996,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,USC,2,5,1409.2503,20,0.4,0,12,3.067862,-12.2714,1396.9789
 3997,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,Western State,2,5,1586.1507,20,0.4,0,12,5.315366,-21.2615,1564.8892
 3998,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,Lewis & Clark,2,5,1410.5028,20,0.4,0,12,3.081949,-12.3278,1398.1751
 3999,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,Santa Clara,1,0,1600.6826,20,0.380952,20,0,10.766685,70.3491,1671.0316
-4000,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,UC Davis,2,1,1390.7666,20,0.4,16,7,5.619416,41.5223,1432.2889
-4001,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,St. Mary's,1,2,1474.9676,20,0.380952,16,5,7.508408,64.6978,1539.6655
+4000,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,UC Davis,2,1,1390.7666,20,0.4,17,7,5.767898,44.9284,1435.695
+4001,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,St. Mary's,1,2,1474.9676,20,0.380952,16,4,7.287754,66.379,1541.3466
 4002,2026-27-fall-premiere-trial-competition-3,Premiere Trial Competition,Fall,2026-27,November 14-15,22,Chapman,1,5,1704.5212,20,0.380952,0,6,3.453137,-26.3096,1678.2116
-4003,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,Faulkner,1,5,1570.4154,20,1,0,2,1.272978,-25.4596,1544.9558
-4004,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,UNLV,1,5,1683.8082,20,1,0,2,1.54162,-30.8324,1652.9758
-4005,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,Illinois,1,5,1537.5777,20,1,0,2,1.183465,-23.6693,1513.9084
-4006,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,Illinois Chicago,2,1,1471.605,20,1,6,2,2.979123,30.2088,1501.8137
-4007,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,DePaul,1,5,1576.1609,20,1,0,2,1.288212,-25.7642,1550.3966
-4008,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,UMKC,2,5,1603.1573,20,1,0,4,2.715523,-27.1552,1576.0021
-4009,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,Duke,1,0,1474.6035,20,1,8,0,3.019079,99.6184,1574.2219
+4003,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,Faulkner,1,5,1570.4154,20,1,0,3,1.911662,-38.2332,1532.1822
+4004,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,UNLV,1,5,1683.7157,20,1,0,3,2.313823,-46.2765,1637.4392
+4005,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,Illinois,1,5,1537.5777,20,1,0,3,1.77749,-35.5498,1502.0279
+4006,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,Illinois Chicago,2,1,1471.5304,20,1,12,2,4.965724,70.3428,1541.8732
+4007,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,DePaul,1,5,1576.1609,20,1,0,3,1.934493,-38.6899,1537.471
+4008,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,UMKC,2,5,1603.1573,20,1,0,6,4.07742,-40.7742,1562.3831
+4009,2026-27-fall-premiere-trial-competition-4,Premiere Trial Competition,Fall,2026-27,November 14-15,9,Duke,1,0,1474.6035,20,1,8,0,3.019388,99.6122,1574.2157
 4010,2026-27-fall-premiere-trial-competition-5,Premiere Trial Competition,Fall,2026-27,November 14-15,16,St. John's,1,5,1475.6944,20,0.533333,0,5,1.016474,-10.8424,1464.8521
 4011,2026-27-fall-premiere-trial-competition-5,Premiere Trial Competition,Fall,2026-27,November 14-15,16,Quinnipiac,1,5,1442.5667,20,0.533333,0,5,0.881349,-9.4011,1433.1656
 4012,2026-27-fall-premiere-trial-competition-5,Premiere Trial Competition,Fall,2026-27,November 14-15,16,Maryland,2,0,1690.7674,20,0.571429,14,4,10.833959,18.0917,1708.8591
@@ -4020,17 +4020,17 @@ step,event_id,event,term,season,dates,teams_in_field,school,teams,best_tier,befo
 4019,2026-27-fall-premiere-trial-competition-5,Premiere Trial Competition,Fall,2026-27,November 14-15,16,Seton Hall,2,5,1227.964,20,0.571429,0,10,0.62012,-3.5435,1224.4205
 4020,2026-27-fall-premiere-trial-competition-5,Premiere Trial Competition,Fall,2026-27,November 14-15,16,Regent,1,4,1682.7946,20,0.533333,11,4,9.514681,15.8434,1698.638
 4021,2026-27-fall-premiere-trial-competition-5,Premiere Trial Competition,Fall,2026-27,November 14-15,16,Wilmington,1,5,1607.9218,40,0.533333,0,5,1.682704,-35.8977,1572.0241
-4022,2026-27-fall-william-daniel-mock-trial-invitational,William Daniel Mock Trial Invitational,Fall,2026-27,November 20-22,5,Emory,1,5,1434.9232,20,1,0,4,0.714121,-14.2824,1420.6408
-4023,2026-27-fall-william-daniel-mock-trial-invitational,William Daniel Mock Trial Invitational,Fall,2026-27,November 20-22,5,Mercer,1,0,1726.1974,20,1,4,0,2.349061,33.0188,1759.2161
-4024,2026-27-fall-william-daniel-mock-trial-invitational,William Daniel Mock Trial Invitational,Fall,2026-27,November 20-22,5,Catholic,1,1,1562.4776,20,1,3,1,1.377404,32.4519,1594.9295
-4025,2026-27-fall-william-daniel-mock-trial-invitational,William Daniel Mock Trial Invitational,Fall,2026-27,November 20-22,5,Cumberland,1,2,1711.9872,20,1,1,2,2.013663,-20.2733,1691.714
-4026,2026-27-fall-william-daniel-mock-trial-invitational,William Daniel Mock Trial Invitational,Fall,2026-27,November 20-22,5,Drexel,1,2,1902.0246,20,1,1,2,2.545751,-30.915,1871.1096
-4027,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Stetson,1,5,1820.5782,20,0.421053,0,3,1.529217,-12.8776,1807.7006
+4022,2026-27-fall-william-daniel-mock-trial-invitational,William Daniel Mock Trial Invitational,Fall,2026-27,November 20-22,5,Emory,1,5,1434.9232,20,1,0,4,0.705409,-14.1082,1420.815
+4023,2026-27-fall-william-daniel-mock-trial-invitational,William Daniel Mock Trial Invitational,Fall,2026-27,November 20-22,5,Mercer,1,0,1726.1974,20,1,4,0,2.34091,33.1818,1759.3792
+4024,2026-27-fall-william-daniel-mock-trial-invitational,William Daniel Mock Trial Invitational,Fall,2026-27,November 20-22,5,Catholic,1,1,1569.4342,20,1,3,1,1.407116,31.8577,1601.2918
+4025,2026-27-fall-william-daniel-mock-trial-invitational,William Daniel Mock Trial Invitational,Fall,2026-27,November 20-22,5,Cumberland,1,2,1711.9872,20,1,1,2,2.005231,-20.1046,1691.8826
+4026,2026-27-fall-william-daniel-mock-trial-invitational,William Daniel Mock Trial Invitational,Fall,2026-27,November 20-22,5,Drexel,1,2,1902.0246,20,1,1,2,2.541334,-30.8267,1871.1979
+4027,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Stetson,1,5,1820.5772,20,0.421053,0,3,1.529213,-12.8776,1807.6996
 4028,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Brooklyn,2,5,1414.2747,20,0.444444,0,6,0.675631,-3.0028,1411.2719
 4029,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Connecticut,1,5,1379.4134,20,0.421053,0,3,0.284231,-2.3935,1377.0198
 4030,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Georgetown,1,5,1759.1755,20,0.421053,0,3,1.305417,-10.993,1748.1826
-4031,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,UCLA,1,0,2021.5792,20,0.421053,19,0,17.515256,12.5031,2034.0823
-4032,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Boston College,2,1,1764.1717,20,0.444444,17,3,14.506239,11.0834,1775.2551
+4031,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,UCLA,1,0,2021.5792,20,0.421053,19,0,17.515257,12.5031,2034.0823
+4032,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Boston College,2,1,1764.1717,20,0.444444,17,3,14.50624,11.0834,1775.2551
 4033,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Boston University,1,5,1363.3002,20,0.421053,0,3,0.262029,-2.2066,1361.0937
 4034,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Roger Williams,1,5,1400.5976,20,0.421053,0,3,0.315859,-2.6599,1397.9377
 4035,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,NYU,1,5,1695.1637,20,0.421053,0,3,1.077181,-9.071,1686.0927
@@ -4038,6 +4038,6 @@ step,event_id,event,term,season,dates,teams_in_field,school,teams,best_tier,befo
 4037,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,New York Law School,1,5,1254.5905,20,0.421053,0,3,0.148363,-1.2494,1253.3411
 4038,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Penn,1,5,1318.7116,20,0.421053,0,3,0.208308,-1.7542,1316.9574
 4039,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Case Western,1,5,1504.9213,20,0.421053,0,3,0.51634,-4.3481,1500.5732
-4040,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Campbell,2,2,1665.4187,20,0.444444,16,4,12.344599,16.2462,1681.665
+4040,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Campbell,2,2,1665.4187,20,0.444444,16,4,12.3446,16.2462,1681.6649
 4041,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Albany,2,5,1307.6233,20,0.444444,0,6,0.393158,-1.7474,1305.8759
 4042,2026-27-fall-cambridge-clash-invitational,Cambridge Clash Invitational,Fall,2026-27,November 20-22,20,Cardozo,1,5,1296.3854,20,0.421053,0,3,0.185304,-1.5605,1294.825

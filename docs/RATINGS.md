@@ -122,17 +122,27 @@ A school with several teams at a competition now has every team rated, and moves
 average of its teams' results. Before, only its best team counted. This lowers schools that often send extra teams that
 go out early (UCLA 2093 to 2021, San Diego 7th to 10th, Maryland 12th to 17th) and lifts schools that send one strong team.
 
-The top 10 now (after the TCPR gap fill):
+The top 10 now (28 November 2026, after the fix below):
 
 | # | School | Rating | Class | Competitions |
 | --- | --- | --- | --- | --- |
-| 1 | UCLA | 2022 | Expert | 82 |
-| 2 | Drexel | 1873 | Class A | 55 |
-| 3 | Stetson | 1821 | Class A | 86 |
+| 1 | UCLA | 2034 | Expert | 83 |
+| 2 | Drexel | 1871 | Class A | 54 |
+| 3 | Stetson | 1808 | Class A | 87 |
 | 4 | Harvard | 1791 | Class B | 43 |
-| 5 | Texas | 1769 | Class B | 44 |
-| 6 | American | 1767 | Class B | 34 |
-| 7 | Boston College | 1765 | Class B | 11 |
-| 8 | Georgetown | 1764 | Class B | 42 |
-| 9 | Mercer | 1759 | Class B | 67 |
-| 10 | Ohio State | 1737 | Class B | 20 |
+| 5 | Boston College | 1775 | Class B | 12 |
+| 6 | American | 1773 | Class B | 33 |
+| 7 | Texas | 1769 | Class B | 44 |
+| 8 | Mercer | 1759 | Class B | 67 |
+| 9 | Georgetown | 1748 | Class B | 42 |
+| 10 | Ohio State | 1738 | Class B | 20 |
+
+## Second audit, 28 November 2026
+
+An independent re-implementation, written from the rules on this page alone, reproduces every published rating exactly
+(198 schools, matching ratings.csv, the live `/api/ratings` feed, and verify_ratings.py). The data review found one
+parser bug:
+
+| Problem | Effect | Fix |
+| --- | --- | --- |
+| In "Charleston 2 was 5th", the team number was read as the place, so the team was credited with 2nd. Same for "Baylor 2 was 5th", "San Diego 2 and St. Mary's were 3rd" and "Drexel 2 was 3rd" (all Fall 2026 Premiere sites); "Illinois Chicago was 2nd and 3rd" lost the 3rd-place team | Illinois Chicago 1502 to 1542, Houston and Baylor swap 14th/15th, San Diego and Florida International swap 11th/12th, Charleston down 8 | A place now needs its ordinal ("5th"), and "2nd and 3rd" credits both teams |

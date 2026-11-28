@@ -1413,9 +1413,9 @@
    },
    {
     "school": "Charleston",
-    "team": "Charleston",
-    "finish": "finalist",
-    "place": 2
+    "team": "Charleston 2",
+    "finish": "place",
+    "place": 5
    }
   ],
   "participants": [
@@ -1724,9 +1724,9 @@
    },
    {
     "school": "Baylor",
-    "team": "Baylor",
-    "finish": "finalist",
-    "place": 2
+    "team": "Baylor 2",
+    "finish": "place",
+    "place": 5
    }
   ],
   "participants": [
@@ -1791,9 +1791,9 @@
    },
    {
     "school": "San Diego",
-    "team": "San Diego",
-    "finish": "finalist",
-    "place": 2
+    "team": "San Diego 2",
+    "finish": "place",
+    "place": 3
    },
    {
     "school": "St. Mary's",
@@ -1852,6 +1852,12 @@
     "team": "Illinois Chicago",
     "finish": "finalist",
     "place": 2
+   },
+   {
+    "school": "Illinois Chicago",
+    "team": "Illinois Chicago",
+    "finish": "place",
+    "place": 3
    }
   ],
   "participants": [
@@ -1894,9 +1900,9 @@
    },
    {
     "school": "Drexel",
-    "team": "Drexel",
-    "finish": "finalist",
-    "place": 2
+    "team": "Drexel 2",
+    "finish": "place",
+    "place": 3
    },
    {
     "school": "Hofstra",
