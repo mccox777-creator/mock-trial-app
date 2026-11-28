@@ -1,7 +1,7 @@
 // The public school Elo leaderboard, built with the same code the app uses (src/lib/elo.ts and
 // src/lib/closedCompetitions.ts), so a site that shows it always matches the app.
 import type { Ballot, Level, Match, PastEvent, Program, Team, Tournament } from '../src/lib/types';
-import { eloFor, tierOfRank, chronological } from '../src/lib/elo';
+import { eloFor, tierInGroup, tierOfRank, chronological } from '../src/lib/elo';
 import { closedCompetitionEvents } from '../src/lib/closedCompetitions';
 import { schoolOfTeam } from '../src/lib/history';
 import { DIVISIONS, ENROLLMENT_SOURCE, SELECTIVITY, divisionOf, enrollmentOf, gpaOf, lsatOf, selectivityOf, type DivisionId, type SelectivityId, type TierId } from '../src/lib/divisions';
@@ -35,13 +35,17 @@ export interface RatingRow {
   division: DivisionId | null;
   /** Place within its division, or null. */
   divisionRank: number | null;
+  /** Tier within its division (top 5% = 1, 13% = 2, 25% = 3, 50% = 4, rest = 5), or null. */
+  divisionTier: number | null;
   /** Median LSAT and undergraduate GPA of the entering class (ABA Standard 509), or null. */
   lsat: number | null;
   gpa: number | null;
   /** Selectivity tier by median LSAT, or null when unknown. */
   selectivity: SelectivityId | null;
-  /** Place within its selectivity tier, or null. */
+  /** Place within its selectivity group, or null. */
   selectivityRank: number | null;
+  /** Tier within its selectivity group, as divisionTier. */
+  selectivityTier: number | null;
 }
 
 export interface DivisionBoard<T extends TierId = DivisionId> {
@@ -129,12 +133,20 @@ export function leaderboard(level: Level, events: PastEvent[], limit: number, li
       enrollment: enrollmentOf(r.school),
       division,
       divisionRank: next(division),
+      divisionTier: null,
       lsat: lsatOf(r.school),
       gpa: gpaOf(r.school),
       selectivity,
       selectivityRank: next(selectivity),
+      selectivityTier: null,
     };
   });
+  const sizeOf = new Map<TierId, number>();
+  for (const r of rows) for (const id of [r.division, r.selectivity]) if (id) sizeOf.set(id, (sizeOf.get(id) ?? 0) + 1);
+  for (const r of rows) {
+    r.divisionTier = r.division ? tierInGroup(r.divisionRank!, sizeOf.get(r.division)!) : null;
+    r.selectivityTier = r.selectivity ? tierInGroup(r.selectivityRank!, sizeOf.get(r.selectivity)!) : null;
+  }
   return {
     level,
     updatedAt: now.toISOString(),

@@ -189,3 +189,4 @@ Moving only the start, and leaving the K=10 line at 2400, would not have been a 
 
 Chris replaced the US Chess class names (Expert, Class A and so on) with plain tiers by overall rank: Tier 1 is ranks 1–10, Tier 2 is 11–25, Tier 3 is 26–50, Tier 4 is 51–100, and Tier 5 is the rest. Provisional schools get a tier like any other and keep their `*`. Tiers are labels only; ratings are unchanged. The published `ratings.csv` has a `tier` column (1–5) in place of `class`, and `/api/ratings` sends `tier` in place of `class`.
 
+Tiers inside groups (Chris, 28 November 2026): within each size division and LSAT group, schools also get a Tier 1–5 by their place in that group, using shares instead of fixed ranks because the groups differ in size: top 5% Tier 1, through 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5 (each cutoff rounded up). For 80 small schools that is places 1–4, 5–11, 12–20, 21–40 and 41–80. `/api/ratings` sends `divisionTier` and `selectivityTier`.

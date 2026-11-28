@@ -37,6 +37,14 @@ export const TIERS: { tier: number; maxRank: number }[] = [
 ];
 /** Tier number for an overall rank (1 = best). */
 export const tierOfRank = (rank: number) => TIERS.find((t) => rank <= t.maxRank)!.tier;
+/** Shares of a group that each tier covers, for tiers inside a size division or LSAT group (which differ in
+ * size): about the same split as the overall tiers (10, 25, 50 and 100 of ~200 schools). */
+export const GROUP_TIER_SHARES = [0.05, 0.13, 0.25, 0.5];
+/** Tier number for a place within a group of groupSize schools. */
+export const tierInGroup = (place: number, groupSize: number) => {
+  const i = GROUP_TIER_SHARES.findIndex((s) => place <= Math.ceil(s * groupSize));
+  return i < 0 ? GROUP_TIER_SHARES.length + 1 : i + 1;
+};
 /** "Tier 1" etc. */
 export const tierLabel = (rank: number) => `Tier ${tierOfRank(rank)}`;
 /** Human-readable tier ranges, e.g. "Tier 1: ranks 1–10". */
