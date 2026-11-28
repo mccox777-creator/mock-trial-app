@@ -10,7 +10,7 @@ const ev = (id: string, ord: number, results: PastEvent['results'], participants
 const W = (s: string) => ({ school: s, team: s, finish: 'winner' as const, place: 1 });
 const F = (s: string) => ({ school: s, team: s, finish: 'finalist' as const, place: 2 });
 
-// Everyone starts at START (2300); ratings are zero-sum within an event.
+// Everyone starts at START (2000); ratings are zero-sum within an event.
 const r1 = computeElo([ev('a', 0, [W('A'), F('B')], ['A', 'B', 'C', 'D'])]);
 assert.equal([...r1.values()].reduce((s, r) => s + r.rating, 0), 4 * START);
 assert.ok(r1.get('A')!.rating > r1.get('B')!.rating && r1.get('B')!.rating > r1.get('C')!.rating);

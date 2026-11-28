@@ -1,7 +1,7 @@
 // Chess-style Elo ratings for schools, from competition finishes.
 //
-// Same rules as chess: everyone starts at 2300 (Chris chose a chess-like scale on 2026-11-28; until then
-// the start was 1500, and every rating is exactly 800 higher than it was), the expected score against an opponent is
+// Same rules as chess: everyone starts at 2000 (Chris chose a chess-like scale on 2026-11-28: first 2300,
+// then 2000 the same day; the original start was 1500, and every rating is exactly 500 higher than on that scale), the expected score against an opponent is
 // 1 / (1 + 10^((their rating - yours) / 400)), and after each event a rating moves by K x (actual - expected).
 // A competition counts like a short chess tournament: finishing above a school is a win against it,
 // finishing below is a loss, and schools that finish in the same round (two semifinalists, or two teams
@@ -13,10 +13,10 @@ import type { PastEvent } from './types';
 /** "UCLA 2" -> "UCLA" (kept here so this file runs without the app bundler). */
 const schoolOfTeam = (team: string) => team.replace(/\s+(\d|I{1,3}|[AB])$/, '');
 
-export const START = 2300;
+export const START = 2000;
 /** How far this scale sits above the old 1500 start and the US Chess numbers below. Ratings only depend on
  * differences, so moving the start, and the K cutoff by the same amount changes nothing else. */
-export const SCALE_SHIFT = 800;
+export const SCALE_SHIFT = 500;
 export const GAMES_PER_EVENT = 8;
 /** Like FIDE: new schools move fast, established ones slower, the very top slowest. */
 export function kFactor(rating: number, eventsPlayed: number) {

@@ -10,8 +10,8 @@ The rules are in https://app.mocktrialcentral.com/ratings (the "How ratings are 
 """
 import csv, json, re, sys
 
-START, GAMES, PROVISIONAL = 2300, 8, 5
-K_TOP = 3200  # K drops to 10 at this rating (FIDE's 2400, on this scale, which starts 800 above chess's 1500)
+START, GAMES, PROVISIONAL = 2000, 8, 5
+K_TOP = 2900  # K drops to 10 at this rating (FIDE's 2400, on this scale, which starts 500 above chess's 1500)
 MONTHS = {m: i + 1 for i, m in enumerate('jan feb mar apr may jun jul aug sep oct nov dec'.split())}
 TIER = {'winner': 0, 'advanced': 0, 'finalist': 1, 'semifinalist': 2, 'quarterfinalist': 3, 'octofinalist': 4}
 
