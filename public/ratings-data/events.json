@@ -3941,7 +3941,7 @@
   "name": "AAJ Region - New York",
   "host": "Fordham & Hofstra",
   "region": null,
-  "dates": null,
+  "dates": "March 5-8",
   "teamCount": 18,
   "schoolCount": 16,
   "results": [
@@ -4025,7 +4025,7 @@
   "name": "AAJ Region - Philadelphia",
   "host": "Drexel & Temple",
   "region": null,
-  "dates": null,
+  "dates": "March 5-8",
   "teamCount": 18,
   "schoolCount": 15,
   "results": [
@@ -4109,7 +4109,7 @@
   "name": "AAJ Region - Annapolis",
   "host": "Georgetown & Maryland",
   "region": null,
-  "dates": null,
+  "dates": "March 5-8",
   "teamCount": 18,
   "schoolCount": 16,
   "results": [
@@ -4193,7 +4193,7 @@
   "name": "AAJ Region - Columbia",
   "host": "Campbell & South Carolina",
   "region": null,
-  "dates": null,
+  "dates": "March 5-8",
   "teamCount": 18,
   "schoolCount": 15,
   "results": [
@@ -4277,7 +4277,7 @@
   "name": "AAJ Region - Chicago",
   "host": "Chicago Kent & Northwestern",
   "region": null,
-  "dates": null,
+  "dates": "March 5-8",
   "teamCount": 18,
   "schoolCount": 14,
   "results": [
@@ -4361,7 +4361,7 @@
   "name": "AAJ Region - Houston",
   "host": "Baylor & Houston",
   "region": null,
-  "dates": null,
+  "dates": "March 5-8",
   "teamCount": 18,
   "schoolCount": 14,
   "results": [
@@ -4445,7 +4445,7 @@
   "name": "AAJ Region - Pittsburgh",
   "host": "Pittsburgh & Duquesne",
   "region": null,
-  "dates": null,
+  "dates": "March 5-8",
   "teamCount": 18,
   "schoolCount": 16,
   "results": [
@@ -4529,7 +4529,7 @@
   "name": "AAJ Region - Portland",
   "host": "Lewis &Clark / San Diego",
   "region": null,
-  "dates": null,
+  "dates": "March 5-8",
   "teamCount": 18,
   "schoolCount": 16,
   "results": [
@@ -4613,7 +4613,7 @@
   "name": "AAJ Region - Virtual East St. Thomas",
   "host": "Nova Southeastern &",
   "region": null,
-  "dates": null,
+  "dates": "March 5-8",
   "teamCount": 18,
   "schoolCount": 17,
   "results": [
@@ -4697,7 +4697,7 @@
   "name": "AAJ Region - Virtual Mountain",
   "host": "St. Mary's & UCLA",
   "region": null,
-  "dates": null,
+  "dates": "March 5-8",
   "teamCount": 18,
   "schoolCount": 17,
   "results": [
@@ -9475,7 +9475,7 @@
   "name": "AAJ Region 1 - New York",
   "host": "Fordham",
   "region": null,
-  "dates": null,
+  "dates": "March 6-9",
   "teamCount": 16,
   "schoolCount": 15,
   "results": [
@@ -9533,7 +9533,7 @@
   "name": "AAJ Region 2 - Philadelphia",
   "host": "Temple",
   "region": null,
-  "dates": null,
+  "dates": "March 6-9",
   "teamCount": 16,
   "schoolCount": 15,
   "results": [
@@ -9591,7 +9591,7 @@
   "name": "AAJ Region 3 - DC 16Teams, 14 Schools)",
   "host": "Baltimore & Maryland",
   "region": null,
-  "dates": null,
+  "dates": "March 6-9",
   "teamCount": null,
   "schoolCount": null,
   "results": [
@@ -9649,7 +9649,7 @@
   "name": "AAJ Region 4: - Raleigh",
   "host": "Campbell & South Carolina",
   "region": null,
-  "dates": null,
+  "dates": "March 6-9",
   "teamCount": 16,
   "schoolCount": 14,
   "results": [
@@ -9707,7 +9707,7 @@
   "name": "AAJ Region 5 - Chicago",
   "host": "Cumberland",
   "region": null,
-  "dates": null,
+  "dates": "March 6-9",
   "teamCount": 16,
   "schoolCount": 15,
   "results": [
@@ -9767,7 +9767,7 @@
   "name": "AAJ Region 6: - Houston",
   "host": "Baylor & Houston",
   "region": null,
-  "dates": null,
+  "dates": "March 6-9",
   "teamCount": 16,
   "schoolCount": 14,
   "results": [
@@ -9825,7 +9825,7 @@
   "name": "AAJ Region 7 - Denver",
   "host": "UC Berkeley",
   "region": null,
-  "dates": null,
+  "dates": "March 6-9",
   "teamCount": 16,
   "schoolCount": 15,
   "results": [
@@ -9883,7 +9883,7 @@
   "name": "AAJ Region 8 - San Francisco",
   "host": "??",
   "region": null,
-  "dates": null,
+  "dates": "March 6-9",
   "teamCount": 16,
   "schoolCount": 16,
   "results": [
@@ -9941,7 +9941,7 @@
   "name": "AAJ Region 9 - Virtual East",
   "host": "Florida State",
   "region": null,
-  "dates": null,
+  "dates": "March 6-9",
   "teamCount": 16,
   "schoolCount": 15,
   "results": [
@@ -9999,7 +9999,7 @@
   "name": "AAJ Region 10 - Virtual Mountain",
   "host": "UCLA",
   "region": null,
-  "dates": null,
+  "dates": "March 6-9",
   "teamCount": 16,
   "schoolCount": 15,
   "results": [
@@ -10057,7 +10057,7 @@
   "name": "AAJ Nationals",
   "host": "",
   "region": null,
-  "dates": null,
+  "dates": "April 3-6",
   "teamCount": 20,
   "schoolCount": 19,
   "results": [

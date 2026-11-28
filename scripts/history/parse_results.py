@@ -57,6 +57,23 @@ ST_THOMAS_AT = {('2024-25', 'Fall', 'Gold Cup Trial Competition'): 'St. Thomas (
 # the Spring 2025 entry repeats the Fall 2024 one (same final four: NYU, Georgetown, Drexel, Fordham).
 DUPLICATES = {('2024-25', 'Spring', "St. John's Civil Rights")}
 
+# Dates the record leaves blank, from the organizer, so these competitions are rated in the right order.
+# AAJ STAC 2025: regionals March 6-9, national finals April 3-6 in Atlanta (justice.org STAC 2025 page; Campbell Law
+# news, Feb 1 and Mar 10, 2025). AAJ STAC 2026: regionals March 5-8 (justice.org search listing); the record already
+# dates the national finals March 26-29.
+DATES = {
+    **{i: 'March 6-9' for i in (
+        '2024-25-spring-aaj-region-1-new-york', '2024-25-spring-aaj-region-2-philadelphia',
+        '2024-25-spring-aaj-region-3-dc-16teams-14-schools', '2024-25-spring-aaj-region-4-raleigh',
+        '2024-25-spring-aaj-region-5-chicago', '2024-25-spring-aaj-region-6-houston', '2024-25-spring-aaj-region-7-denver',
+        '2024-25-spring-aaj-region-8-san-francisco', '2024-25-spring-aaj-region-9-virtual-east',
+        '2024-25-spring-aaj-region-10-virtual-mountain')},
+    '2024-25-spring-aaj-nationals': 'April 3-6',
+    **{f'2025-26-spring-aaj-region-{r}': 'March 5-8' for r in (
+        'new-york', 'philadelphia', 'annapolis', 'columbia', 'chicago', 'houston', 'pittsburgh', 'portland',
+        'virtual-east-st-thomas', 'virtual-mountain')},
+}
+
 
 def resolve_schools(ev):
     """Make results and participants name the same school, and pin down 'St. Thomas' where the event says which one."""
@@ -386,7 +403,7 @@ def for_app(evs, level='law_school'):
         used.add(rid)
         out.append({
             'id': rid, 'level': level, 'season': e['season'], 'term': e['term'], 'name': name, 'host': e['host'], 'region': e['region'],
-            'dates': e['dates'], 'teamCount': e['teams'], 'schoolCount': e['schools'],
+            'dates': e['dates'] or DATES.get(rid), 'teamCount': e['teams'], 'schoolCount': e['schools'],
             'results': [{k: r[k] for k in ('school', 'team', 'finish', 'place', 'source') if k in r} for r in e['results']],
             'participants': [p['team'] for p in e['participants']],
             'needsReview': bool(e['unparsed']),
