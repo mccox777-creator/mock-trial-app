@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { Body, Button, Card, Empty, Field, H1, H2, Label, Loading, Pill, Row, Screen, Segmented } from '../components/ui';
 import { useStore } from '../lib/store';
 import { fmtDateTime, fmtRange } from '../lib/format';
-import type { AdminMember, OrganizerRequest, Report } from '../lib/types';
+import { LEVELS, type AdminMember, type OrganizerRequest, type Report } from '../lib/types';
 
 const KIND: Record<Report['kind'], string> = { tournament: 'Competition', bulletin: 'Bulletin', message: 'Chat message', case: 'Case', team: 'Team', user: 'Person' };
 
@@ -154,14 +154,14 @@ export default function AdminScreen() {
         <>
           <Body muted>
             {me.isOwner
-              ? 'You are the owner. Admins can approve organizers, review listings, handle reports and read the rating math. Only you can add or remove admins.'
-              : 'Admins can approve organizers, review listings, handle reports and read the rating math. Only the owner can add or remove admins.'}
+              ? 'You are the owner, for every level. Each admin works only in the level they signed up for (law school, collegiate or high school): they approve organizers, review listings, handle reports and read the rating math there. Only you can add or remove admins.'
+              : 'Each admin works only in their own level: approving organizers, reviewing listings, handling reports and reading the rating math. Only the owner can add or remove admins.'}
           </Body>
           {admins.map((a) => (
             <Card key={a.userId}>
               <Row>
                 <H2>{a.name}</H2>
-                <Pill text={a.role === 'owner' ? 'Owner' : 'Admin'} tone={a.role === 'owner' ? 'good' : 'neutral'} />
+                <Pill text={a.role === 'owner' ? 'Owner · every level' : `Admin · ${LEVELS.find((l) => l.id === a.level)?.label ?? a.level}`} tone={a.role === 'owner' ? 'good' : 'neutral'} />
               </Row>
               <Body muted>{`${a.email} · since ${fmtDateTime(a.addedAt)}`}</Body>
               {me.isOwner && a.role !== 'owner' && (
@@ -174,7 +174,7 @@ export default function AdminScreen() {
               <H2>Add an admin</H2>
               <Field
                 label="Their email"
-                hint="The email they sign in with. They need to have signed in to the app once."
+                hint="The email they sign in with. They need to have signed in to the app once. They become an admin for the level they signed up for."
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
