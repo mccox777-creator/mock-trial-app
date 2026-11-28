@@ -18,8 +18,8 @@
     "place": 1
    },
    {
-    "school": "St. Thomas",
-    "team": "St. Thomas",
+    "school": "St. Thomas (FL)",
+    "team": "St. Thomas (FL)",
     "finish": "finalist",
     "place": 2
    },
@@ -44,7 +44,7 @@
    "Hofstra",
    "Seton Hall",
    "St. John's",
-   "St. Thomas",
+   "St. Thomas (FL)",
    "Suffolk",
    "Villanova"
   ],
@@ -249,7 +249,7 @@
    "Cumberland",
    "Fordham",
    "Hofstra",
-   "Loyola",
+   "Loyola LA",
    "St. Mary's",
    "Stetson",
    "Temple",

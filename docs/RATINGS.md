@@ -194,9 +194,13 @@ Chris replaced the US Chess class names (Expert, Class A and so on) with tiers, 
 - Schools without ABA data (for example Purdue Global and West LA) have no peer group and no tier; they still appear in the overall list.
 - Labels only: ratings are unchanged. `ratings.csv` drops the `class` column. `/api/ratings` sends `group` (`{id, label}`) and `groupTier` per row; the size and LSAT tab fields are unchanged.
 
-## Fix, 28 November 2026: two more "St. Thomas" entries identified
+## Fix, 28 November 2026: unlabeled "St. Thomas" and "Loyola" entries identified
 
-Using Chris's TCPR spreadsheet: only St. Thomas (FL) entered the 2025-26 All Star Bracket Challenge, so the "St. Thomas" in Region C is St. Thomas (FL). The 2023-24 AAJ Region 9 field (Mitchell Hamline, Marquette, Creighton) is the upper Midwest and West, and TCPR has St. Thomas (MN) entering the AAJ competition that year, so that entry is St. Thomas (MN). Both are pinned in `ST_THOMAS_AT` in parse_results.py. St. Thomas (MN) moves from 2143 to 2124 and St. Thomas (FL) from 2536 to 2535; no other school moves more than 4 points.
+- **2025-26 All Star Bracket Challenge, Region C: St. Thomas (FL).** In Chris's TCPR spreadsheet, St. Thomas (FL) is the only St. Thomas entered in that year's All Star.
+- **2023-24 AAJ Region 9: St. Thomas (MN).** The field (Mitchell Hamline, Marquette, Creighton) is upper Midwest and West, and TCPR has St. Thomas (MN) entering AAJ that year.
+- **2026-27 First Chair, Philadelphia: St. Thomas (FL).** The STU trial team's own post (screenshot from Chris) says its team reached the First Chair final at Drexel. With this, no unlabeled "St. Thomas" is left, so 195 schools are rated.
+- **2026-27 Battle of the Experts: Loyola LA.** The participant list said "Loyola", but the results name Loyola LA as a semifinalist. The event had "10 teams, 10 schools", so the record was counting one Loyola LA team as two competitors.
 
-Still unidentified, because TCPR has no Fall 2026 data yet: the "St. Thomas" finalist at First Chair Philadelphia (Fall 2026), and "Loyola" at Battle of the Experts and at the Cumberland/Mercer All Star site (Fall 2026). Loyola LA and Loyola Chicago are listed separately at those events.
+The St. Thomas entries are pinned in `ST_THOMAS_AT` and the Loyola entry in `LOYOLA_AT`, both in parse_results.py. Effect: St. Thomas (FL) goes from 2536 (11th) to 2561 (8th), St. Thomas (MN) from 2143 to 2124, and no other named school moves more than 5 points.
 
+Still unidentified: "Loyola" at the Cumberland/Mercer All Star site (Fall 2026). It is that entry's only competition.

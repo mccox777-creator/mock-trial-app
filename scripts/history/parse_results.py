@@ -60,6 +60,14 @@ ST_THOMAS_AT = {
     ('2025-26', 'Fall', 'All Star Bracket Challenge'): 'St. Thomas (FL)',
     # AAJ Region 9 is the upper Midwest/West (Mitchell Hamline, Marquette, Creighton); TCPR has St. Thomas (MN) entering STAC that year.
     ('2023-24', 'Spring', 'AAJ Region 9'): 'St. Thomas (MN)',
+    # STU (Miami) trial team Instagram: its team reached the First Chair final at Drexel (Sept 2026).
+    ('2026-27', 'Fall', 'First Chair National Trial Competition'): 'St. Thomas (FL)',
+}
+# Unlabeled "Loyola" pinned where the event shows which one.
+LOYOLA_AT = {
+    # Results name Loyola LA a semifinalist; the field is "10 teams, 10 schools", so the participant "Loyola" is Loyola LA
+    # (the 2025 field was the same ten schools with Loyola LA).
+    ('2026-27', 'Fall', 'Battle of the Experts'): 'Loyola LA',
 }
 
 # Events the record lists twice. The St. John's Peter James Johnson Civil Rights competition is held each October;
@@ -91,9 +99,12 @@ def resolve_schools(ev):
         schools.add('St. Thomas (MN)')  # Region 12 is the upper Midwest; the 2026 record names St. Thomas (MN) there.
     florida = bool(schools & FLORIDA) or re.search(r'florida|zehmer|bedell', ' '.join(ev['source'] + [ev['name'] or '']), re.I)
     pinned = ST_THOMAS_AT.get((ev['season'], ev['term'], re.sub(r'\(\s*\)', '', ev['name'] or '').strip()))
+    loyola = LOYOLA_AT.get((ev['season'], ev['term'], re.sub(r'\(\s*\)', '', ev['name'] or '').strip()))
     def fix(school):
         if school == 'St. Thomas' and pinned:
             return pinned
+        if school == 'Loyola' and loyola:
+            return loyola
         if school == 'St. Thomas':
             if 'St. Thomas (FL)' in schools or (florida and 'St. Thomas (MN)' not in schools):
                 return 'St. Thomas (FL)'
