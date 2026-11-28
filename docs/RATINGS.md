@@ -51,6 +51,22 @@ they are out of date.
 
 The code is in [`src/lib/elo.ts`](../src/lib/elo.ts).
 
+## Size divisions
+
+Like college football, schools are also grouped by size, so a small school can see where it stands against schools its own size. **The rating math does not change.** Every school keeps one rating built from every competition it entered, so a small school's wins over large schools still count in full (and Elo already gives more points for beating a higher-rated school). Divisions only decide which extra list a school appears in, next to the overall list.
+
+| Division | Total JD enrollment |
+| --- | --- |
+| Large | 800 and up |
+| Mid-size | 500 to 799 |
+| Small | under 500 |
+
+Size is total JD enrollment (all class years, full and part time) from the ABA's Standard 509 compilation, "JD Enrollment and Ethnicity", 2025 report (https://www.abarequireddisclosures.org/requiredDisclosure/). The figures and how each rated school was matched to the ABA's name are in `src/data/school-enrollment.json`, built by `python3 scripts/enrollment/build.py` from `scripts/enrollment/aba-2025-jd-enrollment.tsv`.
+
+Schools with no ABA figure appear only in the overall list: Purdue Global, West LA and Birmingham (not ABA-approved), Golden Gate and Thomas Jefferson (no 2025 report), and the record's unlabeled "Loyola" and "St. Thomas". Matching notes: Penn State and Penn State Dickinson use the merged school's 2025 figure; "Widener" is taken as Widener Delaware; Yeshiva is Cardozo and North Texas is UNT Dallas (each is still rated under both names in the record).
+
+The cutoffs are in `src/lib/divisions.ts`. Update the enrollment file once a year when the ABA publishes new 509 data (each December).
+
 ## The data
 
 The results come from the circuit record of law school competitions, read by
