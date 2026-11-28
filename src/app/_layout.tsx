@@ -35,6 +35,7 @@ function Nav() {
       <Stack.Screen name="history/[id]" options={{ title: 'Past competition' }} />
       <Stack.Screen name="history/school" options={{ title: 'School record' }} />
       <Stack.Screen name="privacy" options={{ title: 'Privacy' }} />
+      <Stack.Screen name="support" options={{ title: 'Help' }} />
       <Stack.Screen name="ratings" options={{ title: 'Mock Trial ELO Ratings' }} />
       <Stack.Screen name="case/new" options={{ title: 'Release a case', presentation: 'modal' }} />
       <Stack.Screen name="bulletin/new" options={{ title: 'Post a bulletin', presentation: 'modal' }} />
