@@ -46,6 +46,12 @@
       ],
       "expo-notifications"
     ],
-    "scheme": "mocktrial"
+    "scheme": "mocktrial",
+    "owner": "mccox777",
+    "extra": {
+      "eas": {
+        "projectId": "ab7cc11c-dfde-4530-902b-c46f111f3a9f"
+      }
+    }
   }
 }
