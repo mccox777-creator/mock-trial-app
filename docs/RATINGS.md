@@ -203,8 +203,4 @@ Chris replaced the US Chess class names (Expert, Class A and so on) with tiers, 
 
 The St. Thomas entries are pinned in `ST_THOMAS_AT` and the Loyola entry in `LOYOLA_AT`, both in parse_results.py. Effect: St. Thomas (FL) goes from 2536 (11th) to 2561 (8th), St. Thomas (MN) from 2143 to 2124, and no other named school moves more than 5 points.
 
-<<<<<<< HEAD
 Still unidentified: "Loyola" at the Cumberland/Mercer All Star site (Region C, Fall 2026). Elsewhere in the record, "Loyola LA" means Loyola Marymount (it hosts events in Los Angeles, and Loyola New Orleans is listed under its own name), so that label does not settle it. It is that entry's only competition.
-=======
-Still unidentified: "Loyola" at the Cumberland/Mercer All Star site (Fall 2026). It is that entry's only competition.
->>>>>>> parent of cb5dee8 (Ratings: All Star 2026 Cumberland/Mercer 'Loyola' is Loyola Marymount (Chris))
