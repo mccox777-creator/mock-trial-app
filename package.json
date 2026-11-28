@@ -18,6 +18,7 @@
     "expo-router": "~58.0.33",
     "expo-secure-store": "~58.0.3",
     "expo-status-bar": "~58.0.5",
+    "expo-updates": "~58.0.23",
     "expo-web-browser": "~58.1.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
@@ -42,7 +43,8 @@
     "check:elo": "node --experimental-strip-types --no-warnings scripts/check-elo.ts",
     "check:pairings": "node --experimental-strip-types --no-warnings scripts/check-pairings.ts",
     "ratings:export": "node --experimental-strip-types --no-warnings scripts/export-ratings.ts",
-    "ios:build": "npx eas-cli@latest build --platform ios --profile production --auto-submit"
+    "ios:build": "npx eas-cli@latest build --platform ios --profile production --auto-submit",
+    "ios:update": "npx eas-cli@latest update --channel production --auto --non-interactive"
   },
   "private": true
 }

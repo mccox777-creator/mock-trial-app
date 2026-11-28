@@ -29,6 +29,24 @@ You need: the Apple developer account, a free Expo account (expo.dev), and Node 
 
 Later builds: `npm run ios:build` again. The build number goes up automatically.
 
+## Updates without a new build
+
+Most changes reach installed iPhones without a new App Store build:
+
+- **Results and ratings.** The app downloads the latest results record from the website
+  (`/ratings-data/events.json`) whenever it loads past results, keeps the last copy for offline use, and falls back to
+  the copy it was built with. A merged results change shows up on phones as soon as the website updates.
+- **Everything else in the app's screens and logic** goes out as an over-the-air update (EAS Update). The
+  `iPhone update` GitHub workflow publishes one on every merge to main; phones download it in the background and use
+  it the next time the app is opened. It needs a repository secret `EXPO_TOKEN` (create a token at expo.dev, account
+  settings, Access tokens; add it in GitHub under Settings, Secrets and variables, Actions). Without the secret the
+  workflow skips. You can also publish by hand with `npm run ios:update`.
+- Updates only reach builds made after over-the-air updates were added (build 4 onward).
+
+A new build (`npm run ios:build`) is still needed when a change adds native code, such as a new Expo package with
+native parts, or changes app.json settings like permissions or the icon. When that happens, raise `"version"` in
+app.json (for example 1.0.0 to 1.1.0) so older builds don't receive an update they can't run.
+
 ## What the Apple review will look for
 
 - A way to delete an account inside the app: Me tab, "Delete my account" (migration 0008, `delete_my_account()`).
