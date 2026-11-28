@@ -62,7 +62,11 @@ The results come from the circuit record of law school competitions, read by
 - expands "Cumberland x 3" and "Case Western 1, 2, 3, 4, & 5" into separate teams;
 - matches a result to the school named in the participant list ("St. Thomas" wins, "St. Thomas (FL)" took part), and treats
   an unqualified St. Thomas at a Florida competition as St. Thomas (FL) and at NTC Region 12 as St. Thomas (MN), and
-  "Benjamin Crump" (St. Thomas (FL)'s law school) as St. Thomas (FL).
+  "Benjamin Crump" (St. Thomas (FL)'s law school) as St. Thomas (FL);
+- treats the St. Thomas at the Gold Cup, Fall 2024, as St. Thomas (FL), which St. Thomas (FL)'s law school confirmed
+  in its own post about reaching the national semifinals there (TCPR agrees);
+- drops the Spring 2025 "St. John's Civil Rights" entry, a second copy of the Peter James Johnson Civil Rights
+  competition from Fall 2024 (same final four). St. John's holds that competition each October.
 
 ### Gaps filled from TCPR
 
@@ -85,14 +89,12 @@ Where TCPR and the record disagree, the record stands. The main case is the Char
 
 ### Known gaps
 
-- A few results say only "St. Thomas" (4 competitions) or "Loyola" (2) without saying which school. They are rated as
+- A few results say only "St. Thomas" (3 competitions) or "Loyola" (2) without saying which school. They are rated as
   separate entries until the record is corrected.
 - Online competitions split into divisions are rated as one competition, so a division winner counts as finishing ahead
   of other divisions' semifinalists.
 - Some participant lists in the record are shorter than the stated team count, so a few schools that took part may be
   missing from those competitions. A missing school simply has no games there.
-- St. John's Civil Rights appears twice in the record, as the Peter James Johnson competition in Fall 2024 and again
-  in Spring 2025 with the same results. Both are rated until the record is corrected.
 
 ## Audit, 27 November 2026
 
