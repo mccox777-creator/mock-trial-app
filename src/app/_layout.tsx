@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StoreProvider } from '../lib/store';
 import { useTheme } from '../lib/theme';
 import { PrivacyBanner } from '../components/PrivacyBanner';
+import { BackButton, HomeButton } from '../components/NavButtons';
 
 function Nav() {
   const c = useTheme();
@@ -14,6 +15,9 @@ function Nav() {
         headerTitleStyle: { color: c.ink, fontWeight: '700' },
         contentStyle: { backgroundColor: c.bg },
         headerBackButtonDisplayMode: 'minimal',
+        // Every page gets Back (one step) and Home, including pages opened straight from a link.
+        headerLeft: () => <BackButton />,
+        headerRight: () => <HomeButton />,
       }}
     >
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
