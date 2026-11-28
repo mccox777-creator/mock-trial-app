@@ -1,7 +1,7 @@
 import { Body, Card, H1, H2, Screen } from '../components/ui';
 
-/** Who to write to about privacy requests. Set before launch. */
-export const PRIVACY_CONTACT = '';
+/** Who to write to about privacy requests and support. Also shown on the Help page. */
+export const PRIVACY_CONTACT = 'admin@courtroomdrills.com';
 
 const SECTIONS: { title: string; body: string[] }[] = [
   {

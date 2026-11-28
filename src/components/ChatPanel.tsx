@@ -6,6 +6,8 @@ import { canPost, channelsFor, chatRole, postingNote } from '../lib/chat';
 import { fmtDateTime } from '../lib/format';
 import type { ChatChannel, Message, Tournament } from '../lib/types';
 import { radius, space, useTheme } from '../lib/theme';
+import { useBlocked } from '../lib/blocked';
+import { ReportButton } from './Moderation';
 
 const ROLE_LABEL: Record<string, string> = { organizer: 'Organizer', judge: 'Judge', coach: 'Coach', competitor: 'Competitor' };
 
@@ -17,11 +19,14 @@ export function ChatPanel({ t }: { t: Tournament }) {
   const [draft, setDraft] = useState('');
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const { blocked, block, unblock } = useBlocked();
   const role = data ? chatRole(t, me, data) : null;
   const msgs = useMemo(
     () => (data ? data.messages.filter((m) => m.tournamentId === t.id && m.channel === channel).sort((a, b) => a.createdAt.localeCompare(b.createdAt)) : []),
     [data, t.id, channel],
   );
+  const hiddenCount = msgs.filter((m) => m.authorId && blocked.includes(m.authorId) && m.authorId !== me?.id).length;
+  const shown = msgs.filter((m) => !(m.authorId && blocked.includes(m.authorId) && m.authorId !== me?.id));
   if (!data || !role) return <Empty title="Chat is for this competition's teams, judges, and organizer" body="Once your team or your judging is confirmed, the conversation shows up here." />;
   const channels = channelsFor(role);
   const postable = canPost(t, role, channel);
@@ -54,10 +59,16 @@ export function ChatPanel({ t }: { t: Tournament }) {
           <Button small kind="ghost" title={t.chatReplies === false ? 'Allow replies' : 'Announcements only'} onPress={() => save('tournaments', { ...t, chatReplies: t.chatReplies === false })} />
         </Row>
       )}
-      {msgs.length === 0 ? (
+      {hiddenCount > 0 && (
+        <Row style={{ justifyContent: 'space-between', flexWrap: 'nowrap' }}>
+          <Body muted style={{ flex: 1 }}>{`${hiddenCount} message${hiddenCount === 1 ? '' : 's'} from people you hid.`}</Body>
+          <Button small kind="ghost" title="Show everyone" onPress={() => blocked.forEach((id) => unblock(id))} />
+        </Row>
+      )}
+      {shown.length === 0 ? (
         <Body muted>No messages here yet.</Body>
       ) : (
-        msgs.map((m) => {
+        shown.map((m) => {
           const mine = m.authorId === me?.id;
           const canDelete = mine || role === 'organizer';
           return (
@@ -75,7 +86,15 @@ export function ChatPanel({ t }: { t: Tournament }) {
               >
                 <Text style={{ color: mine ? c.accentInk : c.ink, fontSize: 15 }}>{m.body}</Text>
               </Pressable>
-              <Text style={{ color: c.muted, fontSize: 11, alignSelf: mine ? 'flex-end' : 'flex-start' }}>{fmtDateTime(m.createdAt.slice(0, 16))}</Text>
+              <Row style={{ gap: 12, alignSelf: mine ? 'flex-end' : 'flex-start' }}>
+                <Text style={{ color: c.muted, fontSize: 11 }}>{fmtDateTime(m.createdAt.slice(0, 16))}</Text>
+                {!mine && <ReportButton compact kind="message" targetId={m.id} what="message" />}
+                {!mine && m.authorId && (
+                  <Text accessibilityRole="button" onPress={() => block(m.authorId!)} style={{ color: c.muted, fontSize: 12, textDecorationLine: 'underline' }}>
+                    Hide this person
+                  </Text>
+                )}
+              </Row>
             </View>
           );
         })

@@ -138,6 +138,7 @@ export default function AccountScreen() {
       ) : (
         <Body muted>You are signed out. You can still browse schedules, rankings, case files, and bulletins.</Body>
       )}
+      <Button title="Help and support" kind="ghost" onPress={() => router.push('/support')} />
       <Button title="Privacy notice" kind="ghost" onPress={() => router.push('/privacy')} />
     </Screen>
   );
