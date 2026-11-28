@@ -432,11 +432,6 @@
    "enrollment": 246,
    "aba": "North Dakota, University of"
   },
-  "North Texas": {
-   "enrollment": 431,
-   "aba": "North Texas at Dallas, University of",
-   "note": "Same school as UNT Dallas (UNT Dallas College of Law)."
-  },
   "Northeastern": {
    "enrollment": 786,
    "aba": "Northeastern University"
@@ -795,11 +790,6 @@
   "Yale": {
    "enrollment": 626,
    "aba": "Yale University"
-  },
-  "Yeshiva": {
-   "enrollment": 946,
-   "aba": "Cardozo, Yeshiva University",
-   "note": "Same school as Cardozo (Benjamin N. Cardozo School of Law, Yeshiva University)."
   }
  }
 }

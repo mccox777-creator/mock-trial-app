@@ -28,6 +28,9 @@ ALIASES = {
     'southern university law center': 'Southern', 'new hampshire franklin pierce': 'New Hampshire', 'cleveland': 'Cleveland State',
     'umass': 'Massachusetts', 'texas a&m': 'Texas A&M', 'william and mary': 'William & Mary', 'lewis and clark': 'Lewis & Clark', 'louis & clark': 'Lewis & Clark',
     'mississippi christian': 'Mississippi College', 'southern california': 'USC',
+    # Chris 2026-11-28: one school each, rated twice under two names (Cardozo is Yeshiva University's law school;
+    # UNT Dallas College of Law is the only University of North Texas law school).
+    'yeshiva': 'Cardozo', 'north texas': 'UNT Dallas', 'unt': 'UNT Dallas', 'unt dallas': 'UNT Dallas',
     # Added in the 2026-11-27 audit: short or misspelled names that split one school into two.
     'johns': "St. John's", "john's": "St. John's", "mary's": "St. Mary's", 'thomas': 'St. Thomas',
     'st thomas': 'St. Thomas', 'st. thomas (florida)': 'St. Thomas (FL)', 'st. thomas (minnesota)': 'St. Thomas (MN)',
