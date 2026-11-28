@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Text } from 'react-native';
 import { router } from 'expo-router';
 import { Body, Button, Card, Field, H2, Label, Pill, Row, Segmented } from './ui';
 import { useStore } from '../lib/store';
@@ -15,7 +16,7 @@ const REASONS: { id: ReportReason; label: string }[] = [
 ];
 
 /** "Report" link that opens a short form. Goes to the platform admins only. */
-export function ReportButton({ kind, targetId, what }: { kind: ReportKind; targetId: string; what: string }) {
+export function ReportButton({ kind, targetId, what, compact }: { kind: ReportKind; targetId: string; what: string; compact?: boolean }) {
   const { me, backend } = useStore();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<ReportReason>('fake');
@@ -24,7 +25,14 @@ export function ReportButton({ kind, targetId, what }: { kind: ReportKind; targe
   const [busy, setBusy] = useState(false);
   if (!me) return null;
   if (done) return <Body muted>{done}</Body>;
-  if (!open) return <Button small kind="ghost" title={`Report this ${what}`} onPress={() => setOpen(true)} />;
+  if (!open)
+    return compact ? (
+      <Text accessibilityRole="button" onPress={() => setOpen(true)} style={{ color: '#8A94A6', fontSize: 12, textDecorationLine: 'underline' }}>
+        Report
+      </Text>
+    ) : (
+      <Button small kind="ghost" title={`Report this ${what}`} onPress={() => setOpen(true)} />
+    );
   return (
     <Card>
       <H2>{`Report this ${what}`}</H2>

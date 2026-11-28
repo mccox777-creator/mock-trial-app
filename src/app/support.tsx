@@ -27,6 +27,11 @@ export default function Support() {
         <Button title="How the ratings work" kind="ghost" onPress={() => router.push('/ratings')} />
       </Card>
       <Card>
+        <H2>Community rules</H2>
+        <Body>Competition chat and bulletins are for running competitions. There is no tolerance for abusive, harassing, hateful or sexual content, spam, or fake competitions.</Body>
+        <Body>Tap Report under any message, bulletin or competition to send it to the site admins, who review reports within 24 hours and remove content that breaks these rules. Tap Hide this person to stop seeing someone's messages and posts. People who break the rules lose access.</Body>
+      </Card>
+      <Card>
         <H2>Deleting your account</H2>
         <Body>Open the Me tab, tap Delete my account, and confirm. Your sign-in and personal details are removed right away.</Body>
       </Card>

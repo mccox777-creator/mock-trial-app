@@ -1,16 +1,20 @@
+import { Text } from 'react-native';
 import { router } from 'expo-router';
 import { Body, Button, Card, Empty, H2, Label, LevelSwitcher, Loading, Pill, Row, Screen } from '../../components/ui';
 import { useLevelData, useStore } from '../../lib/store';
 import { fmtDateTime } from '../../lib/format';
 import { KIND_LABEL } from '../../lib/labels';
+import { ReportButton } from '../../components/Moderation';
+import { useBlocked } from '../../lib/blocked';
 
 
 export default function BulletinsScreen() {
   const d = useLevelData();
   const { me } = useStore();
+  const { blocked, block } = useBlocked();
   if (!d) return <Loading />;
   const directs = me ? d.tournaments.some((t) => t.directorIds.includes(me.id)) || d.cases.some((c) => c.createdBy === me.id) : false;
-  const list = [...d.bulletins].sort((a, b) => b.postedAt.localeCompare(a.postedAt));
+  const list = [...d.bulletins].filter((b) => !(b.postedBy && blocked.includes(b.postedBy) && b.postedBy !== me?.id)).sort((a, b) => b.postedAt.localeCompare(a.postedAt));
 
   return (
     <Screen>
@@ -31,6 +35,16 @@ export default function BulletinsScreen() {
               <H2>{b.title}</H2>
               <Body>{b.body}</Body>
               {(t || cs) && <Body muted>{t ? t.name : cs!.title}</Body>}
+              {me && b.postedBy !== me.id && (
+                <Row style={{ gap: 12 }}>
+                  <ReportButton compact kind="bulletin" targetId={b.id} what="bulletin" />
+                  {b.postedBy && (
+                    <Text accessibilityRole="button" onPress={() => block(b.postedBy!)} style={{ color: '#8A94A6', fontSize: 12, textDecorationLine: 'underline' }}>
+                      Hide posts from this person
+                    </Text>
+                  )}
+                </Row>
+              )}
             </Card>
           );
         })
