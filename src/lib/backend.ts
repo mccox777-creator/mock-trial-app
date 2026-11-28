@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'react-native-url-polyfill/auto';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { sessionStorage } from './secureStorage';
-import type { AppData, Level, Notice, NotificationPrefs, OrganizerRequest, PastEvent, Profile, Report, ReportKind, ReportReason } from './types';
+import type { AdminMember, AppData, Level, Notice, NotificationPrefs, OrganizerRequest, PastEvent, Profile, Report, ReportKind, ReportReason } from './types';
 import { Platform } from 'react-native';
 import { sampleData, DEMO_USERS } from './sampleData';
 
@@ -109,6 +109,12 @@ export interface Backend {
     resolveReport(id: number, status: 'resolved' | 'dismissed'): Promise<void>;
     setListing(tournamentId: string, patch: { approved?: boolean; hidden?: boolean }): Promise<void>;
     removePost(kind: 'bulletin' | 'message', id: string): Promise<void>;
+    /** Everyone with the admin or owner role. */
+    admins(): Promise<AdminMember[]>;
+    /** Owner only: make the person who signs in with this email an admin. */
+    addAdmin(email: string): Promise<void>;
+    /** Owner only. The owner can't be removed. */
+    removeAdmin(userId: string): Promise<void>;
   };
 }
 
@@ -135,6 +141,11 @@ const DEMO_ADMIN: Backend['admin'] = {
   resolveReport: async () => {},
   setListing: async () => {},
   removePost: async () => {},
+  admins: async () => [{ userId: 'demo-director', name: 'Demo Director', email: 'director@example.edu', role: 'owner', addedAt: '2026-11-01T09:00:00' }],
+  addAdmin: async () => {
+    throw new Error('In the demo, admins can\'t be added. This works once you sign in on the live app.');
+  },
+  removeAdmin: async () => {},
 };
 
 function demoBackend(): Backend {
@@ -320,6 +331,7 @@ function supabaseBackend(url: string, anonKey: string): Backend {
         sb.from('organizer_requests').select('status').eq('user_id', u.id).maybeSingle(),
         sb.rpc('is_admin'),
       ]);
+      const { data: owner } = admin === true ? await sb.rpc('is_owner') : { data: false };
       return {
         id: u.id,
         email: u.email ?? '',
@@ -327,6 +339,7 @@ function supabaseBackend(url: string, anonKey: string): Backend {
         teamIds: (prof?.team_ids as string[]) ?? [],
         coachOf: (mine ?? []).filter((m) => m.role === 'coach').map((m) => m.team_id as string),
         isAdmin: admin === true,
+        isOwner: owner === true,
         organizer: (req?.status as Profile['organizer']) ?? 'none',
       };
     },
@@ -427,6 +440,19 @@ function supabaseBackend(url: string, anonKey: string): Backend {
       async removePost(kind, id) {
         const { error } = await sb.from(kind === 'bulletin' ? 'bulletins' : 'messages').delete().eq('id', id);
         if (error) throw error;
+      },
+      async admins() {
+        const { data, error } = await sb.rpc('list_admins');
+        if (error) throw error;
+        return ((data ?? []) as Record<string, unknown>[]).map((r) => mapKeys(r, toCamel) as unknown as AdminMember);
+      },
+      async addAdmin(email) {
+        const { error } = await sb.rpc('add_admin', { p_email: email.trim() });
+        if (error) throw new Error(error.message);
+      },
+      async removeAdmin(userId) {
+        const { error } = await sb.rpc('remove_admin', { p_user: userId });
+        if (error) throw new Error(error.message);
       },
     },
     async fileLink(ref) {
