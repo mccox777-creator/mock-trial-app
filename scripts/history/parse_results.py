@@ -57,6 +57,23 @@ ST_THOMAS_AT = {('2024-25', 'Fall', 'Gold Cup Trial Competition'): 'St. Thomas (
 # the Spring 2025 entry repeats the Fall 2024 one (same final four: NYU, Georgetown, Drexel, Fordham).
 DUPLICATES = {('2024-25', 'Spring', "St. John's Civil Rights")}
 
+# Dates the record leaves blank, from the organizer, so these competitions are rated in the right order.
+# AAJ STAC 2025: regionals March 6-9, national finals April 3-6 in Atlanta (justice.org STAC 2025 page; Campbell Law
+# news, Feb 1 and Mar 10, 2025). AAJ STAC 2026: regionals March 5-8 (justice.org search listing); the record already
+# dates the national finals March 26-29.
+DATES = {
+    **{i: 'March 6-9' for i in (
+        '2024-25-spring-aaj-region-1-new-york', '2024-25-spring-aaj-region-2-philadelphia',
+        '2024-25-spring-aaj-region-3-dc-16teams-14-schools', '2024-25-spring-aaj-region-4-raleigh',
+        '2024-25-spring-aaj-region-5-chicago', '2024-25-spring-aaj-region-6-houston', '2024-25-spring-aaj-region-7-denver',
+        '2024-25-spring-aaj-region-8-san-francisco', '2024-25-spring-aaj-region-9-virtual-east',
+        '2024-25-spring-aaj-region-10-virtual-mountain')},
+    '2024-25-spring-aaj-nationals': 'April 3-6',
+    **{f'2025-26-spring-aaj-region-{r}': 'March 5-8' for r in (
+        'new-york', 'philadelphia', 'annapolis', 'columbia', 'chicago', 'houston', 'pittsburgh', 'portland',
+        'virtual-east-st-thomas', 'virtual-mountain')},
+}
+
 
 def resolve_schools(ev):
     """Make results and participants name the same school, and pin down 'St. Thomas' where the event says which one."""
@@ -274,14 +291,18 @@ def build(block, participants, term, year):
                 ok = add(mo.group(1), 'winner', 1)
                 add(mo.group(2), 'finalist', 2)
         if not ok and re.search(r'\d(?:st|nd|rd|th)\b|\b(second|third|fourth|fifth)\b', c, re.I):
-            for seg in re.split(r'\.\s+|,\s+(?=[^,]*\d(?:st|nd|rd|th)|[^,]*\b(?:second|third|fourth|fifth)\b)', c):
-                mm = re.match(r'^(.+?)\s+(?:(?:was|were|tied for|took)\s+)?(\d|second|third|fourth|fifth)(?:st|nd|rd|th)?\b', seg.strip(), re.I)
+            for seg in re.split(r'(?<!\bSt)(?<!\bMt)\.\s+|,\s+(?=[^,]*\d(?:st|nd|rd|th)|[^,]*\b(?:second|third|fourth|fifth)\b)', c):
+                # A place needs its ordinal ("5th"), so the team number in "Charleston 2 was 5th" isn't read as 2nd place.
+                mm = re.match(r'^(.+?)\s+(?:(?:was|were|tied for|took)\s+)?(\d(?:st|nd|rd|th)|second|third|fourth|fifth)\b(.*)$', seg.strip(), re.I)
                 if not mm:
                     continue
-                word = mm.group(2).lower()
+                word = re.sub(r'^(\d)(st|nd|rd|th)$', r'\1', mm.group(2).lower())
                 place = {'second': 2, 'third': 3, 'fourth': 4, 'fifth': 5}.get(word) or int(word)
-                for n in names(mm.group(1)):
-                    ok = add(n, 'winner' if place == 1 else 'finalist' if place == 2 else 'place', place) or ok
+                # "Illinois Chicago was 2nd and 3rd": the school's teams took both places.
+                more = [int(x) for x in re.findall(r'\band\s+(\d)(?:st|nd|rd|th)\b', mm.group(3), re.I)]
+                for pl in [place] + more:
+                    for n in names(mm.group(1)):
+                        ok = add(n, 'winner' if pl == 1 else 'finalist' if pl == 2 else 'place', pl) or ok
         if not ok and re.match(r'^(champions?|semi-?finalists?|finalists?|winner|division \w+|region \w+)$', c, re.I):
             ok = True  # empty headings in the document
         if not ok:
@@ -382,7 +403,7 @@ def for_app(evs, level='law_school'):
         used.add(rid)
         out.append({
             'id': rid, 'level': level, 'season': e['season'], 'term': e['term'], 'name': name, 'host': e['host'], 'region': e['region'],
-            'dates': e['dates'], 'teamCount': e['teams'], 'schoolCount': e['schools'],
+            'dates': e['dates'] or DATES.get(rid), 'teamCount': e['teams'], 'schoolCount': e['schools'],
             'results': [{k: r[k] for k in ('school', 'team', 'finish', 'place', 'source') if k in r} for r in e['results']],
             'participants': [p['team'] for p in e['participants']],
             'needsReview': bool(e['unparsed']),

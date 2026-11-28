@@ -100,8 +100,9 @@ Where TCPR and the record disagree, the record stands. The main case is the Char
   separate entries until the record is corrected.
 - Online competitions split into divisions are rated as one competition, so a division winner counts as finishing ahead
   of other divisions' semifinalists.
-- Some participant lists in the record are shorter than the stated team count, so a few schools that took part may be
-  missing from those competitions. A missing school simply has no games there.
+- Some participant lists in the record are shorter than the stated team count: 52 competitions, about 340 of 4,860
+  teams (7%), mostly schools' second teams. A missing team simply has no games there, so a school's unlisted extra
+  team never counts against it.
 
 ## Audit, 27 November 2026
 
@@ -122,17 +123,28 @@ A school with several teams at a competition now has every team rated, and moves
 average of its teams' results. Before, only its best team counted. This lowers schools that often send extra teams that
 go out early (UCLA 2093 to 2021, San Diego 7th to 10th, Maryland 12th to 17th) and lifts schools that send one strong team.
 
-The top 10 now (after the TCPR gap fill):
+The top 10 now (28 November 2026, after the fixes below):
 
 | # | School | Rating | Class | Competitions |
 | --- | --- | --- | --- | --- |
-| 1 | UCLA | 2022 | Expert | 82 |
-| 2 | Drexel | 1873 | Class A | 55 |
-| 3 | Stetson | 1821 | Class A | 86 |
-| 4 | Harvard | 1791 | Class B | 43 |
-| 5 | Texas | 1769 | Class B | 44 |
-| 6 | American | 1767 | Class B | 34 |
-| 7 | Boston College | 1765 | Class B | 11 |
-| 8 | Georgetown | 1764 | Class B | 42 |
-| 9 | Mercer | 1759 | Class B | 67 |
-| 10 | Ohio State | 1737 | Class B | 20 |
+| 1 | UCLA | 2033 | Expert | 83 |
+| 2 | Drexel | 1871 | Class A | 54 |
+| 3 | Stetson | 1804 | Class A | 87 |
+| 4 | Harvard | 1787 | Class B | 43 |
+| 5 | Boston College | 1776 | Class B | 12 |
+| 6 | American | 1769 | Class B | 33 |
+| 7 | Texas | 1768 | Class B | 44 |
+| 8 | Mercer | 1759 | Class B | 67 |
+| 9 | Georgetown | 1749 | Class B | 42 |
+| 10 | Florida International | 1738 | Class B | 24 |
+
+## Second audit, 28 November 2026
+
+An independent re-implementation, written from the rules on this page alone, reproduces every published rating exactly
+(198 schools, matching ratings.csv, the live `/api/ratings` feed, and verify_ratings.py). The data review found two
+problems:
+
+| Problem | Effect | Fix |
+| --- | --- | --- |
+| In "Charleston 2 was 5th", the team number was read as the place, so the team was credited with 2nd. Same for "Baylor 2 was 5th", "San Diego 2 and St. Mary's were 3rd" and "Drexel 2 was 3rd" (all Fall 2026 Premiere sites); "Illinois Chicago was 2nd and 3rd" lost the 3rd-place team | Illinois Chicago 1502 to 1542, Houston and Baylor swap 14th/15th, San Diego and Florida International swap 11th/12th, Charleston down 8 | A place now needs its ordinal ("5th"), and "2nd and 3rd" credits both teams |
+| The AAJ regionals (Spring 2025 and Spring 2026) and AAJ Nationals (Spring 2025) had no dates, so they took the date of the competition listed before them. The 2026 regionals were rated after the 2026 national finals | Up to 16 points for schools that competed there (Syracuse, Colorado, NYU, UMKC) | Dates from AAJ: 2025 regionals March 6-9, finals April 3-6 (Atlanta); 2026 regionals March 5-8. Kept in `DATES` in parse_results.py |
