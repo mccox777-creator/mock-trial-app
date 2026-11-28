@@ -5,8 +5,8 @@ import { Body, Card, Empty, H1, Label, Loading, Row, Screen } from '../../compon
 import { PastEventCard } from '../../components/CircuitHistory';
 import { useHistory } from '../../lib/store';
 import { circuitPoints, finishText, schoolHistory, seasonsOf } from '../../lib/history';
-import { START, eloFor, fmtChange, tierInGroup, tierLabel } from '../../lib/elo';
-import { ENROLLMENT_SOURCE, GROUPINGS, inTier } from '../../lib/divisions';
+import { START, eloFor, fmtChange, tierInGroup } from '../../lib/elo';
+import { ENROLLMENT_SOURCE, enrollmentOf, lsatOf, peerTiers } from '../../lib/divisions';
 import { space } from '../../lib/theme';
 
 export default function SchoolHistoryScreen() {
@@ -27,11 +27,7 @@ export default function SchoolHistoryScreen() {
   const total = bySeason.reduce((a, s) => a + (s.row?.points ?? 0), 0);
   const mine = elo?.rows.get(name);
   const rank = mine ? elo!.ranked.indexOf(mine) + 1 : 0;
-  const tiers = GROUPINGS.map((g) => {
-    const t = name ? g.tierOf(name) : null;
-    const inIt = t && elo ? inTier(elo.ranked, t.id) : [];
-    return { g, t, of: inIt.length, place: mine ? inIt.indexOf(mine) + 1 : 0 };
-  });
+  const peer = mine && elo ? peerTiers(elo.ranked, tierInGroup).get(name!) : undefined;
 
   return (
     <Screen>
@@ -42,11 +38,11 @@ export default function SchoolHistoryScreen() {
           <Label>Mock Trial ELO Rating</Label>
           <Row style={{ alignItems: 'baseline' }}>
             <H1>{String(Math.round(mine.rating))}</H1>
-            <Body muted>{`${tierLabel(rank)} · #${rank} of ${elo!.ranked.length}${mine.provisional ? ' · provisional' : ''}`}</Body>
+            <Body muted>{`#${rank} of ${elo!.ranked.length}${mine.provisional ? ' · provisional' : ''}`}</Body>
           </Row>
           <Body muted>{`Peak ${Math.round(mine.peak)} · started at ${START} · ${mine.events} competitions rated`}</Body>
-          {tiers.map(({ g, t, of, place }) =>
-            t && place > 0 ? <Body key={g.id} muted>{`${t.short} (${g.label.toLowerCase()}): Tier ${tierInGroup(place, of)}, #${place} of ${of} · ${g.describe(name!)} (ABA ${ENROLLMENT_SOURCE.year})`}</Body> : null,
+          {peer && (
+            <Body muted>{`${peer.group.label} · Tier ${peer.tier} (#${peer.place} of ${peer.of}) · ${enrollmentOf(name!)} JD students, median LSAT ${lsatOf(name!)} (ABA ${ENROLLMENT_SOURCE.year})`}</Body>
           )}
         </Card>
       )}

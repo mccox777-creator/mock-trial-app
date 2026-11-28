@@ -15,7 +15,7 @@ const schoolOfTeam = (team: string) => team.replace(/\s+(\d|I{1,3}|[AB])$/, '');
 
 export const START = 2300;
 /** How far this scale sits above the old 1500 start and the US Chess numbers below. Ratings only depend on
- * differences, so moving the start, the K cutoff and the class lines by the same amount changes nothing else. */
+ * differences, so moving the start, and the K cutoff by the same amount changes nothing else. */
 export const SCALE_SHIFT = 800;
 export const GAMES_PER_EVENT = 8;
 /** Like FIDE: new schools move fast, established ones slower, the very top slowest. */
@@ -26,33 +26,14 @@ export function kFactor(rating: number, eventsPlayed: number) {
 /** Under this many competitions a rating is provisional, as in chess. */
 export const PROVISIONAL_UNDER = 5;
 
-/** Tiers by overall rank (Chris, 2026-11-28; replaced the chess class names). Each tier runs up to and including
- * maxRank. Provisional schools get a tier like any other school (and keep their *). */
-export const TIERS: { tier: number; maxRank: number }[] = [
-  { tier: 1, maxRank: 10 },
-  { tier: 2, maxRank: 25 },
-  { tier: 3, maxRank: 50 },
-  { tier: 4, maxRank: 100 },
-  { tier: 5, maxRank: Infinity },
-];
-/** Tier number for an overall rank (1 = best). */
-export const tierOfRank = (rank: number) => TIERS.find((t) => rank <= t.maxRank)!.tier;
-/** Shares of a group that each tier covers, for tiers inside a size division or LSAT group (which differ in
- * size): about the same split as the overall tiers (10, 25, 50 and 100 of ~200 schools). */
+/** Tiers inside a peer group (Chris, 2026-11-28): groups differ in size, so each tier covers a share of the group:
+ * top 5% Tier 1, through 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5 (cutoffs rounded up). */
 export const GROUP_TIER_SHARES = [0.05, 0.13, 0.25, 0.5];
 /** Tier number for a place within a group of groupSize schools. */
 export const tierInGroup = (place: number, groupSize: number) => {
   const i = GROUP_TIER_SHARES.findIndex((s) => place <= Math.ceil(s * groupSize));
   return i < 0 ? GROUP_TIER_SHARES.length + 1 : i + 1;
 };
-/** "Tier 1" etc. */
-export const tierLabel = (rank: number) => `Tier ${tierOfRank(rank)}`;
-/** Human-readable tier ranges, e.g. "Tier 1: ranks 1–10". */
-export const tierRanges = () =>
-  TIERS.map((t, i) => {
-    const from = i === 0 ? 1 : TIERS[i - 1].maxRank + 1;
-    return `Tier ${t.tier}: ${t.maxRank === Infinity ? `rank ${from} and below` : `ranks ${from}–${t.maxRank}`}`;
-  });
 
 /**
  * Lower is better: 0 won (or qualified out of a regional), 1 final, 2 semifinal, 3 quarterfinal, 4 octofinal, 5 took part.

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Linking, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { Body, Button, Card, H1, H2, Label, Loading, Screen } from '../components/ui';
-import { chronological, eloFor, GAMES_PER_EVENT, PROVISIONAL_UNDER, SCALE_SHIFT, START, tierRanges } from '../lib/elo';
+import { chronological, eloFor, GAMES_PER_EVENT, PROVISIONAL_UNDER, SCALE_SHIFT, START } from '../lib/elo';
 import { useHistory } from '../lib/store';
 
 /** Where the site publishes the rating data (public/ratings-data in the repository). */
@@ -52,7 +52,7 @@ const STEPS: { title: string; body: string[] }[] = [
   {
     title: '6. Classes',
     body: [
-      `Under ${PROVISIONAL_UNDER} competitions a rating is provisional, marked *. Schools are grouped into tiers by overall rank: ${tierRanges().join('; ')}. Provisional schools get a tier like any other.`,
+      `Under ${PROVISIONAL_UNDER} competitions a rating is provisional, marked *. Each school is listed by its place among all schools, with its peer group and tier underneath. Peer groups: the three size divisions (total JD enrollment under 500, 500–799, 800+), each split at a median LSAT of 160, from the ABA Standard 509 reports. Within its group a school is Tier 1 (top 5%), Tier 2 (to 13%), Tier 3 (to 25%), Tier 4 (to 50%) or Tier 5 (the rest). Provisional schools get a tier like any other.`,
     ],
   },
 ];

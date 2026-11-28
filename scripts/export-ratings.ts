@@ -8,7 +8,7 @@
 // The site serves these at https://app.mocktrialcentral.com/ratings-data/... . They cover the circuit record; competitions
 // run in the app join the ratings in the app as soon as they close.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { chronological, computeElo, tierOfRank, GAMES_PER_EVENT, START, teamsOf } from '../src/lib/elo.ts';
+import { chronological, computeElo, GAMES_PER_EVENT, START, teamsOf } from '../src/lib/elo.ts';
 import type { PastEvent } from '../src/lib/types.ts';
 
 const src = new URL('../src/data/history-law-school.json', import.meta.url);
@@ -22,8 +22,8 @@ const n = (x: number, d = 4) => Number(x.toFixed(d));
 
 const ranked = [...rows.values()].sort((a, b) => b.rating - a.rating);
 const ratings = [
-  ['rank', 'school', 'rating', 'tier', 'competitions', 'provisional', 'peak'],
-  ...ranked.map((r, i) => [i + 1, r.school, n(r.rating, 2), tierOfRank(i + 1), r.events, r.provisional ? 'yes' : 'no', n(r.peak, 2)]),
+  ['rank', 'school', 'rating', 'competitions', 'provisional', 'peak'],
+  ...ranked.map((r, i) => [i + 1, r.school, n(r.rating, 2), r.events, r.provisional ? 'yes' : 'no', n(r.peak, 2)]),
 ];
 
 const order = chronological(events);

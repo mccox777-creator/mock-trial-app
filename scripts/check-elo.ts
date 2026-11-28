@@ -1,7 +1,7 @@
 // Sanity checks for school Elo ratings. Run with: npm run check:elo
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { computeElo, expectedScore, tierInGroup, tierOfRank, chronological, startDay, START, SCALE_SHIFT } from '../src/lib/elo.ts';
+import { computeElo, expectedScore, tierInGroup, chronological, startDay, START, SCALE_SHIFT } from '../src/lib/elo.ts';
 import type { PastEvent } from '../src/lib/types.ts';
 
 const ev = (id: string, ord: number, results: PastEvent['results'], participants: string[]): PastEvent => ({
@@ -22,7 +22,6 @@ const gainVsStrong = seq.get('C')!.rating - START;
 assert.ok(gainVsStrong > 20, `upset gain ${gainVsStrong}`);
 
 assert.ok(Math.abs(expectedScore(1700, 1500) - 0.76) < 0.01);
-assert.deepEqual([1, 10, 11, 25, 26, 50, 51, 100, 101, 196].map(tierOfRank), [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
 assert.deepEqual([1, 4, 5, 11, 12, 20, 21, 40, 41, 80].map((p) => tierInGroup(p, 80)), [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
 assert.equal(START, 1500 + SCALE_SHIFT);
 

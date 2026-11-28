@@ -1,18 +1,23 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { router } from 'expo-router';
-import { Pressable, ScrollView, Text } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { Body, Button, Card, Label } from './ui';
-import { tierInGroup, tierLabel, tierRanges, type EloRow } from '../lib/elo';
-import { ENROLLMENT_SOURCE, GROUPINGS, groupingOfTier, inTier, type TierId } from '../lib/divisions';
+import { tierInGroup, type EloRow } from '../lib/elo';
+import { ENROLLMENT_SOURCE, GROUPINGS, groupingOfTier, inTier, peerTiers, type TierId } from '../lib/divisions';
 import { radius, space, useTheme } from '../lib/theme';
 
-const W = [32, undefined, 52, 104, 52];
+const W = [32, undefined, 60, 64];
 
 /** School Elo ratings: overall top 25 with a button for the rest, plus a top 20 for each size division and LSAT tier, and a link to how they're calculated. */
 export function EloTable({ ranked, filter = '', title = 'Mock Trial ELO Ratings, as of the latest results' }: { ranked: EloRow[]; filter?: string; title?: string }) {
   const c = useTheme();
   const [showAll, setShowAll] = useState(false);
   const [tier, setTier] = useState<TierId | 'all'>('all');
+  const peers = useMemo(() => peerTiers(ranked, tierInGroup), [ranked]);
+  const sub = (school: string) => {
+    const p = peers.get(school);
+    return p ? `${p.group.label} · Tier ${p.tier}` : undefined;
+  };
   const grouping = tier === 'all' ? null : groupingOfTier(tier);
   const div = grouping?.tiers.find((t) => t.id === tier) ?? null;
   const list = div ? inTier(ranked, div.id) : ranked;
@@ -46,7 +51,7 @@ export function EloTable({ ranked, filter = '', title = 'Mock Trial ELO Ratings,
         </ScrollView>
       ))}
       <Card style={{ padding: 0, overflow: 'hidden' }}>
-        <PointsRow head cells={div ? ['#', 'School', 'ELO', 'Tier', 'Overall'] : ['#', 'School', 'ELO', 'Tier', 'Comps']} widths={W} />
+        <PointsRow head cells={['#', 'School', 'ELO', div ? 'Overall' : 'Comps']} widths={W} />
         {shown.map((r) => (
           <PointsRow
             key={r.school}
@@ -55,9 +60,9 @@ export function EloTable({ ranked, filter = '', title = 'Mock Trial ELO Ratings,
               String(list.indexOf(r) + 1),
               r.school,
               `${Math.round(r.rating)}${r.provisional ? '*' : ''}`,
-              div ? `Tier ${tierInGroup(list.indexOf(r) + 1, list.length)}` : tierLabel(ranked.indexOf(r) + 1),
               div ? `#${ranked.indexOf(r) + 1}` : String(r.events),
             ]}
+            sub={sub(r.school)}
             onPress={() => router.push({ pathname: '/history/school', params: { name: r.school } })}
           />
         ))}
@@ -66,12 +71,12 @@ export function EloTable({ ranked, filter = '', title = 'Mock Trial ELO Ratings,
       {div ? (
         <Body muted>
           {grouping?.id === 'lsat'
-            ? `LSAT groups compare schools that admit similar students, using the entering class's median LSAT from the ABA's ${ENROLLMENT_SOURCE.year} Standard 509 reports. Every school keeps one rating from all its competitions, so wins over schools in other groups still count. Tier is the school's tier within the group (top 5% Tier 1, next to 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5). Overall is its place among all schools.`
-            : `Divisions group schools by size, the way college football does. Size is total JD enrollment from the ABA's ${ENROLLMENT_SOURCE.year} Standard 509 reports. Every school keeps one rating from all its competitions, so wins over bigger or smaller schools still count. Tier is the school's tier within the group (top 5% Tier 1, next to 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5). Overall is its place among all schools.`}
+            ? `LSAT groups compare schools that admit similar students, using the entering class's median LSAT from the ABA's ${ENROLLMENT_SOURCE.year} Standard 509 reports. Every school keeps one rating from all its competitions, so wins over schools in other groups still count. Overall is its place among all schools. Under each school: its peer group (size, split at a median LSAT of 160) and its tier in that group (top 5% Tier 1, then 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5).`
+            : `Divisions group schools by size, the way college football does. Size is total JD enrollment from the ABA's ${ENROLLMENT_SOURCE.year} Standard 509 reports. Every school keeps one rating from all its competitions, so wins over bigger or smaller schools still count. Overall is its place among all schools. Under each school: its peer group (size, split at a median LSAT of 160) and its tier in that group (top 5% Tier 1, then 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5).`}
         </Body>
       ) : (
         <Body muted>
-          {`Every school starts at 2300 and gains or loses points for each of its teams finishing ahead of or behind other schools' teams, more for beating a higher-rated school. A 200-point gap means the higher school finishes ahead about 3 times in 4. * means provisional (under 5 competitions). Tiers go by overall rank: ${tierRanges().join(', ')}. Competitions run in the app count as soon as they close with published results.`}
+          {`Every school starts at 2300 and gains or loses points for each of its teams finishing ahead of or behind other schools' teams, more for beating a higher-rated school. A 200-point gap means the higher school finishes ahead about 3 times in 4. * means provisional (under 5 competitions). Under each school: its peer group (size, split at a median LSAT of 160) and its tier in that group (top 5% Tier 1, then 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5). Competitions run in the app count as soon as they close with published results.`}
         </Body>
       )}
       <Button small kind="secondary" title="How the Mock Trial ELO Ratings are calculated" onPress={() => router.push('/ratings')} />
@@ -79,16 +84,26 @@ export function EloTable({ ranked, filter = '', title = 'Mock Trial ELO Ratings,
   );
 }
 
-export function PointsRow({ cells, head, onPress, widths }: { cells: string[]; head?: boolean; onPress?: () => void; widths?: (number | undefined)[] }) {
+/** sub: an optional small line under the second cell (the name). */
+export function PointsRow({ cells, head, onPress, widths, sub }: { cells: string[]; head?: boolean; onPress?: () => void; widths?: (number | undefined)[]; sub?: string }) {
   const c = useTheme();
   const w = widths ?? [32, undefined, 44, 60, 56];
   return (
     <Pressable onPress={onPress} disabled={!onPress} accessibilityRole={onPress ? 'button' : undefined} style={{ flexDirection: 'row', paddingHorizontal: space.md, paddingVertical: 9, borderBottomWidth: 1, borderColor: c.line, backgroundColor: head ? c.surfaceAlt : c.surface }}>
-      {cells.map((t, i) => (
-        <Text key={i} numberOfLines={1} style={{ width: w[i], flex: w[i] ? undefined : 1, textAlign: i >= 2 ? 'right' : 'left', color: head ? c.muted : c.ink, fontWeight: head || i === 2 ? '700' : '400', fontSize: head ? 12 : 15, fontVariant: ['tabular-nums'] }}>
-          {t}
-        </Text>
-      ))}
+      {cells.map((t, i) => {
+        const text = (
+          <Text key={i} numberOfLines={1} style={{ width: sub && i === 1 ? undefined : w[i], flex: w[i] || (sub && i === 1) ? undefined : 1, textAlign: i >= 2 ? 'right' : 'left', color: head ? c.muted : c.ink, fontWeight: head || i === 2 ? '700' : '400', fontSize: head ? 12 : 15, fontVariant: ['tabular-nums'] }}>
+            {t}
+          </Text>
+        );
+        if (!(sub && i === 1)) return text;
+        return (
+          <View key={i} style={{ flex: 1, minWidth: 0 }}>
+            {text}
+            <Text numberOfLines={1} style={{ color: c.muted, fontSize: 12, marginTop: 1 }}>{sub}</Text>
+          </View>
+        );
+      })}
     </Pressable>
   );
 }

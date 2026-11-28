@@ -1,10 +1,10 @@
 // The public school Elo leaderboard, built with the same code the app uses (src/lib/elo.ts and
 // src/lib/closedCompetitions.ts), so a site that shows it always matches the app.
 import type { Ballot, Level, Match, PastEvent, Program, Team, Tournament } from '../src/lib/types';
-import { eloFor, tierInGroup, tierOfRank, chronological } from '../src/lib/elo';
+import { eloFor, tierInGroup, chronological } from '../src/lib/elo';
 import { closedCompetitionEvents } from '../src/lib/closedCompetitions';
 import { schoolOfTeam } from '../src/lib/history';
-import { DIVISIONS, ENROLLMENT_SOURCE, SELECTIVITY, divisionOf, enrollmentOf, gpaOf, lsatOf, selectivityOf, type DivisionId, type SelectivityId, type TierId } from '../src/lib/divisions';
+import { DIVISIONS, ENROLLMENT_SOURCE, SELECTIVITY, divisionOf, peerTiers, enrollmentOf, gpaOf, lsatOf, selectivityOf, type DivisionId, type SelectivityId, type TierId } from '../src/lib/divisions';
 
 export interface LiveData {
   pastEvents: PastEvent[];
@@ -24,8 +24,10 @@ export interface RatingRow {
   events: number;
   /** Under 5 competitions, as in chess. */
   provisional: boolean;
-  /** Tier by overall rank: 1 (ranks 1–10), 2 (11–25), 3 (26–50), 4 (51–100), 5 (the rest). */
-  tier: number;
+  /** Peer group: size division split at median LSAT 160, e.g. { id: 'large-hi', label: 'Large · 160+' }; null without ABA data. */
+  group: { id: string; label: string } | null;
+  /** Tier within the peer group: top 5% = 1, to 13% = 2, to 25% = 3, to 50% = 4, rest = 5. */
+  groupTier: number | null;
   /** Points gained or lost at the school's most recent competition. */
   lastChange: number;
   lastEvent: string | null;
@@ -35,8 +37,6 @@ export interface RatingRow {
   division: DivisionId | null;
   /** Place within its division, or null. */
   divisionRank: number | null;
-  /** Tier within its division (top 5% = 1, 13% = 2, 25% = 3, 50% = 4, rest = 5), or null. */
-  divisionTier: number | null;
   /** Median LSAT and undergraduate GPA of the entering class (ABA Standard 509), or null. */
   lsat: number | null;
   gpa: number | null;
@@ -44,8 +44,6 @@ export interface RatingRow {
   selectivity: SelectivityId | null;
   /** Place within its selectivity group, or null. */
   selectivityRank: number | null;
-  /** Tier within its selectivity group, as divisionTier. */
-  selectivityTier: number | null;
 }
 
 export interface DivisionBoard<T extends TierId = DivisionId> {
@@ -127,25 +125,26 @@ export function leaderboard(level: Level, events: PastEvent[], limit: number, li
       peak: Math.round(r.peak),
       events: r.events,
       provisional: r.provisional,
-      tier: tierOfRank(i + 1),
+      group: null,
+      groupTier: null,
       lastChange: h ? Math.round(h.after - h.before) : 0,
       lastEvent: h ? byId.get(h.eventId)?.name ?? null : null,
       enrollment: enrollmentOf(r.school),
       division,
       divisionRank: next(division),
-      divisionTier: null,
       lsat: lsatOf(r.school),
       gpa: gpaOf(r.school),
       selectivity,
       selectivityRank: next(selectivity),
-      selectivityTier: null,
     };
   });
-  const sizeOf = new Map<TierId, number>();
-  for (const r of rows) for (const id of [r.division, r.selectivity]) if (id) sizeOf.set(id, (sizeOf.get(id) ?? 0) + 1);
+  const peers = peerTiers(rows, tierInGroup);
   for (const r of rows) {
-    r.divisionTier = r.division ? tierInGroup(r.divisionRank!, sizeOf.get(r.division)!) : null;
-    r.selectivityTier = r.selectivity ? tierInGroup(r.selectivityRank!, sizeOf.get(r.selectivity)!) : null;
+    const p = peers.get(r.school);
+    if (p) {
+      r.group = p.group;
+      r.groupTier = p.tier;
+    }
   }
   return {
     level,

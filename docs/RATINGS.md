@@ -46,8 +46,8 @@ they are out of date.
 6. **Order.** Competitions are applied oldest first by start date. One with no date in the record takes the date of the one
    listed just before it in the same term. Competitions run in the app count once they close (finalized by the organizer,
    or 7 days after the last day) and their results are published.
-7. **Labels.** Fewer than 5 competitions is provisional (`*`). Schools are grouped into tiers by overall rank: Tier 1 ranks 1–10,
-   Tier 2 11–25, Tier 3 26–50, Tier 4 51–100, Tier 5 the rest (`TIERS` in elo.ts). Provisional schools get a tier like any other.
+7. **Labels.** Fewer than 5 competitions is provisional (`*`). Each school with ABA data gets a peer group (its size division,
+   split at a median LSAT of 160) and a Tier 1–5 by its place in that group (see Peer groups and tiers, below).
 
 The code is in [`src/lib/elo.ts`](../src/lib/elo.ts).
 
@@ -185,8 +185,11 @@ Chris chose bigger, chess-like numbers. Every school now starts at 2300 instead 
 
 Moving only the start, and leaving the K=10 line at 2400, would not have been a relabel: almost every established school would have crossed 2400 at once and moved half as fast from then on, which reorders the list (Mercer would pass Harvard) for no reason that happened in a courtroom.
 
-## Change, 28 November 2026: tiers instead of chess classes
+## Change, 28 November 2026: peer groups and tiers instead of chess classes
 
-Chris replaced the US Chess class names (Expert, Class A and so on) with plain tiers by overall rank: Tier 1 is ranks 1–10, Tier 2 is 11–25, Tier 3 is 26–50, Tier 4 is 51–100, and Tier 5 is the rest. Provisional schools get a tier like any other and keep their `*`. Tiers are labels only; ratings are unchanged. The published `ratings.csv` has a `tier` column (1–5) in place of `class`, and `/api/ratings` sends `tier` in place of `class`.
+Chris replaced the US Chess class names (Expert, Class A and so on) with tiers, and asked that the overall list stay a plain ranked list with one line under each school. He chose to set tiers inside peer groups, so that a large school with a low median LSAT (UIC: 1,015 JD students, median 153) is not tiered against Harvard.
 
-Tiers inside groups (Chris, 28 November 2026): within each size division and LSAT group, schools also get a Tier 1–5 by their place in that group, using shares instead of fixed ranks because the groups differ in size: top 5% Tier 1, through 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5 (each cutoff rounded up). For 80 small schools that is places 1–4, 5–11, 12–20, 21–40 and 41–80. `/api/ratings` sends `divisionTier` and `selectivityTier`.
+- **Peer group:** the size division (Large 800+, Mid-size 500–799, Small under 500 JD students) split at a median LSAT of 160, for six groups: Large · 160+, Large · under 160, Mid-size · 160+, Mid-size · under 160, Small · 160+, Small · under 160 (`peerGroupOf` in divisions.ts).
+- **Tier:** a school's place among the rated schools in its peer group, by shares because the groups differ in size: top 5% Tier 1, through 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5 (each cutoff rounded up; `tierInGroup` in elo.ts). For a group of 80 that is places 1–4, 5–11, 12–20, 21–40 and 41–80.
+- Schools without ABA data (for example Purdue Global and West LA) have no peer group and no tier; they still appear in the overall list.
+- Labels only: ratings are unchanged. `ratings.csv` drops the `class` column. `/api/ratings` sends `group` (`{id, label}`) and `groupTier` per row; the size and LSAT tab fields are unchanged.
