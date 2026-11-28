@@ -49,13 +49,25 @@ FLORIDA = {'Barry', 'Florida International', 'Nova Southeastern', 'Stetson', 'Fl
            'Jacksonville', 'Ave Maria', 'Florida A&M'}
 
 
+# Events where the record says only "St. Thomas" and outside sources settle which school it was.
+# Gold Cup 2024: St. Thomas (FL)'s law school posted its national semifinal finish there (Oct 29, 2024), and TCPR agrees.
+ST_THOMAS_AT = {('2024-25', 'Fall', 'Gold Cup Trial Competition'): 'St. Thomas (FL)'}
+
+# Events the record lists twice. The St. John's Peter James Johnson Civil Rights competition is held each October;
+# the Spring 2025 entry repeats the Fall 2024 one (same final four: NYU, Georgetown, Drexel, Fordham).
+DUPLICATES = {('2024-25', 'Spring', "St. John's Civil Rights")}
+
+
 def resolve_schools(ev):
     """Make results and participants name the same school, and pin down 'St. Thomas' where the event says which one."""
     schools = {p['school'] for p in ev['participants']} | {r['school'] for r in ev['results']}
     if re.fullmatch(r'NTC Region 12', ev['name'] or '', re.I):
         schools.add('St. Thomas (MN)')  # Region 12 is the upper Midwest; the 2026 record names St. Thomas (MN) there.
     florida = bool(schools & FLORIDA) or re.search(r'florida|zehmer|bedell', ' '.join(ev['source'] + [ev['name'] or '']), re.I)
+    pinned = ST_THOMAS_AT.get((ev['season'], ev['term'], re.sub(r'\(\s*\)', '', ev['name'] or '').strip()))
     def fix(school):
+        if school == 'St. Thomas' and pinned:
+            return pinned
         if school == 'St. Thomas':
             if 'St. Thomas (FL)' in schools or (florida and 'St. Thomas (MN)' not in schools):
                 return 'St. Thomas (FL)'
@@ -364,7 +376,8 @@ def for_app(evs, level='law_school'):
 
 if __name__ == '__main__':
     lines = open(sys.argv[1], encoding='utf-8').read().split('\n')
-    evs = apply_tcpr(parse(lines), __file__.rsplit('/', 1)[0] + '/tcpr_gaps.json')
+    evs = [e for e in parse(lines) if (e['season'], e['term'], re.sub(r'\(\s*\)', '', e['name'] or '').strip()) not in DUPLICATES]
+    evs = apply_tcpr(evs, __file__.rsplit('/', 1)[0] + '/tcpr_gaps.json')
     json.dump(evs, open(sys.argv[2], 'w'), indent=1, ensure_ascii=False)
     if len(sys.argv) > 3:
         json.dump(for_app(evs), open(sys.argv[3], 'w'), ensure_ascii=False, separators=(',', ':'))
