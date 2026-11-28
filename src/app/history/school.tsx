@@ -6,7 +6,7 @@ import { PastEventCard } from '../../components/CircuitHistory';
 import { useHistory } from '../../lib/store';
 import { circuitPoints, finishText, schoolHistory, seasonsOf } from '../../lib/history';
 import { classOf, eloFor, fmtChange } from '../../lib/elo';
-import { divisionOf, ENROLLMENT_SOURCE, enrollmentOf, inDivision } from '../../lib/divisions';
+import { ENROLLMENT_SOURCE, GROUPINGS, inTier } from '../../lib/divisions';
 import { space } from '../../lib/theme';
 
 export default function SchoolHistoryScreen() {
@@ -27,10 +27,11 @@ export default function SchoolHistoryScreen() {
   const total = bySeason.reduce((a, s) => a + (s.row?.points ?? 0), 0);
   const mine = elo?.rows.get(name);
   const rank = mine ? elo!.ranked.indexOf(mine) + 1 : 0;
-  const division = divisionOf(name);
-  const divRanked = division && elo ? inDivision(elo.ranked, division.id) : [];
-  const divRank = mine && division ? divRanked.indexOf(mine) + 1 : 0;
-  const students = enrollmentOf(name);
+  const tiers = GROUPINGS.map((g) => {
+    const t = name ? g.tierOf(name) : null;
+    const inIt = t && elo ? inTier(elo.ranked, t.id) : [];
+    return { g, t, of: inIt.length, place: mine ? inIt.indexOf(mine) + 1 : 0 };
+  });
 
   return (
     <Screen>
@@ -44,8 +45,8 @@ export default function SchoolHistoryScreen() {
             <Body muted>{`${classOf(mine.rating)} · #${rank} of ${elo!.ranked.length}${mine.provisional ? ' · provisional' : ''}`}</Body>
           </Row>
           <Body muted>{`Peak ${Math.round(mine.peak)} · started at 1500 · ${mine.events} competitions rated`}</Body>
-          {division && divRank > 0 && (
-            <Body muted>{`${division.short} division: #${divRank} of ${divRanked.length} · ${students} JD students (ABA ${ENROLLMENT_SOURCE.year})`}</Body>
+          {tiers.map(({ g, t, of, place }) =>
+            t && place > 0 ? <Body key={g.id} muted>{`${t.short} (${g.label.toLowerCase()}): #${place} of ${of} · ${g.describe(name!)} (ABA ${ENROLLMENT_SOURCE.year})`}</Body> : null,
           )}
         </Card>
       )}

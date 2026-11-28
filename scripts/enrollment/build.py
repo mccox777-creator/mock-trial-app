@@ -1,12 +1,14 @@
-"""Builds src/data/school-enrollment.json: each rated law school's total JD enrollment
-from the ABA Standard 509 compilation (JD Enrollment and Ethnicity, 2025, TotalGrandTotal).
+"""Builds src/data/school-enrollment.json: each rated law school's total JD enrollment and its
+entering class's median LSAT and undergraduate GPA, from the ABA Standard 509 compilations (2025):
+"JD Enrollment and Ethnicity" (TotalGrandTotal) and "First Year Class" (All50thPercentileLSAT,
+All50thPercentileUGPA). Source TSV columns: ABA name, enrollment, median LSAT, median GPA.
 Source TSV: scripts/enrollment/aba-2025-jd-enrollment.tsv. Run: python3 scripts/enrollment/build.py"""
 import csv, json, os, re, sys
 HERE = os.path.dirname(__file__)
 ROOT = os.path.join(HERE, '..', '..')
 aba = {}
-for name, n in csv.reader(open(os.path.join(HERE, 'aba-2025-jd-enrollment.tsv')), delimiter='\t'):
-    aba[name] = int(n)
+for name, n, lsat, gpa in csv.reader(open(os.path.join(HERE, 'aba-2025-jd-enrollment.tsv')), delimiter='\t'):
+    aba[name] = (int(n), int(lsat), float(gpa))
 
 # Rating name -> ABA name, where the obvious match doesn't work.
 MAP = {
@@ -91,19 +93,20 @@ for s in schools:
         c = [n for n in aba if norm(n).startswith(norm(s)) or norm(s + ' University') == norm(n) or norm(s) in norm(n)]
         a = c[0] if len(c) == 1 else 'AMBIG:' + '; '.join(c)
     if a is None:
-        out[s] = {'enrollment': None, 'note': UNRATED_NOTE[s]}
+        out[s] = {'enrollment': None, 'lsat': None, 'gpa': None, 'note': UNRATED_NOTE[s]}
     elif a not in aba:
         missing.append((s, a))
     else:
-        out[s] = {'enrollment': aba[a], 'aba': a, **({'note': NOTE[s]} if s in NOTE else {})}
+        n, lsat, gpa = aba[a]
+        out[s] = {'enrollment': n, 'lsat': lsat, 'gpa': gpa, 'aba': a, **({'note': NOTE[s]} if s in NOTE else {})}
 if missing:
     for m in missing: print('UNMATCHED', m)
     sys.exit(1)
 doc = {
-    'source': 'ABA Standard 509 Information Report compilation, "JD Enrollment and Ethnicity", total JD enrollment (all years, full and part time)',
+    'source': 'ABA Standard 509 Information Report compilations: "JD Enrollment and Ethnicity" (total JD enrollment, all years, full and part time) and "First Year Class" (median LSAT and undergraduate GPA of the entering class)',
     'sourceUrl': 'https://www.abarequireddisclosures.org/requiredDisclosure/',
     'year': 2025,
     'schools': dict(sorted(out.items())),
 }
 json.dump(doc, open(os.path.join(ROOT, 'src/data/school-enrollment.json'), 'w'), indent=1, ensure_ascii=False)
-print(len(out), 'schools;', sum(1 for v in out.values() if v['enrollment'] is None), 'without enrollment')
+print(len(out), 'schools;', sum(1 for v in out.values() if v['enrollment'] is None), 'without ABA data')

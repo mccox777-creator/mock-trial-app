@@ -1,794 +1,1186 @@
 {
- "source": "ABA Standard 509 Information Report compilation, \"JD Enrollment and Ethnicity\", total JD enrollment (all years, full and part time)",
+ "source": "ABA Standard 509 Information Report compilations: \"JD Enrollment and Ethnicity\" (total JD enrollment, all years, full and part time) and \"First Year Class\" (median LSAT and undergraduate GPA of the entering class)",
  "sourceUrl": "https://www.abarequireddisclosures.org/requiredDisclosure/",
  "year": 2025,
  "schools": {
   "Akron": {
    "enrollment": 473,
+   "lsat": 154,
+   "gpa": 3.51,
    "aba": "Akron, The University of"
   },
   "Alabama": {
    "enrollment": 388,
+   "lsat": 167,
+   "gpa": 3.97,
    "aba": "Alabama, The University of"
   },
   "Albany": {
    "enrollment": 615,
+   "lsat": 158,
+   "gpa": 3.54,
    "aba": "Albany Law School"
   },
   "American": {
    "enrollment": 1199,
+   "lsat": 162,
+   "gpa": 3.63,
    "aba": "American University"
   },
   "Appalachian": {
    "enrollment": 182,
+   "lsat": 146,
+   "gpa": 3.2,
    "aba": "Appalachian School of Law"
   },
   "Arizona": {
    "enrollment": 338,
+   "lsat": 163,
+   "gpa": 3.78,
    "aba": "Arizona, The University of"
   },
   "Arizona State": {
    "enrollment": 744,
+   "lsat": 165,
+   "gpa": 3.91,
    "aba": "Arizona State University"
   },
   "Arkansas": {
    "enrollment": 375,
+   "lsat": 158,
+   "gpa": 3.71,
    "aba": "Arkansas, University of"
   },
   "Arkansas Little Rock": {
    "enrollment": 429,
+   "lsat": 153,
+   "gpa": 3.41,
    "aba": "Arkansas at Little Rock, University of"
   },
   "Ave Maria": {
    "enrollment": 334,
+   "lsat": 155,
+   "gpa": 3.36,
    "aba": "Ave Maria School of Law"
   },
   "BYU": {
    "enrollment": 348,
+   "lsat": 170,
+   "gpa": 3.95,
    "aba": "Brigham Young University"
   },
   "Baltimore": {
    "enrollment": 726,
+   "lsat": 155,
+   "gpa": 3.45,
    "aba": "Baltimore, University of"
   },
   "Barry": {
    "enrollment": 723,
+   "lsat": 150,
+   "gpa": 3.23,
    "aba": "Barry University"
   },
   "Baylor": {
    "enrollment": 439,
+   "lsat": 164,
+   "gpa": 3.77,
    "aba": "Baylor University"
   },
   "Belmont": {
    "enrollment": 372,
+   "lsat": 161,
+   "gpa": 3.84,
    "aba": "Belmont University"
   },
   "Birmingham": {
    "enrollment": null,
+   "lsat": null,
+   "gpa": null,
    "note": "Birmingham School of Law is Alabama-accredited, not ABA-approved; no 509 report."
   },
   "Boston College": {
    "enrollment": 634,
+   "lsat": 168,
+   "gpa": 3.83,
    "aba": "Boston College"
   },
   "Boston University": {
    "enrollment": 691,
+   "lsat": 170,
+   "gpa": 3.88,
    "aba": "Boston University"
   },
   "Brooklyn": {
    "enrollment": 1126,
+   "lsat": 161,
+   "gpa": 3.59,
    "aba": "Brooklyn Law School"
   },
   "Buffalo": {
    "enrollment": 430,
+   "lsat": 157,
+   "gpa": 3.71,
    "aba": "Buffalo, University at"
   },
   "CUNY": {
    "enrollment": 695,
+   "lsat": 155,
+   "gpa": 3.54,
    "aba": "City University of New York, University of"
   },
   "Cal Western": {
    "enrollment": 669,
+   "lsat": 155,
+   "gpa": 3.5,
    "aba": "California Western School of Law"
   },
   "Campbell": {
    "enrollment": 553,
+   "lsat": 156,
+   "gpa": 3.51,
    "aba": "Campbell University"
   },
   "Capital": {
    "enrollment": 483,
+   "lsat": 151,
+   "gpa": 3.44,
    "aba": "Capital University Law School"
   },
   "Cardozo": {
    "enrollment": 946,
+   "lsat": 165,
+   "gpa": 3.78,
    "aba": "Cardozo, Yeshiva University"
   },
   "Case Western": {
    "enrollment": 531,
+   "lsat": 162,
+   "gpa": 3.76,
    "aba": "Case Western Reserve University"
   },
   "Catholic": {
    "enrollment": 432,
+   "lsat": 161,
+   "gpa": 3.68,
    "aba": "Catholic University of America, The"
   },
   "Chapman": {
    "enrollment": 420,
+   "lsat": 163,
+   "gpa": 3.7,
    "aba": "Chapman University"
   },
   "Charleston": {
    "enrollment": 707,
+   "lsat": 154,
+   "gpa": 3.51,
    "aba": "Charleston School of Law"
   },
   "Chicago-Kent": {
    "enrollment": 720,
+   "lsat": 161,
+   "gpa": 3.72,
    "aba": "Chicago-Kent, Illinois Institute of Technology"
   },
   "Cincinnati": {
    "enrollment": 398,
+   "lsat": 159,
+   "gpa": 3.8,
    "aba": "Cincinnati, University of"
   },
   "Cleveland State": {
    "enrollment": 495,
+   "lsat": 155,
+   "gpa": 3.5,
    "aba": "Cleveland State University"
   },
   "Colorado": {
    "enrollment": 547,
+   "lsat": 164,
+   "gpa": 3.81,
    "aba": "Colorado, University of"
   },
   "Columbia": {
    "enrollment": 1377,
+   "lsat": 173,
+   "gpa": 3.92,
    "aba": "Columbia University"
   },
   "Connecticut": {
    "enrollment": 479,
+   "lsat": 162,
+   "gpa": 3.78,
    "aba": "Connecticut, University of"
   },
   "Cooley": {
    "enrollment": 476,
+   "lsat": 147,
+   "gpa": 3.09,
    "aba": "Cooley Law School"
   },
   "Cornell": {
    "enrollment": 611,
+   "lsat": 173,
+   "gpa": 3.92,
    "aba": "Cornell University"
   },
   "Creighton": {
    "enrollment": 427,
+   "lsat": 153,
+   "gpa": 3.51,
    "aba": "Creighton University"
   },
   "Cumberland": {
    "enrollment": 471,
+   "lsat": 156,
+   "gpa": 3.63,
    "aba": "Samford University"
   },
   "Dayton": {
    "enrollment": 442,
+   "lsat": 157,
+   "gpa": 3.6,
    "aba": "Dayton, University of"
   },
   "DePaul": {
    "enrollment": 510,
+   "lsat": 158,
+   "gpa": 3.61,
    "aba": "DePaul University"
   },
   "Denver": {
    "enrollment": 851,
+   "lsat": 160,
+   "gpa": 3.66,
    "aba": "Denver, University of"
   },
   "Drake": {
    "enrollment": 369,
+   "lsat": 156,
+   "gpa": 3.67,
    "aba": "Drake University"
   },
   "Drexel": {
    "enrollment": 461,
+   "lsat": 160,
+   "gpa": 3.76,
    "aba": "Drexel University"
   },
   "Duke": {
    "enrollment": 723,
+   "lsat": 171,
+   "gpa": 3.91,
    "aba": "Duke University"
   },
   "Duquesne": {
    "enrollment": 528,
+   "lsat": 157,
+   "gpa": 3.62,
    "aba": "Duquesne University"
   },
   "Elon": {
    "enrollment": 540,
+   "lsat": 154,
+   "gpa": 3.4,
    "aba": "Elon University"
   },
   "Emory": {
    "enrollment": 913,
+   "lsat": 166,
+   "gpa": 3.82,
    "aba": "Emory University"
   },
   "Faulkner": {
    "enrollment": 411,
+   "lsat": 150,
+   "gpa": 3.33,
    "aba": "Faulkner University"
   },
   "Florida": {
    "enrollment": 658,
+   "lsat": 169,
+   "gpa": 3.91,
    "aba": "Florida, University of"
   },
   "Florida International": {
    "enrollment": 581,
+   "lsat": 161,
+   "gpa": 3.8,
    "aba": "Florida International University"
   },
   "Florida State": {
    "enrollment": 455,
+   "lsat": 166,
+   "gpa": 3.93,
    "aba": "Florida State University"
   },
   "Fordham": {
    "enrollment": 1352,
+   "lsat": 168,
+   "gpa": 3.79,
    "aba": "Fordham University"
   },
   "George Mason": {
    "enrollment": 438,
+   "lsat": 169,
+   "gpa": 3.93,
    "aba": "George Mason University"
   },
   "George Washington": {
    "enrollment": 1728,
+   "lsat": 168,
+   "gpa": 3.86,
    "aba": "George Washington University, The"
   },
   "Georgetown": {
    "enrollment": 2266,
+   "lsat": 171,
+   "gpa": 3.93,
    "aba": "Georgetown University"
   },
   "Georgia": {
    "enrollment": 540,
+   "lsat": 169,
+   "gpa": 3.92,
    "aba": "Georgia, University of"
   },
   "Georgia State": {
    "enrollment": 682,
+   "lsat": 160,
+   "gpa": 3.64,
    "aba": "Georgia State University"
   },
   "Golden Gate": {
    "enrollment": null,
+   "lsat": null,
+   "gpa": null,
    "note": "Closed its JD program (no 2025 509 report)."
   },
   "Gonzaga": {
    "enrollment": 551,
+   "lsat": 155,
+   "gpa": 3.55,
    "aba": "Gonzaga University"
   },
   "Harvard": {
    "enrollment": 1784,
+   "lsat": 174,
+   "gpa": 3.96,
    "aba": "Harvard University"
   },
   "Hawaii": {
    "enrollment": 375,
+   "lsat": 158,
+   "gpa": 3.62,
    "aba": "Hawaii, University of"
   },
   "Hofstra": {
    "enrollment": 800,
+   "lsat": 157,
+   "gpa": 3.65,
    "aba": "Hofstra University"
   },
   "Houston": {
    "enrollment": 838,
+   "lsat": 163,
+   "gpa": 3.79,
    "aba": "Houston, University of"
   },
   "Howard": {
    "enrollment": 555,
+   "lsat": 156,
+   "gpa": 3.63,
    "aba": "Howard University"
   },
   "Illinois": {
    "enrollment": 500,
+   "lsat": 166,
+   "gpa": 3.81,
    "aba": "Illinois, University of"
   },
   "Illinois Chicago": {
    "enrollment": 1015,
+   "lsat": 153,
+   "gpa": 3.4,
    "aba": "Illinois-Chicago, University of"
   },
   "Indiana": {
    "enrollment": 502,
+   "lsat": 164,
+   "gpa": 3.91,
    "aba": "Indiana University-Bloomington"
   },
   "InterAmerican Puerto Rico": {
    "enrollment": 611,
+   "lsat": 144,
+   "gpa": 3.39,
    "aba": "Inter American University of Puerto Rico"
   },
   "Iowa": {
    "enrollment": 500,
+   "lsat": 164,
+   "gpa": 3.78,
    "aba": "Iowa, University of"
   },
   "Jacksonville": {
    "enrollment": 135,
+   "lsat": 156,
+   "gpa": 3.48,
    "aba": "Jacksonville University"
   },
   "John Marshall Atlanta": {
    "enrollment": 379,
+   "lsat": 152,
+   "gpa": 3.13,
    "aba": "Atlanta's John Marshall Law School"
   },
   "Kansas": {
    "enrollment": 356,
+   "lsat": 162,
+   "gpa": 3.85,
    "aba": "Kansas, The University of"
   },
   "Kentucky": {
    "enrollment": 419,
+   "lsat": 159,
+   "gpa": 3.72,
    "aba": "Kentucky, University of"
   },
   "LSU": {
    "enrollment": 635,
+   "lsat": 157,
+   "gpa": 3.74,
    "aba": "Louisiana State University"
   },
   "Lewis & Clark": {
    "enrollment": 519,
+   "lsat": 161,
+   "gpa": 3.59,
    "aba": "Lewis & Clark Law School"
   },
   "Liberty": {
    "enrollment": 326,
+   "lsat": 154,
+   "gpa": 3.54,
    "aba": "Liberty University"
   },
   "Lincoln Memorial": {
    "enrollment": 429,
+   "lsat": 153,
+   "gpa": 3.44,
    "aba": "Lincoln Memorial University"
   },
   "Louisville": {
    "enrollment": 377,
+   "lsat": 157,
+   "gpa": 3.67,
    "aba": "Louisville, University of"
   },
   "Loyola": {
    "enrollment": null,
+   "lsat": null,
+   "gpa": null,
    "note": "Record does not say which Loyola (LA, Chicago or New Orleans)."
   },
   "Loyola Chicago": {
    "enrollment": 848,
+   "lsat": 161,
+   "gpa": 3.7,
    "aba": "Loyola University-Chicago"
   },
   "Loyola LA": {
    "enrollment": 1000,
+   "lsat": 163,
+   "gpa": 3.74,
    "aba": "Loyola Marymount University-Los Angeles"
   },
   "Loyola New Orleans": {
    "enrollment": 649,
+   "lsat": 154,
+   "gpa": 3.47,
    "aba": "Loyola University-New Orleans"
   },
   "Maine": {
    "enrollment": 286,
+   "lsat": 158,
+   "gpa": 3.7,
    "aba": "Maine, University of"
   },
   "Marquette": {
    "enrollment": 614,
+   "lsat": 158,
+   "gpa": 3.7,
    "aba": "Marquette University"
   },
   "Maryland": {
    "enrollment": 650,
+   "lsat": 164,
+   "gpa": 3.72,
    "aba": "Maryland, University of"
   },
   "Massachusetts": {
    "enrollment": 389,
+   "lsat": 152,
+   "gpa": 3.36,
    "aba": "Massachusetts/Dartmouth, University of"
   },
   "Memphis": {
    "enrollment": 239,
+   "lsat": 155,
+   "gpa": 3.53,
    "aba": "Memphis, The University of"
   },
   "Mercer": {
    "enrollment": 425,
+   "lsat": 157,
+   "gpa": 3.62,
    "aba": "Mercer University"
   },
   "Miami": {
    "enrollment": 993,
+   "lsat": 164,
+   "gpa": 3.79,
    "aba": "Miami, University of"
   },
   "Michigan": {
    "enrollment": 991,
+   "lsat": 171,
+   "gpa": 3.88,
    "aba": "Michigan, University of"
   },
   "Michigan State": {
    "enrollment": 500,
+   "lsat": 162,
+   "gpa": 3.73,
    "aba": "Michigan State University"
   },
   "Minnesota": {
    "enrollment": 655,
+   "lsat": 171,
+   "gpa": 3.88,
    "aba": "Minnesota, University of"
   },
   "Mississippi": {
    "enrollment": 468,
+   "lsat": 157,
+   "gpa": 3.68,
    "aba": "Mississippi, The University of"
   },
   "Mississippi College": {
    "enrollment": 401,
+   "lsat": 152,
+   "gpa": 3.37,
    "aba": "Mississippi Christian University",
    "note": "Renamed Mississippi Christian University."
   },
   "Missouri": {
    "enrollment": 373,
+   "lsat": 161,
+   "gpa": 3.72,
    "aba": "Missouri, University of"
   },
   "Mitchell Hamline": {
    "enrollment": 1144,
+   "lsat": 154,
+   "gpa": 3.29,
    "aba": "Mitchell/Hamline School of Law"
   },
   "Montana": {
    "enrollment": 280,
+   "lsat": 156,
+   "gpa": 3.64,
    "aba": "Montana, University of"
   },
   "NYU": {
    "enrollment": 1405,
+   "lsat": 172,
+   "gpa": 3.92,
    "aba": "New York University"
   },
   "Nebraska": {
    "enrollment": 447,
+   "lsat": 160,
+   "gpa": 3.81,
    "aba": "Nebraska, University of"
   },
   "New England": {
    "enrollment": 1189,
+   "lsat": 153,
+   "gpa": 3.37,
    "aba": "New England Law/Boston"
   },
   "New Hampshire": {
    "enrollment": 685,
+   "lsat": 155,
+   "gpa": 3.5,
    "aba": "New Hampshire, University of"
   },
   "New Mexico": {
    "enrollment": 296,
+   "lsat": 157,
+   "gpa": 3.56,
    "aba": "New Mexico, The University of"
   },
   "New York Law School": {
    "enrollment": 1107,
+   "lsat": 157,
+   "gpa": 3.63,
    "aba": "New York Law School"
   },
   "North Carolina": {
    "enrollment": 543,
+   "lsat": 168,
+   "gpa": 3.89,
    "aba": "North Carolina, University of"
   },
   "North Carolina Central": {
    "enrollment": 361,
+   "lsat": 151,
+   "gpa": 3.31,
    "aba": "North Carolina Central University"
   },
   "North Dakota": {
    "enrollment": 246,
+   "lsat": 151,
+   "gpa": 3.48,
    "aba": "North Dakota, University of"
   },
   "Northeastern": {
    "enrollment": 786,
+   "lsat": 164,
+   "gpa": 3.77,
    "aba": "Northeastern University"
   },
   "Northern Illinois": {
    "enrollment": 352,
+   "lsat": 150,
+   "gpa": 3.41,
    "aba": "Northern Illinois University"
   },
   "Northern Kentucky": {
    "enrollment": 412,
+   "lsat": 154,
+   "gpa": 3.41,
    "aba": "Northern Kentucky University"
   },
   "Northwestern": {
    "enrollment": 776,
+   "lsat": 173,
+   "gpa": 3.96,
    "aba": "Northwestern University"
   },
   "Notre Dame": {
    "enrollment": 572,
+   "lsat": 170,
+   "gpa": 3.89,
    "aba": "Notre Dame, University of"
   },
   "Nova Southeastern": {
    "enrollment": 634,
+   "lsat": 155,
+   "gpa": 3.52,
    "aba": "Nova Southeastern University"
   },
   "Ohio Northern": {
    "enrollment": 319,
+   "lsat": 149,
+   "gpa": 3.34,
    "aba": "Ohio Northern University"
   },
   "Ohio State": {
    "enrollment": 486,
+   "lsat": 168,
+   "gpa": 3.91,
    "aba": "The Ohio State University"
   },
   "Oklahoma": {
    "enrollment": 539,
+   "lsat": 162,
+   "gpa": 3.73,
    "aba": "Oklahoma, University of"
   },
   "Oklahoma City": {
    "enrollment": 433,
+   "lsat": 151,
+   "gpa": 3.56,
    "aba": "Oklahoma City University"
   },
   "Oregon": {
    "enrollment": 481,
+   "lsat": 160,
+   "gpa": 3.62,
    "aba": "Oregon, University of"
   },
   "Pace": {
    "enrollment": 873,
+   "lsat": 154,
+   "gpa": 3.54,
    "aba": "Pace University"
   },
   "Pacific McGeorge": {
    "enrollment": 615,
+   "lsat": 156,
+   "gpa": 3.52,
    "aba": "Pacific, University of the"
   },
   "Penn": {
    "enrollment": 764,
+   "lsat": 173,
+   "gpa": 3.95,
    "aba": "Pennsylvania, University of"
   },
   "Penn State": {
    "enrollment": 665,
+   "lsat": 159,
+   "gpa": 3.71,
    "aba": "Penn State Dickinson Law",
    "note": "Penn State Law (University Park) and Dickinson Law merged in 2025; enrollment is the merged school."
   },
   "Penn State Dickinson": {
    "enrollment": 665,
+   "lsat": 159,
+   "gpa": 3.71,
    "aba": "Penn State Dickinson Law",
    "note": "Merged with Penn State Law (University Park) in 2025; enrollment is the merged school."
   },
   "Pepperdine": {
    "enrollment": 553,
+   "lsat": 164,
+   "gpa": 3.85,
    "aba": "Pepperdine University"
   },
   "Pittsburgh": {
    "enrollment": 389,
+   "lsat": 160,
+   "gpa": 3.54,
    "aba": "Pittsburgh, University of"
   },
   "Purdue Global": {
    "enrollment": null,
+   "lsat": null,
+   "gpa": null,
    "note": "Not ABA-approved (online, California-accredited); no 509 report."
   },
   "Quinnipiac": {
    "enrollment": 392,
+   "lsat": 155,
+   "gpa": 3.65,
    "aba": "Quinnipiac University"
   },
   "Regent": {
    "enrollment": 341,
+   "lsat": 158,
+   "gpa": 3.68,
    "aba": "Regent University"
   },
   "Richmond": {
    "enrollment": 413,
+   "lsat": 164,
+   "gpa": 3.81,
    "aba": "Richmond, University of"
   },
   "Roger Williams": {
    "enrollment": 486,
+   "lsat": 150,
+   "gpa": 3.43,
    "aba": "Roger Williams University"
   },
   "Rutgers": {
    "enrollment": 1339,
+   "lsat": 158,
+   "gpa": 3.66,
    "aba": "Rutgers University"
   },
   "SMU": {
    "enrollment": 672,
+   "lsat": 167,
+   "gpa": 3.81,
    "aba": "Southern Methodist University"
   },
   "San Diego": {
    "enrollment": 725,
+   "lsat": 163,
+   "gpa": 3.84,
    "aba": "San Diego, University of"
   },
   "San Francisco": {
    "enrollment": 510,
+   "lsat": 155,
+   "gpa": 3.47,
    "aba": "San Francisco, University of"
   },
   "Santa Clara": {
    "enrollment": 746,
+   "lsat": 159,
+   "gpa": 3.5,
    "aba": "Santa Clara University"
   },
   "Seattle": {
    "enrollment": 646,
+   "lsat": 159,
+   "gpa": 3.6,
    "aba": "Seattle University"
   },
   "Seton Hall": {
    "enrollment": 822,
+   "lsat": 161,
+   "gpa": 3.71,
    "aba": "Seton Hall University"
   },
   "South Carolina": {
    "enrollment": 649,
+   "lsat": 162,
+   "gpa": 3.67,
    "aba": "South Carolina, University of"
   },
   "South Dakota": {
    "enrollment": 252,
+   "lsat": 152,
+   "gpa": 3.47,
    "aba": "South Dakota, University of"
   },
   "South Texas": {
    "enrollment": 1144,
+   "lsat": 155,
+   "gpa": 3.41,
    "aba": "South Texas College of Law Houston"
   },
   "Southern": {
    "enrollment": 809,
+   "lsat": 147,
+   "gpa": 3.15,
    "aba": "Southern University"
   },
   "Southern Illinois": {
    "enrollment": 313,
+   "lsat": 149,
+   "gpa": 3.38,
    "aba": "Southern Illinois University"
   },
   "Southwestern": {
    "enrollment": 1108,
+   "lsat": 157,
+   "gpa": 3.51,
    "aba": "Southwestern Law School"
   },
   "St. John's": {
    "enrollment": 758,
+   "lsat": 164,
+   "gpa": 3.81,
    "aba": "St. John's University"
   },
   "St. Louis": {
    "enrollment": 594,
+   "lsat": 157,
+   "gpa": 3.61,
    "aba": "Saint Louis University"
   },
   "St. Mary's": {
    "enrollment": 800,
+   "lsat": 153,
+   "gpa": 3.49,
    "aba": "St. Mary's University"
   },
   "St. Thomas": {
    "enrollment": null,
+   "lsat": null,
+   "gpa": null,
    "note": "Record does not say which St. Thomas (Miami or Minnesota)."
   },
   "St. Thomas (FL)": {
    "enrollment": 998,
+   "lsat": 152,
+   "gpa": 3.42,
    "aba": "St. Thomas University (Miami)"
   },
   "St. Thomas (MN)": {
    "enrollment": 486,
+   "lsat": 159,
+   "gpa": 3.72,
    "aba": "St. Thomas, (Minneapolis) University of"
   },
   "Stanford": {
    "enrollment": 570,
+   "lsat": 173,
+   "gpa": 3.96,
    "aba": "Stanford University"
   },
   "Stetson": {
    "enrollment": 1009,
+   "lsat": 159,
+   "gpa": 3.63,
    "aba": "Stetson University"
   },
   "Suffolk": {
    "enrollment": 1337,
+   "lsat": 155,
+   "gpa": 3.58,
    "aba": "Suffolk University"
   },
   "Syracuse": {
    "enrollment": 750,
+   "lsat": 158,
+   "gpa": 3.6,
    "aba": "Syracuse University"
   },
   "Temple": {
    "enrollment": 685,
+   "lsat": 165,
+   "gpa": 3.76,
    "aba": "Temple University"
   },
   "Tennessee": {
    "enrollment": 419,
+   "lsat": 164,
+   "gpa": 3.89,
    "aba": "Tennessee, University of"
   },
   "Texas": {
    "enrollment": 928,
+   "lsat": 172,
+   "gpa": 3.89,
    "aba": "Texas, University of"
   },
   "Texas A&M": {
    "enrollment": 396,
+   "lsat": 169,
+   "gpa": 4.0,
    "aba": "Texas A&M University"
   },
   "Texas Southern": {
    "enrollment": 556,
+   "lsat": 150,
+   "gpa": 3.33,
    "aba": "Texas Southern University"
   },
   "Texas Tech": {
    "enrollment": 459,
+   "lsat": 159,
+   "gpa": 3.69,
    "aba": "Texas Tech University"
   },
   "Thomas Jefferson": {
    "enrollment": null,
+   "lsat": null,
+   "gpa": null,
    "note": "No longer ABA-approved; no 2025 509 report."
   },
   "Touro": {
    "enrollment": 604,
+   "lsat": 153,
+   "gpa": 3.35,
    "aba": "Touro University"
   },
   "Tulane": {
    "enrollment": 628,
+   "lsat": 161,
+   "gpa": 3.67,
    "aba": "Tulane University"
   },
   "Tulsa": {
    "enrollment": 282,
+   "lsat": 157,
+   "gpa": 3.45,
    "aba": "Tulsa, The University of"
   },
   "UC Berkeley": {
    "enrollment": 1128,
+   "lsat": 170,
+   "gpa": 3.92,
    "aba": "California-Berkeley, University of"
   },
   "UC Davis": {
    "enrollment": 606,
+   "lsat": 165,
+   "gpa": 3.7,
    "aba": "California-Davis, University of"
   },
   "UC Irvine": {
    "enrollment": 493,
+   "lsat": 169,
+   "gpa": 3.8,
    "aba": "California-Irvine, University of"
   },
   "UC Law SF": {
    "enrollment": 1048,
+   "lsat": 161,
+   "gpa": 3.71,
    "aba": "California-San Francisco, University of"
   },
   "UCLA": {
    "enrollment": 1020,
+   "lsat": 171,
+   "gpa": 3.95,
    "aba": "California-Los Angeles, University of"
   },
   "UDC": {
    "enrollment": 236,
+   "lsat": 151,
+   "gpa": 3.28,
    "aba": "District of Columbia, University of"
   },
   "UMKC": {
    "enrollment": 405,
+   "lsat": 156,
+   "gpa": 3.65,
    "aba": "Missouri-Kansas City, University of"
   },
   "UNLV": {
    "enrollment": 457,
+   "lsat": 160,
+   "gpa": 3.76,
    "aba": "Nevada-Las Vegas, University of"
   },
   "UNT Dallas": {
    "enrollment": 431,
+   "lsat": 153,
+   "gpa": 3.41,
    "aba": "North Texas at Dallas, University of"
   },
   "USC": {
    "enrollment": 650,
+   "lsat": 169,
+   "gpa": 3.91,
    "aba": "Southern California, University of"
   },
   "University of Chicago": {
    "enrollment": 615,
+   "lsat": 174,
+   "gpa": 3.97,
    "aba": "Chicago, The University of"
   },
   "University of Puerto Rico": {
    "enrollment": 444,
+   "lsat": 152,
+   "gpa": 3.77,
    "aba": "Puerto Rico, University of"
   },
   "Utah": {
    "enrollment": 313,
+   "lsat": 166,
+   "gpa": 3.87,
    "aba": "Utah, The University of"
   },
   "Vanderbilt": {
    "enrollment": 525,
+   "lsat": 170,
+   "gpa": 3.91,
    "aba": "Vanderbilt University"
   },
   "Vermont": {
    "enrollment": 704,
+   "lsat": 152,
+   "gpa": 3.25,
    "aba": "Vermont Law School"
   },
   "Villanova": {
    "enrollment": 597,
+   "lsat": 164,
+   "gpa": 3.8,
    "aba": "Villanova University"
   },
   "Virginia": {
    "enrollment": 919,
+   "lsat": 173,
+   "gpa": 3.99,
    "aba": "Virginia, University of"
   },
   "Wake Forest": {
    "enrollment": 563,
+   "lsat": 166,
+   "gpa": 3.79,
    "aba": "Wake Forest University"
   },
   "Washburn": {
    "enrollment": 347,
+   "lsat": 155,
+   "gpa": 3.68,
    "aba": "Washburn University"
   },
   "Washington": {
    "enrollment": 568,
+   "lsat": 165,
+   "gpa": 3.76,
    "aba": "Washington, University of"
   },
   "Washington University": {
    "enrollment": 787,
+   "lsat": 175,
+   "gpa": 3.96,
    "aba": "Washington University (St. Louis)"
   },
   "Washington and Lee": {
    "enrollment": 369,
+   "lsat": 167,
+   "gpa": 3.75,
    "aba": "Washington and Lee University"
   },
   "Wayne State": {
    "enrollment": 394,
+   "lsat": 164,
+   "gpa": 3.89,
    "aba": "Wayne State University"
   },
   "West LA": {
    "enrollment": null,
+   "lsat": null,
+   "gpa": null,
    "note": "University of West Los Angeles is California-accredited, not ABA-approved; no 509 report."
   },
   "West Virginia": {
    "enrollment": 310,
+   "lsat": 155,
+   "gpa": 3.65,
    "aba": "West Virginia University"
   },
   "Western New England": {
    "enrollment": 324,
+   "lsat": 153,
+   "gpa": 3.27,
    "aba": "Western New England University"
   },
   "Western State": {
    "enrollment": 355,
+   "lsat": 152,
+   "gpa": 3.36,
    "aba": "Western State, Westcliff University"
   },
   "Widener": {
    "enrollment": 807,
+   "lsat": 152,
+   "gpa": 3.33,
    "aba": "Widener University Delaware Law School",
    "note": "Assumed Widener Delaware (NTC Region 3, Philadelphia); Widener Commonwealth has 411."
   },
   "Willamette": {
    "enrollment": 365,
+   "lsat": 154,
+   "gpa": 3.48,
    "aba": "Willamette University"
   },
   "William & Mary": {
    "enrollment": 496,
+   "lsat": 166,
+   "gpa": 3.82,
    "aba": "William & Mary"
   },
   "Wilmington": {
    "enrollment": 119,
+   "lsat": 149,
+   "gpa": 3.13,
    "aba": "Wilmington University School of Law"
   },
   "Wisconsin": {
    "enrollment": 642,
+   "lsat": 167,
+   "gpa": 3.81,
    "aba": "Wisconsin, University of"
   },
   "Yale": {
    "enrollment": 626,
+   "lsat": 174,
+   "gpa": 3.96,
    "aba": "Yale University"
   }
  }

@@ -3,43 +3,48 @@ import { router } from 'expo-router';
 import { Pressable, ScrollView, Text } from 'react-native';
 import { Body, Button, Card, Label } from './ui';
 import { classOf, type EloRow } from '../lib/elo';
-import { DIVISIONS, ENROLLMENT_SOURCE, inDivision, type DivisionId } from '../lib/divisions';
+import { ENROLLMENT_SOURCE, GROUPINGS, groupingOfTier, inTier, type TierId } from '../lib/divisions';
 import { radius, space, useTheme } from '../lib/theme';
 
 const W = [32, undefined, 52, 104, 52];
 
-/** School Elo ratings: overall top 25 with a button for the rest, plus a top 20 for each size division, and a link to how they're calculated. */
+/** School Elo ratings: overall top 25 with a button for the rest, plus a top 20 for each size division and LSAT tier, and a link to how they're calculated. */
 export function EloTable({ ranked, filter = '', title = 'Mock Trial ELO Ratings, as of the latest results' }: { ranked: EloRow[]; filter?: string; title?: string }) {
   const c = useTheme();
   const [showAll, setShowAll] = useState(false);
-  const [division, setDivision] = useState<DivisionId | 'all'>('all');
-  const div = DIVISIONS.find((d) => d.id === division) ?? null;
-  const list = div ? inDivision(ranked, div.id) : ranked;
+  const [tier, setTier] = useState<TierId | 'all'>('all');
+  const grouping = tier === 'all' ? null : groupingOfTier(tier);
+  const div = grouping?.tiers.find((t) => t.id === tier) ?? null;
+  const list = div ? inTier(ranked, div.id) : ranked;
   const top = div ? 20 : 25;
   const shown = filter ? list.filter((r) => r.school.toLowerCase().includes(filter)) : showAll ? list : list.slice(0, top);
-  const chips: { id: DivisionId | 'all'; label: string }[] = [{ id: 'all', label: 'All schools' }, ...DIVISIONS.map((d) => ({ id: d.id, label: d.short }))];
+  const chip = (id: TierId | 'all', label: string) => {
+    const on = id === tier;
+    return (
+      <Pressable
+        key={id}
+        onPress={() => {
+          setTier(id);
+          setShowAll(false);
+        }}
+        accessibilityRole="button"
+        accessibilityState={{ selected: on }}
+        style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: radius.md, backgroundColor: on ? c.accent : c.surfaceAlt }}
+      >
+        <Text style={{ color: on ? c.accentInk : c.ink, fontWeight: '600' }}>{label}</Text>
+      </Pressable>
+    );
+  };
   return (
     <>
       <Label>{div ? `${title} · ${div.label}` : title}</Label>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: space.sm }}>
-        {chips.map((ch) => {
-          const on = ch.id === division;
-          return (
-            <Pressable
-              key={ch.id}
-              onPress={() => {
-                setDivision(ch.id);
-                setShowAll(false);
-              }}
-              accessibilityRole="button"
-              accessibilityState={{ selected: on }}
-              style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: radius.md, backgroundColor: on ? c.accent : c.surfaceAlt }}
-            >
-              <Text style={{ color: on ? c.accentInk : c.ink, fontWeight: '600' }}>{ch.label}</Text>
-            </Pressable>
-          );
-        })}
-      </ScrollView>
+      {GROUPINGS.map((g, i) => (
+        <ScrollView key={g.id} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: space.sm, alignItems: 'center' }}>
+          {i === 0 && chip('all', 'All schools')}
+          <Text style={{ color: c.muted, fontSize: 12, fontWeight: '700', textTransform: 'uppercase' }}>{g.label}</Text>
+          {g.tiers.map((t) => chip(t.id, t.short))}
+        </ScrollView>
+      ))}
       <Card style={{ padding: 0, overflow: 'hidden' }}>
         <PointsRow head cells={['#', 'School', 'ELO', div ? 'Overall' : 'Class', 'Comps']} widths={W} />
         {shown.map((r) => (
@@ -60,7 +65,9 @@ export function EloTable({ ranked, filter = '', title = 'Mock Trial ELO Ratings,
       {!filter && list.length > top && <Button small kind="ghost" title={showAll ? `Show top ${top}` : `Show all ${list.length} schools`} onPress={() => setShowAll(!showAll)} />}
       {div ? (
         <Body muted>
-          {`Divisions group schools by size, the way college football does. Size is total JD enrollment from the ABA's ${ENROLLMENT_SOURCE.year} Standard 509 reports. Every school keeps one rating from all its competitions, so wins over bigger or smaller schools still count. Overall is the school's place among all schools.`}
+          {grouping?.id === 'lsat'
+            ? `LSAT tiers compare schools that admit similar students, using the entering class's median LSAT from the ABA's ${ENROLLMENT_SOURCE.year} Standard 509 reports. Every school keeps one rating from all its competitions, so wins over schools in other tiers still count. Overall is the school's place among all schools.`
+            : `Divisions group schools by size, the way college football does. Size is total JD enrollment from the ABA's ${ENROLLMENT_SOURCE.year} Standard 509 reports. Every school keeps one rating from all its competitions, so wins over bigger or smaller schools still count. Overall is the school's place among all schools.`}
         </Body>
       ) : (
         <Body muted>
