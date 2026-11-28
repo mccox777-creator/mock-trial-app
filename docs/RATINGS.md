@@ -193,3 +193,10 @@ Chris replaced the US Chess class names (Expert, Class A and so on) with tiers, 
 - **Tier:** a school's place among the rated schools in its peer group, by shares because the groups differ in size: top 5% Tier 1, through 13% Tier 2, 25% Tier 3, 50% Tier 4, the rest Tier 5 (each cutoff rounded up; `tierInGroup` in elo.ts). For a group of 80 that is places 1–4, 5–11, 12–20, 21–40 and 41–80.
 - Schools without ABA data (for example Purdue Global and West LA) have no peer group and no tier; they still appear in the overall list.
 - Labels only: ratings are unchanged. `ratings.csv` drops the `class` column. `/api/ratings` sends `group` (`{id, label}`) and `groupTier` per row; the size and LSAT tab fields are unchanged.
+
+## Fix, 28 November 2026: two more "St. Thomas" entries identified
+
+Using Chris's TCPR spreadsheet: only St. Thomas (FL) entered the 2025-26 All Star Bracket Challenge, so the "St. Thomas" in Region C is St. Thomas (FL). The 2023-24 AAJ Region 9 field (Mitchell Hamline, Marquette, Creighton) is the upper Midwest and West, and TCPR has St. Thomas (MN) entering the AAJ competition that year, so that entry is St. Thomas (MN). Both are pinned in `ST_THOMAS_AT` in parse_results.py. St. Thomas (MN) moves from 2143 to 2124 and St. Thomas (FL) from 2536 to 2535; no other school moves more than 4 points.
+
+Still unidentified, because TCPR has no Fall 2026 data yet: the "St. Thomas" finalist at First Chair Philadelphia (Fall 2026), and "Loyola" at Battle of the Experts and at the Cumberland/Mercer All Star site (Fall 2026). Loyola LA and Loyola Chicago are listed separately at those events.
+

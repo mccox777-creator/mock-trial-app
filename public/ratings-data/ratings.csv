@@ -1,197 +1,197 @@
 rank,school,rating,competitions,provisional,peak
-1,UCLA,2831.69,83,no,2833.64
-2,Drexel,2669.88,54,no,2724.87
-3,Stetson,2602.36,87,no,2717.38
-4,Harvard,2585.85,43,no,2585.85
-5,Boston College,2575.18,12,no,2631.01
-6,American,2567.49,33,no,2576.07
-7,Texas,2567.19,44,no,2663.59
-8,Mercer,2558.6,67,no,2686.97
-9,Georgetown,2548.14,42,no,2594.68
-10,Florida International,2537.26,24,no,2602.2
-11,St. Thomas (FL),2536.16,33,no,2603.3
-12,Ohio State,2534.65,20,no,2622.99
-13,San Diego,2528.63,30,no,2528.63
-14,Houston,2525.56,76,no,2605.08
-15,Baylor,2521.05,67,no,2620.02
-16,Maryland,2511.4,60,no,2611.57
-17,UC Berkeley,2501.88,49,no,2607.45
-18,Regent,2498.26,30,no,2545.25
-19,Georgia,2493.94,40,no,2631.3
-20,Texas Southern,2492.73,32,no,2533.03
-21,Cumberland,2487.55,62,no,2619.3
-22,Campbell,2487.12,56,no,2581.72
-23,Chapman,2479.49,27,no,2538.09
-24,Chicago-Kent,2473.37,51,no,2549.51
-25,UC Law SF,2471.81,36,no,2642.77
-26,NYU,2470.87,31,no,2578.4
-27,Washington University,2468.37,19,no,2555.85
-28,Northwestern,2466.96,40,no,2537.04
-29,Santa Clara,2466.4,14,no,2466.4
-30,Michigan,2453.78,18,no,2534.04
-31,Minnesota,2442.54,5,no,2512.94
-32,UNLV,2437.18,27,no,2486.56
-33,Barry,2434.1,21,no,2457.59
-34,Colorado,2432.63,20,no,2435.42
-35,Villanova,2426.58,31,no,2600.22
-36,South Carolina,2423.91,68,no,2562.25
-37,Nebraska,2419.89,8,no,2424.44
-38,St. Thomas,2419.72,3,yes,2419.72
-39,Iowa,2419.32,5,no,2444
-40,Howard,2415.3,31,no,2610.13
-41,Suffolk,2410.93,24,no,2440.01
-42,Pepperdine,2408.24,21,no,2530.59
-43,Akron,2406.75,28,no,2596.06
-44,Wake Forest,2406.18,21,no,2433.63
+1,UCLA,2831.68,83,no,2833.61
+2,Drexel,2670.44,54,no,2725.74
+3,Stetson,2602.37,87,no,2717.37
+4,Harvard,2585.78,43,no,2585.78
+5,Boston College,2575.17,12,no,2630.97
+6,American,2567.45,33,no,2576.01
+7,Texas,2567.14,44,no,2663.49
+8,Mercer,2558.52,67,no,2686.94
+9,Georgetown,2548.11,42,no,2594.65
+10,Florida International,2537.01,24,no,2601.95
+11,St. Thomas (FL),2534.85,34,no,2601.7
+12,Ohio State,2534.58,20,no,2622.91
+13,San Diego,2528.48,30,no,2528.48
+14,Houston,2525.53,76,no,2604.96
+15,Baylor,2521.55,67,no,2619.98
+16,Maryland,2511.42,60,no,2611.49
+17,UC Berkeley,2501.76,49,no,2607.36
+18,Regent,2498.23,30,no,2545.13
+19,Georgia,2494.28,40,no,2631.76
+20,Texas Southern,2492.6,32,no,2532.89
+21,Cumberland,2488.16,62,no,2619.3
+22,Campbell,2487.1,56,no,2581.72
+23,Chapman,2479.4,27,no,2537.99
+24,Chicago-Kent,2474.03,51,no,2549.36
+25,St. Thomas,2472.04,1,yes,2472.04
+26,UC Law SF,2471.57,36,no,2642.37
+27,NYU,2470.75,31,no,2578.38
+28,Washington University,2468.28,19,no,2555.85
+29,Northwestern,2466.79,40,no,2536.68
+30,Santa Clara,2466.09,14,no,2466.09
+31,Michigan,2453.7,18,no,2534
+32,Minnesota,2441.53,5,no,2512.91
+33,UNLV,2436.96,27,no,2486.31
+34,Barry,2433.76,21,no,2457.24
+35,Colorado,2431.93,20,no,2435.42
+36,Villanova,2427.57,31,no,2600.16
+37,South Carolina,2423.92,68,no,2562.25
+38,Nebraska,2419.06,8,no,2424.44
+39,Iowa,2417.85,5,no,2444
+40,Howard,2415.22,31,no,2610.13
+41,Suffolk,2411.87,24,no,2439.85
+42,Pepperdine,2408.08,21,no,2530.59
+43,Akron,2406.7,28,no,2596.06
+44,Wake Forest,2406.14,21,no,2433.61
 45,Memphis,2405.67,5,no,2463.64
-46,Loyola LA,2404.68,36,no,2625.76
-47,Hofstra,2401.71,52,no,2566.24
-48,Catholic,2397.72,16,no,2397.72
-49,Cal Western,2395.28,24,no,2448.61
-50,Denver,2394.45,42,no,2557.88
-51,Belmont,2390.9,10,no,2481.64
-52,Pace,2390.3,54,no,2510.74
-53,Alabama,2388.3,27,no,2419.59
+46,Loyola LA,2404.62,36,no,2625.76
+47,Hofstra,2402.77,52,no,2566.24
+48,Catholic,2397.67,16,no,2397.67
+49,Cal Western,2395.09,24,no,2448.4
+50,Denver,2394.29,42,no,2557.78
+51,Belmont,2390.82,10,no,2481.64
+52,Pace,2390.22,54,no,2510.62
+53,Alabama,2388.23,27,no,2419.49
 54,Temple,2380.47,45,no,2550.82
-55,Kentucky,2380.4,5,no,2380.4
-56,Pacific McGeorge,2379.01,55,no,2440.9
-57,UMKC,2374.62,33,no,2490.9
-58,Duke,2374.5,6,no,2374.5
-59,Wilmington,2372.11,4,yes,2408.1
-60,Missouri,2369.79,13,no,2430.98
-61,Western State,2362.43,19,no,2383.81
-62,Liberty,2361.51,5,no,2398.09
-63,William & Mary,2360.25,46,no,2441.26
-64,South Texas,2357.57,56,no,2562.62
-65,Fordham,2357.26,76,no,2553.51
-66,Ohio Northern,2346.97,28,no,2423.93
-67,Illinois Chicago,2343.16,49,no,2417.08
-68,St. Louis,2341.87,8,no,2429.78
-69,Rutgers,2339.95,23,no,2581.85
-70,Marquette,2339.77,5,no,2358.61
-71,DePaul,2336.61,19,no,2375.2
-72,St. Mary's,2329.6,52,no,2394.38
-73,Florida,2329.49,24,no,2450.21
-74,Faulkner,2327.32,25,no,2459.69
-75,Charleston,2326.19,21,no,2345.74
-76,University of Chicago,2323.19,4,yes,2323.19
+55,Kentucky,2380.39,5,no,2380.39
+56,Pacific McGeorge,2378.88,55,no,2440.69
+57,Duke,2374.45,6,no,2374.45
+58,UMKC,2374.45,33,no,2490.68
+59,Wilmington,2372.14,4,yes,2408.06
+60,Missouri,2369.74,13,no,2430.97
+61,Western State,2362.32,19,no,2383.71
+62,Liberty,2361.42,5,no,2398.09
+63,William & Mary,2360,46,no,2440.99
+64,South Texas,2357.57,56,no,2562.51
+65,Fordham,2357.12,76,no,2553.51
+66,Ohio Northern,2346.84,28,no,2423.92
+67,Illinois Chicago,2343.04,49,no,2417.08
+68,St. Louis,2341.85,8,no,2429.77
+69,Rutgers,2339.92,23,no,2581.85
+70,Marquette,2337.53,5,no,2355.88
+71,DePaul,2336.43,19,no,2375.01
+72,St. Mary's,2329.49,52,no,2394.38
+73,Florida,2329.38,24,no,2450.13
+74,Faulkner,2327.33,25,no,2459.73
+75,Charleston,2326.03,21,no,2345.57
+76,University of Chicago,2323.13,4,yes,2323.13
 77,New England,2322.97,4,yes,2415.66
-78,Illinois,2308.14,46,no,2529.78
-79,Case Western,2302.61,25,no,2560.18
-80,North Carolina,2298.05,14,no,2302.11
-81,Cleveland State,2297.1,10,no,2438.12
-82,Miami,2296.52,25,no,2373.47
+78,Illinois,2308.05,46,no,2529.78
+79,Case Western,2302.54,25,no,2560.18
+80,North Carolina,2298.01,14,no,2302.1
+81,Cleveland State,2297.08,10,no,2438.11
+82,Miami,2296.18,25,no,2373.47
 83,Appalachian,2293.12,1,yes,2300
-84,Drake,2292.69,13,no,2439.58
-85,Vanderbilt,2289.35,12,no,2485.93
-86,Texas Tech,2285.65,32,no,2536.5
-87,Southwestern,2284.99,8,no,2348.86
-88,Washington,2278.89,9,no,2379.22
-89,West LA,2277.01,1,yes,2300
-90,St. John's,2273.12,57,no,2608.5
-91,New Hampshire,2271.2,6,no,2300
-92,Gonzaga,2269.2,4,yes,2300
-93,Purdue Global,2269.03,1,yes,2300
-94,Loyola Chicago,2265.11,31,no,2455.17
-95,Seattle,2260.95,8,no,2486.97
-96,Duquesne,2255.31,23,no,2361.59
-97,Arizona State,2252.44,10,no,2325.77
-98,Florida State,2252.08,34,no,2451.98
-99,Penn State,2251.28,8,no,2324.62
-100,Loyola,2247.65,2,yes,2300
-101,Arizona,2247.11,12,no,2300
-102,San Francisco,2245.79,1,yes,2300
+84,Drake,2291.62,13,no,2438.35
+85,Vanderbilt,2289.33,12,no,2485.93
+86,Texas Tech,2285.58,32,no,2536.5
+87,Southwestern,2284.86,8,no,2348.75
+88,Washington,2278.77,9,no,2379.22
+89,West LA,2276.87,1,yes,2300
+90,St. John's,2274.3,57,no,2608.43
+91,New Hampshire,2271.18,6,no,2300
+92,Gonzaga,2269.09,4,yes,2300
+93,Purdue Global,2268.96,1,yes,2300
+94,Loyola Chicago,2264.75,31,no,2455.17
+95,Seattle,2260.79,8,no,2486.97
+96,Duquesne,2255.27,23,no,2361.58
+97,Florida State,2251.77,34,no,2451.95
+98,Penn State,2251.27,8,no,2324.62
+99,Arizona State,2248.71,10,no,2320.03
+100,Loyola,2247.59,2,yes,2300
+101,Arizona,2246.89,12,no,2300
+102,San Francisco,2245.77,1,yes,2300
 103,Washington and Lee,2236.12,1,yes,2300
-104,UC Davis,2235.63,28,no,2325.59
-105,Baltimore,2234,16,no,2307.65
-106,Willamette,2231.16,4,yes,2300
-107,Nova Southeastern,2226.99,42,no,2344.43
-108,Cincinnati,2226.91,9,no,2300
-109,Quinnipiac,2226.9,31,no,2372.02
-110,Notre Dame,2225.25,10,no,2300
-111,Syracuse,2224.83,50,no,2488.94
-112,Arkansas,2221.56,7,no,2444.75
-113,SMU,2220.51,29,no,2300
-114,Emory,2218.46,38,no,2458.9
-115,Jacksonville,2216.2,3,yes,2300
-116,Yale,2214.13,5,no,2447.46
-117,Cornell,2213.16,8,no,2417.68
-118,Brooklyn,2211.84,44,no,2468.62
-119,George Washington,2210.61,23,no,2336.64
+104,UC Davis,2234.82,28,no,2324.4
+105,Baltimore,2233.96,16,no,2307.65
+106,Willamette,2230.97,4,yes,2300
+107,Cincinnati,2226.9,9,no,2300
+108,Quinnipiac,2226.86,31,no,2372.02
+109,Nova Southeastern,2226.72,42,no,2344.43
+110,Notre Dame,2224.89,10,no,2300
+111,Syracuse,2224.77,50,no,2488.9
+112,Arkansas,2221.5,7,no,2444.75
+113,SMU,2220.47,29,no,2300
+114,Emory,2218.36,38,no,2458.9
+115,Jacksonville,2215.82,3,yes,2300
+116,Yale,2214.12,5,no,2447.46
+117,Cornell,2213.15,8,no,2417.68
+118,Brooklyn,2211.74,44,no,2468.62
+119,George Washington,2210.42,23,no,2336.59
 120,Columbia,2207.46,1,yes,2300
 121,Stanford,2204.55,1,yes,2300
-122,Capital,2202.49,3,yes,2300
-123,Northern Kentucky,2202.49,15,no,2300
+122,Capital,2202.48,3,yes,2300
+123,Northern Kentucky,2202.46,15,no,2300
 124,CUNY,2201.61,3,yes,2300
 125,Roger Williams,2197.89,9,no,2300
-126,USC,2196.22,14,no,2300
-127,Lewis & Clark,2194.87,25,no,2496.92
-128,Touro,2191.89,7,no,2385.78
-129,Dayton,2188.18,6,no,2300
-130,Wisconsin,2187.37,18,no,2300
-131,Northeastern,2187.13,2,yes,2300
-132,Buffalo,2186.89,45,no,2300
+126,USC,2196.06,14,no,2300
+127,Lewis & Clark,2194.72,25,no,2496.9
+128,Touro,2191.87,7,no,2385.78
+129,Dayton,2188.15,6,no,2300
+130,Northeastern,2187.12,2,yes,2300
+131,Buffalo,2186.79,45,no,2300
+132,Wisconsin,2186.68,18,no,2300
 133,Northern Illinois,2183.64,1,yes,2300
-134,Louisville,2179.7,7,no,2324.02
-135,Indiana,2178.96,3,yes,2300
-136,Tulane,2176.44,20,no,2440.7
-137,Arkansas Little Rock,2175.35,8,no,2300
-138,Connecticut,2174.83,16,no,2350.14
+134,Louisville,2179.69,7,no,2324.02
+135,Indiana,2178.94,3,yes,2300
+136,Tulane,2176.43,20,no,2440.7
+137,Arkansas Little Rock,2175.29,8,no,2300
+138,Connecticut,2174.81,16,no,2350.14
 139,North Carolina Central,2171.53,5,no,2300
-140,Boston University,2161.83,10,no,2300
-141,Richmond,2160.68,11,no,2380.84
+140,Boston University,2161.79,10,no,2300
+141,Richmond,2160.67,11,no,2380.84
 142,Mississippi College,2160.02,12,no,2300
-143,George Mason,2158.61,16,no,2332.62
-144,Thomas Jefferson,2156.58,2,yes,2300
-145,Virginia,2156.5,18,no,2300
-146,University of Puerto Rico,2154.22,11,no,2366.74
-147,Tulsa,2149.81,9,no,2300
-148,St. Thomas (MN),2142.96,8,no,2300
-149,Kansas,2134.34,25,no,2300
-150,Lincoln Memorial,2134.32,12,no,2300
-151,Western New England,2131.45,4,yes,2300
-152,New Mexico,2131.23,4,yes,2313.14
-153,North Dakota,2130.99,4,yes,2300
-154,Cooley,2130.48,5,no,2300
-155,Utah,2124.39,4,yes,2300
-156,UC Irvine,2123.83,5,no,2380
-157,Penn,2117.76,16,no,2300
-158,Montana,2117.68,4,yes,2300
+143,George Mason,2158.5,16,no,2332.62
+144,Virginia,2156.45,18,no,2300
+145,Thomas Jefferson,2156.44,2,yes,2300
+146,University of Puerto Rico,2154.12,11,no,2366.67
+147,Tulsa,2149.8,9,no,2300
+148,Kansas,2134.31,25,no,2300
+149,Lincoln Memorial,2134.22,12,no,2300
+150,Western New England,2131.44,4,yes,2300
+151,New Mexico,2131.23,4,yes,2313.14
+152,Cooley,2130.39,5,no,2300
+153,North Dakota,2129.51,4,yes,2300
+154,Utah,2124.32,4,yes,2300
+155,St. Thomas (MN),2124.11,9,no,2300
+156,UC Irvine,2123.79,5,no,2380
+157,Penn,2117.72,16,no,2300
+158,Montana,2117.56,4,yes,2300
 159,Ave Maria,2116.87,4,yes,2300
-160,BYU,2111.44,10,no,2300
-161,Wayne State,2107.72,10,no,2326.67
-162,Birmingham,2107.35,6,no,2300
-163,South Dakota,2105.64,28,no,2300
-164,Texas A&M,2104.41,25,no,2300
-165,Albany,2104.16,9,no,2300
-166,Mississippi,2103.16,17,no,2300
+160,BYU,2111.31,10,no,2300
+161,Wayne State,2107.7,10,no,2326.67
+162,Birmingham,2107.33,6,no,2300
+163,South Dakota,2105.1,28,no,2300
+164,Texas A&M,2104.37,25,no,2300
+165,Albany,2104.12,9,no,2300
+166,Mississippi,2103.13,17,no,2300
 167,Penn State Dickinson,2102.43,3,yes,2300
 168,Maine,2100.43,4,yes,2300
 169,Vermont,2100.43,4,yes,2300
-170,Massachusetts,2098.05,5,no,2300
-171,Widener,2095.56,7,no,2300
-172,LSU,2093.73,27,no,2300
-173,Loyola New Orleans,2093.22,18,no,2300
-174,Hawaii,2090.82,4,yes,2300
+170,Massachusetts,2098.04,5,no,2300
+171,Widener,2095.55,7,no,2300
+172,LSU,2093.7,27,no,2300
+173,Loyola New Orleans,2093.18,18,no,2300
+174,Hawaii,2090.55,4,yes,2300
 175,John Marshall Atlanta,2083.97,6,no,2300
-176,Oklahoma,2079.22,7,no,2300
-177,Washburn,2074.2,6,no,2300
-178,InterAmerican Puerto Rico,2073.49,15,no,2300
-179,Creighton,2065.78,10,no,2300
-180,Golden Gate,2063.46,7,no,2300
-181,Tennessee,2061.92,7,no,2300
-182,Oregon,2054.61,4,yes,2300
-183,New York Law School,2052.55,13,no,2300
-184,West Virginia,2050.45,6,no,2300
-185,Mitchell Hamline,2048.64,9,no,2300
+176,Oklahoma,2079.21,7,no,2300
+177,Washburn,2074.19,6,no,2300
+178,InterAmerican Puerto Rico,2073.46,15,no,2300
+179,Golden Gate,2063.46,7,no,2300
+180,Creighton,2062.87,10,no,2300
+181,Tennessee,2061.93,7,no,2300
+182,Oregon,2054.51,4,yes,2300
+183,New York Law School,2052.53,13,no,2300
+184,West Virginia,2050.43,6,no,2300
+185,Mitchell Hamline,2047.61,9,no,2300
 186,Oklahoma City,2046.88,4,yes,2300
 187,UDC,2046.26,6,no,2300
-188,UNT Dallas,2044.37,15,no,2300
-189,Cardozo,2043.52,25,no,2300
+188,UNT Dallas,2044.34,15,no,2300
+189,Cardozo,2043.41,25,no,2300
 190,Elon,2042.53,6,no,2300
-191,Southern Illinois,2034,6,no,2300
+191,Southern Illinois,2033.97,6,no,2300
 192,Michigan State,2030.15,13,no,2300
-193,Seton Hall,2022.53,26,no,2300
-194,Georgia State,2021.06,19,no,2300
-195,Southern,2019.58,19,no,2300
-196,Pittsburgh,2018.58,17,no,2300
+193,Seton Hall,2023.27,26,no,2300
+194,Georgia State,2021.04,19,no,2300
+195,Southern,2019.55,19,no,2300
+196,Pittsburgh,2018.55,17,no,2300

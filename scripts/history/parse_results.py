@@ -54,7 +54,13 @@ FLORIDA = {'Barry', 'Florida International', 'Nova Southeastern', 'Stetson', 'Fl
 
 # Events where the record says only "St. Thomas" and outside sources settle which school it was.
 # Gold Cup 2024: St. Thomas (FL)'s law school posted its national semifinal finish there (Oct 29, 2024), and TCPR agrees.
-ST_THOMAS_AT = {('2024-25', 'Fall', 'Gold Cup Trial Competition'): 'St. Thomas (FL)'}
+ST_THOMAS_AT = {
+    ('2024-25', 'Fall', 'Gold Cup Trial Competition'): 'St. Thomas (FL)',
+    # TCPR (Chris's spreadsheet): only St. Thomas (FL) entered the 2025-26 All Star Bracket Challenge.
+    ('2025-26', 'Fall', 'All Star Bracket Challenge'): 'St. Thomas (FL)',
+    # AAJ Region 9 is the upper Midwest/West (Mitchell Hamline, Marquette, Creighton); TCPR has St. Thomas (MN) entering STAC that year.
+    ('2023-24', 'Spring', 'AAJ Region 9'): 'St. Thomas (MN)',
+}
 
 # Events the record lists twice. The St. John's Peter James Johnson Civil Rights competition is held each October;
 # the Spring 2025 entry repeats the Fall 2024 one (same final four: NYU, Georgetown, Drexel, Fordham).
