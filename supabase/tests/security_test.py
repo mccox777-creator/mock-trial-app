@@ -1,6 +1,6 @@
 import os, subprocess, sys, uuid
 # Attack tests for the database rules. Needs a scratch Postgres 15+ (never a real project):
-#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0004_notifications.sql -f supabase/migrations/0005_pairing_options.sql -f supabase/migrations/0006_past_results.sql -f supabase/migrations/0007_entry_controls_and_moderation.sql
+#   createdb t && psql -d t -f supabase/tests/supabase_stub.sql -f supabase/migrations/0001_initial.sql -f supabase/migrations/0002_security.sql -f supabase/migrations/0003_scoring_and_video.sql -f supabase/migrations/0004_notifications.sql -f supabase/migrations/0005_pairing_options.sql -f supabase/migrations/0006_past_results.sql -f supabase/migrations/0007_entry_controls_and_moderation.sql -f supabase/migrations/0008_account_deletion.sql
 #   PGARGS='-h localhost -U postgres -d t' python3 supabase/tests/security_test.py
 PG = os.environ.get('PGARGS', '-d t').split()
 U = {n: str(uuid.uuid5(uuid.NAMESPACE_DNS, n)) for n in ['org','org2','judge','judge2','coachA','coachB','compA','evil','admin','newbie']}
@@ -230,6 +230,27 @@ blocked('organizer cannot un-hide it', "update tournaments set hidden=false wher
 ok('admin resolves the report', "update reports set status='resolved'", 'admin')
 ok('admin removes a bulletin', "delete from bulletins where id='bj1'", 'admin')
 blocked('others cannot delete bulletins', "delete from bulletins returning id", 'evil', '')
+
+print('--- account deletion ---')
+def su(name, sql, expect):
+    global fails
+    good, out = psql(sql, superuser=True)
+    passed = good and out == str(expect)
+    print(('PASS ' if passed else 'FAIL ') + 'after deletion: ' + name + ('' if passed else f'  -> {out}'))
+    fails += not passed
+blocked('signed-out visitor deletes an account', "select delete_my_account()")
+blocked('only organizer of a running competition', "select delete_my_account()", 'org')
+blocked('the last site admin', "select delete_my_account()", 'admin')
+ok('judge deletes their account', "select delete_my_account()", 'judge')
+su('login is gone', f"select count(*) from auth.users where id='{U['judge']}'", 0)
+su('profile is gone', f"select count(*) from profiles where id='{U['judge']}'", 0)
+su('judge sign-up kept without name or email', "select coalesce(user_id::text,'none')||'|'||name||'|'||email from judge_signups where id='j1'", 'none|Deleted account|')
+su('their ballot still counts', "select coalesce(judge_id::text,'none')||'|'||p_score||'-'||d_score from ballots where id='b1'", 'none|24-21')
+su('removed from the pairing', f"select count(*) from matches where '{U['judge']}' = any(judge_ids)", 0)
+ok('coach A deletes their account', "select delete_my_account()", 'coachA')
+su('registration kept, contact removed', "select coalesce(submitted_by::text,'none')||'|'||contact_name||'|'||contact_email from registrations where id='rA'", 'none|Deleted account|')
+su('team kept for its other members', "select count(*) from team_members where team_id='tA'", 1)
+su('coach no longer on the team', f"select count(*) from team_members where user_id='{U['coachA']}'", 0)
 
 print('--- rate limits ---')
 FRESH = False

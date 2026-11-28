@@ -67,3 +67,12 @@ Set up in `supabase/migrations/0007_entry_controls_and_moderation.sql`, all enfo
 ## Reporting a problem
 
 If you find a security issue, email the organizers privately instead of opening a public GitHub issue.
+
+## Account deletion
+
+`supabase/migrations/0008_account_deletion.sql` adds `delete_my_account()`, which only the signed-in person can call
+for their own account. It deletes their sign-in and everything that is only theirs (profile, team memberships,
+notifications, settings, push tokens, organizer request, reports, admin role, chat messages) and detaches them from
+shared records (results, ballots, registrations, judge sign-ups, bulletins, cases, recordings, teams), replacing their
+name and email there with "Deleted account". The only organizer of an unfinished competition, and the last site admin,
+are asked to hand off first. The change log keeps old rows as they were, for the audit trail.

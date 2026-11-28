@@ -37,6 +37,13 @@ const SECTIONS: { title: string; body: string[] }[] = [
       'Results lock 7 days after a competition ends (or sooner, when the organizer finalizes it), so they cannot be changed afterward without a record.',
     ],
   },
+  {
+    title: 'Deleting your account',
+    body: [
+      'You can delete your account at any time from the Me tab (Delete my account). That removes your sign-in, profile, team memberships, notifications and chat messages.',
+      'Competition records other people rely on stay, without your name or email: results, ballots you judged, and registrations you sent for a team. The security log of past edits is kept as it was.',
+    ],
+  },
 ];
 
 export default function Privacy() {
